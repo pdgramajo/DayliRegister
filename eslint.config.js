@@ -17,5 +17,9 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      'prefer-arrow-callback': 'error',
+      'arrow-spacing': ['error', { before: true, after: true }],
+    },
   },
 ])
