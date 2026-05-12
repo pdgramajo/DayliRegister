@@ -1,9 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux'
+import type { RootState, AppDispatch } from '../store'
 import { increment, decrement } from '../store/counterSlice'
 
 const Counter = () => {
-  const count = useSelector((state) => state.counter.value)
-  const dispatch = useDispatch()
+  const count = useSelector((state: RootState) => state.counter.value)
+  const dispatch = useDispatch<AppDispatch>()
 
   return (
     <div>
