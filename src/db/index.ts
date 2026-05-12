@@ -44,7 +44,7 @@ export class DayliRegisterDB extends Dexie {
     super('dayliRegisterDB')
 
     this.version(1).stores({
-      branches: 'id, name, createdAt, updatedAt',
+      branches: 'id, name, isActive, createdAt, updatedAt, deletedAt',
 
       cashSessions:
         'id, branchId, status, openedAt, closedAt, createdAt, updatedAt',

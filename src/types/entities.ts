@@ -22,6 +22,9 @@ export interface BaseEntity {
 /** Sucursal del negocio */
 export interface Branch extends BaseEntity {
   name: string
+  address?: string
+  phone?: string
+  isActive: boolean
 }
 
 /* =========================================================

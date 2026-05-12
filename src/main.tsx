@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { ToastProvider } from './components/ui/Toast'
 import { store } from './store'
 import './index.css'
 import App from './App'
@@ -15,6 +16,7 @@ createRoot(rootElement).render(
     <ErrorBoundary>
       <Provider store={store}>
         <BrowserRouter>
+          <ToastProvider />
           <App />
         </BrowserRouter>
       </Provider>
