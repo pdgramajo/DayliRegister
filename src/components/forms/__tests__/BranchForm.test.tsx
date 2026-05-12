@@ -34,7 +34,7 @@ describe('BranchForm', () => {
   it('should show submit button with correct text for new branch', () => {
     renderWithProviders(<BranchForm onSubmit={vi.fn()} />)
 
-    expect(screen.getByText('Crear sucursal')).toBeInTheDocument()
+    expect(screen.getByText('Crear Sucursal')).toBeInTheDocument()
   })
 
   it('should show submit button with correct text for editing', () => {
@@ -45,7 +45,7 @@ describe('BranchForm', () => {
       />
     )
 
-    expect(screen.getByText('Guardar cambios')).toBeInTheDocument()
+    expect(screen.getByText('Guardar Cambios')).toBeInTheDocument()
   })
 
   it('should pre-fill form with initialValues', () => {
