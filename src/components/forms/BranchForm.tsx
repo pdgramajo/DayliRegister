@@ -1,6 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { Link } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 import type { CreateBranchDTO } from '../../types/dtos'
 import { Button, Input } from '../ui'
 
@@ -20,12 +22,14 @@ interface BranchFormProps {
   initialValues?: Partial<CreateBranchDTO>
   onSubmit: (data: CreateBranchDTO) => void | Promise<void>
   isLoading?: boolean
+  cancelTo?: string
 }
 
 export const BranchForm = ({
   initialValues,
   onSubmit,
   isLoading = false,
+  cancelTo = '/branches',
 }: BranchFormProps) => {
   const {
     register,
@@ -45,7 +49,10 @@ export const BranchForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div className="space-y-2">
-        <label htmlFor="name" className="text-sm font-medium text-gray-700">
+        <label
+          htmlFor="name"
+          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
           Nombre
         </label>
         <Input
@@ -57,19 +64,27 @@ export const BranchForm = ({
           }
         />
         {errors.name && (
-          <p className="text-sm text-red-500">{errors.name.message}</p>
+          <p className="text-sm text-red-500 dark:text-red-400">
+            {errors.name.message}
+          </p>
         )}
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="address" className="text-sm font-medium text-gray-700">
+        <label
+          htmlFor="address"
+          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
           Dirección
         </label>
         <Input id="address" placeholder="Dirección" {...register('address')} />
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="phone" className="text-sm font-medium text-gray-700">
+        <label
+          htmlFor="phone"
+          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
           Teléfono
         </label>
         <Input
@@ -79,21 +94,32 @@ export const BranchForm = ({
         />
       </div>
 
-      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+      <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
         <input
           type="checkbox"
           id="isActive"
           {...register('isActive')}
-          className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600"
         />
-        <label htmlFor="isActive" className="text-sm font-medium text-gray-700">
+        <label
+          htmlFor="isActive"
+          className="text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
           Sucursal activa
         </label>
       </div>
 
-      <Button type="submit" loading={isLoading} className="w-full">
-        {initialValues?.name ? 'Guardar Cambios' : 'Crear Sucursal'}
-      </Button>
+      <div className="flex gap-3">
+        <Link to={cancelTo} className="flex-1">
+          <Button type="button" variant="outline" className="w-full">
+            <ArrowLeft className="w-4 h-4" />
+            Cancelar
+          </Button>
+        </Link>
+        <Button type="submit" loading={isLoading} className="flex-1">
+          {initialValues?.name ? 'Guardar' : 'Crear'}
+        </Button>
+      </div>
     </form>
   )
 }

@@ -8,8 +8,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import type { UpdateBranchDTO } from '../../types/dtos'
-import { BranchForm } from '../../components/forms/BranchForm'
-import { PageHeader, toast } from '../../components/ui'
+import { BranchForm } from '../../components/ui'
 
 export const BranchEdit = () => {
   const { id } = useParams<{ id: string }>()
@@ -30,46 +29,43 @@ export const BranchEdit = () => {
 
   const handleSubmit = (data: UpdateBranchDTO) => {
     if (!id) return
-
     dispatch(updateBranch({ id, data }))
       .unwrap()
-      .then(() => {
-        toast.success('Sucursal actualizada correctamente')
-        navigate('/branches')
-      })
-      .catch(() => {
-        toast.error('Error al actualizar la sucursal')
-      })
+      .then(() => navigate('/branches'))
   }
 
   if (!currentBranch && !isLoading) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">Cargando sucursal...</p>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-6">
+        <p className="text-gray-500 text-center">Cargando...</p>
       </div>
     )
   }
 
   return (
-    <div>
-      <PageHeader
-        title="Editar Sucursal"
-        description={`Editando: ${currentBranch?.name || ''}`}
-      />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="max-w-lg mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+            Editar Sucursal
+          </h1>
+        </div>
 
-      <div className="bg-white shadow rounded-lg p-6">
-        {currentBranch && (
-          <BranchForm
-            initialValues={{
-              name: currentBranch.name,
-              address: currentBranch.address,
-              phone: currentBranch.phone,
-              isActive: currentBranch.isActive,
-            }}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-          />
-        )}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+          {currentBranch && (
+            <BranchForm
+              initialValues={{
+                name: currentBranch.name,
+                address: currentBranch.address,
+                phone: currentBranch.phone,
+                isActive: currentBranch.isActive,
+              }}
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+              cancelTo="/branches"
+            />
+          )}
+        </div>
       </div>
     </div>
   )

@@ -36,19 +36,21 @@ const Loading = () => (
   </div>
 )
 
-const App = () => (
-  <div className="min-h-screen bg-gray-50">
-    <Suspense fallback={<Loading />}>
-      <Routes>
-        <Route path={ROUTES.HOME} element={<BranchList />} />
-        <Route path={ROUTES.BRANCHES} element={<BranchList />} />
-        <Route path={ROUTES.BRANCH_NEW} element={<BranchNew />} />
-        <Route path={ROUTES.BRANCH_EDIT} element={<BranchEdit />} />
-        <Route path={ROUTES.BRANCH_SESSIONS} element={<BranchSessions />} />
-        <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
-      </Routes>
-    </Suspense>
-  </div>
-)
+const App = () => {
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path={ROUTES.HOME} element={<BranchList />} />
+          <Route path={ROUTES.BRANCHES} element={<BranchList />} />
+          <Route path={ROUTES.BRANCH_NEW} element={<BranchNew />} />
+          <Route path={ROUTES.BRANCH_EDIT} element={<BranchEdit />} />
+          <Route path={ROUTES.BRANCH_SESSIONS} element={<BranchSessions />} />
+          <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
+        </Routes>
+      </Suspense>
+    </div>
+  )
+}
 
 export default App

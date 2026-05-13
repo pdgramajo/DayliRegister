@@ -55,7 +55,7 @@ export const BranchSessions = () => {
         <p className="text-gray-500">No hay sesiones abiertas</p>
       </div>
 
-      <div className="bg-gray-50 shadow rounded-lg p-6 mt-4">
+      <div className="bg-gray-50 dark:bg-gray-800 shadow rounded-lg p-6 mt-4">
         <h2 className="text-lg font-semibold mb-4">Sesiones Cerradas</h2>
         <p className="text-gray-500">No hay sesiones cerradas</p>
       </div>
