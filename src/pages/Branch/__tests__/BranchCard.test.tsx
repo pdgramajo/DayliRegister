@@ -51,7 +51,7 @@ describe('BranchCard', () => {
     renderWithRouter(<BranchCard branch={inactiveBranch} onDelete={vi.fn()} />)
 
     const indicator = screen.getByTestId('status-indicator')
-    expect(indicator).toHaveClass('bg-gray-300')
+    expect(indicator).toHaveClass('bg-surface-300')
   })
 
   it('should call onDelete when delete button is clicked', async () => {

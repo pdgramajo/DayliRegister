@@ -38,7 +38,7 @@ const Loading = () => (
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen bg-surface-50 dark:bg-surface-900 transition-colors">
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route path={ROUTES.HOME} element={<BranchList />} />

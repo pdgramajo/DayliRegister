@@ -7,7 +7,7 @@ const Card = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'rounded-2xl bg-white border border-gray-200/60 shadow-lg shadow-gray-200/40 transition-all duration-300 hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-0.5 dark:bg-gradient-to-b dark:from-gray-800 dark:to-gray-850 dark:border-gray-700/50 dark:shadow-none dark:hover:shadow-none dark:hover:border-indigo-500/30',
+      'rounded-2xl bg-white border border-surface-200/60 shadow-lg shadow-surface-200/40 transition-all duration-300 hover:shadow-xl hover:shadow-surface-200/50 hover:-translate-y-0.5 dark:bg-gradient-to-b dark:from-surface-800 dark:to-surface-850 dark:border-surface-700/50 dark:shadow-none dark:hover:shadow-none dark:hover:border-brand-500/30',
       className
     )}
     {...props}
@@ -41,7 +41,7 @@ const CardDescription = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) => (
-  <p className={cn('text-sm text-gray-500', className)} {...props} />
+  <p className={cn('text-sm text-content-500', className)} {...props} />
 )
 
 const CardContent = ({

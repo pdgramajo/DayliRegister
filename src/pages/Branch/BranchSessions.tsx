@@ -52,12 +52,12 @@ export const BranchSessions = () => {
 
       <div className="bg-white shadow rounded-lg p-6">
         <h2 className="text-lg font-semibold mb-4">Sesiones Abiertas</h2>
-        <p className="text-gray-500">No hay sesiones abiertas</p>
+        <p className="text-content-500">No hay sesiones abiertas</p>
       </div>
 
-      <div className="bg-gray-50 dark:bg-gray-800 shadow rounded-lg p-6 mt-4">
+      <div className="bg-surface-50 dark:bg-surface-800 shadow rounded-lg p-6 mt-4">
         <h2 className="text-lg font-semibold mb-4">Sesiones Cerradas</h2>
-        <p className="text-gray-500">No hay sesiones cerradas</p>
+        <p className="text-content-500">No hay sesiones cerradas</p>
       </div>
     </div>
   )

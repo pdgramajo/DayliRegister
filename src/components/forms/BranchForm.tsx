@@ -51,7 +51,7 @@ export const BranchForm = ({
       <div className="space-y-2">
         <label
           htmlFor="name"
-          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="text-sm font-medium text-content-700 dark:text-content-300"
         >
           Nombre
         </label>
@@ -73,7 +73,7 @@ export const BranchForm = ({
       <div className="space-y-2">
         <label
           htmlFor="address"
-          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="text-sm font-medium text-content-700 dark:text-content-300"
         >
           Dirección
         </label>
@@ -83,7 +83,7 @@ export const BranchForm = ({
       <div className="space-y-2">
         <label
           htmlFor="phone"
-          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="text-sm font-medium text-content-700 dark:text-content-300"
         >
           Teléfono
         </label>
@@ -94,16 +94,16 @@ export const BranchForm = ({
         />
       </div>
 
-      <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+      <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
         <input
           type="checkbox"
           id="isActive"
           {...register('isActive')}
-          className="size-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600"
+          className="size-5 rounded border-surface-300 text-brand-600 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600"
         />
         <label
           htmlFor="isActive"
-          className="text-sm font-medium text-gray-700 dark:text-gray-200"
+          className="text-sm font-medium text-content-700 dark:text-content-200"
         >
           Sucursal activa
         </label>

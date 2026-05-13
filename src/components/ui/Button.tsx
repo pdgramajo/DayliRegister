@@ -9,16 +9,16 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 hover:shadow-md dark:bg-indigo-500 dark:hover:bg-indigo-600',
+          'bg-brand-600 text-white shadow-sm hover:bg-brand-700 hover:shadow-md dark:bg-brand-500 dark:hover:bg-brand-600',
         destructive:
           'bg-red-600 text-white shadow-sm hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700',
         outline:
-          'border border-gray-200 bg-white shadow-sm hover:bg-gray-50 hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700',
+          'border border-surface-200 bg-white shadow-sm hover:bg-surface-50 hover:border-surface-300 dark:border-surface-700 dark:bg-surface-800 dark:hover:bg-surface-700',
         secondary:
-          'bg-gray-100 text-gray-900 shadow-sm hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600',
+          'bg-surface-100 text-content-900 shadow-sm hover:bg-surface-200 dark:bg-surface-700 dark:text-content-100 dark:hover:bg-surface-600',
         ghost:
-          'hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100',
-        link: 'text-indigo-600 underline-offset-4 hover:underline dark:text-indigo-400',
+          'hover:bg-surface-100 hover:text-content-900 dark:hover:bg-surface-800 dark:hover:text-content-100',
+        link: 'text-brand-600 underline-offset-4 hover:underline dark:text-brand-400',
       },
       size: {
         default: 'h-10 px-4 py-2',

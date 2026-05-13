@@ -44,7 +44,7 @@ export const BranchList = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="size-8 border-4 border-gray-200 dark:border-gray-700 border-t-indigo-600 rounded-full animate-spin" />
+        <div className="size-8 border-4 border-surface-200 dark:border-surface-700 border-t-indigo-600 rounded-full animate-spin" />
       </div>
     )
   }
@@ -61,34 +61,34 @@ export const BranchList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-surface-50 dark:bg-surface-900 px-4 py-8 sm:px-6 lg:px-8">
       <div className="max-w-xl mx-auto space-y-8">
         <div className="space-y-4">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <Button
               variant="outline"
-              className="h-12 justify-start gap-2 px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:border-gray-600"
+              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
               <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
               <span className="text-xs">Reportes</span>
             </Button>
             <Button
               variant="outline"
-              className="h-12 justify-start gap-2 px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:border-gray-600"
+              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
               <ClipboardList className="size-5 text-emerald-500 dark:text-emerald-400" />
               <span className="text-xs">Recepciones</span>
             </Button>
             <Button
               variant="outline"
-              className="h-12 justify-start gap-2 px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:border-gray-600"
+              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
               <Settings className="size-5 text-amber-500 dark:text-amber-400" />
               <span className="text-xs">Configuración</span>
             </Button>
             <Button
               variant="outline"
-              className="h-12 justify-start gap-2 px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:border-gray-600"
+              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
               onClick={toggleTheme}
             >
               {isDark ? (
@@ -108,15 +108,15 @@ export const BranchList = () => {
         </div>
 
         <div className="pt-4">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight mb-4">
+          <h2 className="text-lg font-bold text-content-900 dark:text-white tracking-tight mb-4">
             SUCURSALES
           </h2>
           {branches.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="size-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                <MapPin className="size-6 text-gray-400 dark:text-gray-500" />
+              <div className="size-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mb-4">
+                <MapPin className="size-6 text-content-400 dark:text-surface-500" />
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-surface-500 dark:text-content-400">
                 No hay sucursales creadas
               </p>
             </div>
