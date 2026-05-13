@@ -1,10 +1,18 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { MapPin, Phone, Pencil, Trash2, ArrowRight } from 'lucide-react'
+import {
+  Plus,
+  MapPin,
+  BarChart3,
+  ClipboardList,
+  Settings,
+  Sun,
+} from 'lucide-react'
 import { fetchBranches, deleteBranch } from '../../store/branchSlice'
 import type { RootState } from '../../store'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
-import { Button, Card, CardContent, Badge, toast } from '../../components/ui'
+import { Button, Card, toast } from '../../components/ui'
+import { BranchCard } from './BranchCard'
 
 export const BranchList = () => {
   const dispatch = useAppDispatch()
@@ -50,114 +58,59 @@ export const BranchList = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
       <div className="max-w-xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-            SUCURSALES
-          </h1>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Button variant="outline" className="h-12 justify-start gap-2 px-3">
+              <BarChart3 className="w-5 h-5" />
+              <span className="text-xs">Reportes</span>
+            </Button>
+            <Button variant="outline" className="h-12 justify-start gap-2 px-3">
+              <ClipboardList className="w-5 h-5" />
+              <span className="text-xs">Recepciones</span>
+            </Button>
+            <Button variant="outline" className="h-12 justify-start gap-2 px-3">
+              <Settings className="w-5 h-5" />
+              <span className="text-xs">Configuración</span>
+            </Button>
+            <Button variant="outline" className="h-12 justify-start gap-2 px-3">
+              <Sun className="w-5 h-5" />
+              <span className="text-xs">Tema</span>
+            </Button>
+          </div>
           <Link to="/branches/new">
-            <Button className="shadow-lg shadow-indigo-200">
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
+            <Button className="w-full shadow-lg shadow-indigo-200 py-6">
+              <Plus className="w-4 h-4" />
               Nueva Sucursal
             </Button>
           </Link>
         </div>
 
-        {branches.length === 0 ? (
-          <Card className="p-12 text-center">
-            <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MapPin className="w-8 h-8 text-indigo-400" />
+        <div className="pt-4">
+          <h2 className="text-lg font-bold text-gray-900 tracking-tight mb-4">
+            SUCURSALES
+          </h2>
+          {branches.length === 0 ? (
+            <Card className="p-12 text-center">
+              <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="w-8 h-8 text-indigo-400" />
+              </div>
+              <p className="text-gray-500 mb-6">No hay sucursales creadas</p>
+              <Link to="/branches/new">
+                <Button>Crear Primera Sucursal</Button>
+              </Link>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {branches.map((branch) => (
+                <BranchCard
+                  key={branch.id}
+                  branch={branch}
+                  onDelete={handleDelete}
+                />
+              ))}
             </div>
-            <p className="text-gray-500 mb-6">No hay sucursales creadas</p>
-            <Link to="/branches/new">
-              <Button>Crear Primera Sucursal</Button>
-            </Link>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {branches.map((branch) => (
-              <Card
-                key={branch.id}
-                className="overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <CardContent className="p-0">
-                  <div className="p-5">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-lg font-bold text-gray-900 truncate">
-                            {branch.name}
-                          </h3>
-                          <Badge
-                            variant={branch.isActive ? 'success' : 'secondary'}
-                          >
-                            {branch.isActive ? 'Activa' : 'Inactiva'}
-                          </Badge>
-                        </div>
-
-                        <div className="space-y-1.5 mt-3">
-                          {branch.address && (
-                            <p className="text-sm text-gray-500 flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                              <span className="truncate">{branch.address}</span>
-                            </p>
-                          )}
-                          {branch.phone && (
-                            <p className="text-sm text-gray-500 flex items-center gap-2">
-                              <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                              <span>{branch.phone}</span>
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 px-5 py-3 bg-gray-50/80 border-t border-gray-100">
-                    <Link to={`/branches/${branch.id}`} className="flex-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-center"
-                      >
-                        <Pencil className="w-4 h-4" />
-                        Editar
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(branch.id, branch.name)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                    <Link
-                      to={`/branches/${branch.id}/sessions`}
-                      className="flex-1"
-                    >
-                      <Button size="sm" className="w-full justify-center">
-                        Abrir
-                        <ArrowRight className="w-4 h-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
