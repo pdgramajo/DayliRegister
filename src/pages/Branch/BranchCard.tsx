@@ -15,7 +15,12 @@ export const BranchCard = ({ branch, onDelete }: BranchCardProps) => {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={() => navigate(`/branches/${branch.id}/sessions`)}
+      onKeyDown={(e) =>
+        e.key === 'Enter' && navigate(`/branches/${branch.id}/sessions`)
+      }
       className={`flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer ${hasContactInfo ? 'py-3' : 'py-2'}`}
     >
       <div className="flex items-start gap-3 min-w-0">
@@ -29,13 +34,13 @@ export const BranchCard = ({ branch, onDelete }: BranchCardProps) => {
           </span>
           {branch.address && (
             <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-1">
-              <MapPin className="w-3 h-3 shrink-0 mt-0.5" />
+              <MapPin className="size-3 shrink-0 mt-0.5" />
               <span className="truncate">{branch.address}</span>
             </span>
           )}
           {branch.phone && (
             <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              <Phone className="w-3 h-3 shrink-0 mt-0.5" />
+              <Phone className="size-3 shrink-0 mt-0.5" />
               <span>{branch.phone}</span>
             </span>
           )}
@@ -52,7 +57,7 @@ export const BranchCard = ({ branch, onDelete }: BranchCardProps) => {
           className="h-8 w-8"
           onClick={() => navigate(`/branches/${branch.id}`)}
         >
-          <Pencil className="w-4 h-4" />
+          <Pencil className="size-4" />
         </Button>
         <Button
           variant="ghost"
@@ -61,7 +66,7 @@ export const BranchCard = ({ branch, onDelete }: BranchCardProps) => {
           onClick={() => onDelete(branch.id, branch.name)}
           data-testid="delete-button"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="size-4" />
         </Button>
       </div>
     </div>

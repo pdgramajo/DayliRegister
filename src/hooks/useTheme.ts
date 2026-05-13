@@ -18,11 +18,6 @@ const applyTheme = (theme: Theme) => {
   localStorage.setItem(THEME_KEY, theme)
 }
 
-export const initTheme = () => {
-  const theme = getInitialTheme()
-  applyTheme(theme)
-}
-
 export const useTheme = () => {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme)
 

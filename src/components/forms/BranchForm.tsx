@@ -99,7 +99,7 @@ export const BranchForm = ({
           type="checkbox"
           id="isActive"
           {...register('isActive')}
-          className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600"
+          className="size-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600"
         />
         <label
           htmlFor="isActive"
@@ -112,7 +112,7 @@ export const BranchForm = ({
       <div className="flex gap-3">
         <Link to={cancelTo} className="flex-1">
           <Button type="button" variant="outline" className="w-full">
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="size-4" />
             Cancelar
           </Button>
         </Link>

@@ -44,7 +44,7 @@ export const BranchList = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="w-8 h-8 border-4 border-gray-200 dark:border-gray-700 border-t-indigo-600 rounded-full animate-spin" />
+        <div className="size-8 border-4 border-gray-200 dark:border-gray-700 border-t-indigo-600 rounded-full animate-spin" />
       </div>
     )
   }
@@ -69,21 +69,21 @@ export const BranchList = () => {
               variant="outline"
               className="h-12 justify-start gap-2 px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:border-gray-600"
             >
-              <BarChart3 className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+              <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
               <span className="text-xs">Reportes</span>
             </Button>
             <Button
               variant="outline"
               className="h-12 justify-start gap-2 px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:border-gray-600"
             >
-              <ClipboardList className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
+              <ClipboardList className="size-5 text-emerald-500 dark:text-emerald-400" />
               <span className="text-xs">Recepciones</span>
             </Button>
             <Button
               variant="outline"
               className="h-12 justify-start gap-2 px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:border-gray-600"
             >
-              <Settings className="w-5 h-5 text-amber-500 dark:text-amber-400" />
+              <Settings className="size-5 text-amber-500 dark:text-amber-400" />
               <span className="text-xs">Configuración</span>
             </Button>
             <Button
@@ -92,16 +92,16 @@ export const BranchList = () => {
               onClick={toggleTheme}
             >
               {isDark ? (
-                <Sun className="w-5 h-5 text-amber-500 dark:text-amber-400" />
+                <Sun className="size-5 text-amber-500 dark:text-amber-400" />
               ) : (
-                <Moon className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+                <Moon className="size-5 text-indigo-500 dark:text-indigo-400" />
               )}
               <span className="text-xs">{isDark ? 'Claro' : 'Oscuro'}</span>
             </Button>
           </div>
           <Link to="/branches/new">
             <Button className="w-full shadow-lg shadow-indigo-200 dark:shadow-none py-6 hover:shadow-xl hover:shadow-indigo-200/50 transition-all duration-300 dark:hover:shadow-none">
-              <Plus className="w-4 h-4" />
+              <Plus className="size-4" />
               Nueva Sucursal
             </Button>
           </Link>
@@ -113,8 +113,8 @@ export const BranchList = () => {
           </h2>
           {branches.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                <MapPin className="w-6 h-6 text-gray-400 dark:text-gray-500" />
+              <div className="size-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                <MapPin className="size-6 text-gray-400 dark:text-gray-500" />
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 No hay sucursales creadas
