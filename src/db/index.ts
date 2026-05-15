@@ -47,7 +47,7 @@ export class DayliRegisterDB extends Dexie {
       branches: 'id, name, isActive, createdAt, updatedAt, deletedAt',
 
       cashSessions:
-        'id, branchId, status, openedAt, closedAt, createdAt, updatedAt',
+        'id, branchId, name, initialAmount, closingBalance, notes, status, openedAt, closedAt, createdAt, updatedAt',
 
       transactions:
         'id, sessionId, branchId, type, amount, createdAt, updatedAt, deletedAt',

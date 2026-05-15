@@ -16,6 +16,16 @@ const BranchSessions = lazy(() =>
     default: m.BranchSessions,
   }))
 )
+const SessionNew = lazy(() =>
+  import('./pages/Session/SessionNew').then((m) => ({
+    default: m.SessionNew,
+  }))
+)
+const SessionEdit = lazy(() =>
+  import('./pages/Session/SessionEdit').then((m) => ({
+    default: m.SessionEdit,
+  }))
+)
 
 const ROUTES = {
   HOME: '/',
@@ -23,6 +33,8 @@ const ROUTES = {
   BRANCH_NEW: '/branches/new',
   BRANCH_EDIT: '/branches/:id',
   BRANCH_SESSIONS: '/branches/:id/sessions',
+  BRANCH_SESSION_NEW: '/branches/:id/sessions/new',
+  BRANCH_SESSION_EDIT: '/branches/:id/sessions/:sessionId',
 } as const
 
 const Loading = () => (
@@ -46,6 +58,8 @@ const App = () => {
           <Route path={ROUTES.BRANCH_NEW} element={<BranchNew />} />
           <Route path={ROUTES.BRANCH_EDIT} element={<BranchEdit />} />
           <Route path={ROUTES.BRANCH_SESSIONS} element={<BranchSessions />} />
+          <Route path={ROUTES.BRANCH_SESSION_NEW} element={<SessionNew />} />
+          <Route path={ROUTES.BRANCH_SESSION_EDIT} element={<SessionEdit />} />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </Suspense>

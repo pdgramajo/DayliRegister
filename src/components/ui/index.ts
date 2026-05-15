@@ -1,5 +1,6 @@
 export { Button, buttonVariants } from './button'
 export { Input } from './input'
+export { MoneyInput } from './money-input'
 export {
   Card,
   CardHeader,
@@ -8,7 +9,7 @@ export {
   CardDescription,
   CardContent,
 } from './card'
-export { Badge, badgeVariants } from './badge'
+export { Badge } from './badge'
 export { PageHeader } from './page-header'
 export { ToastProvider, toast } from './toast'
 export { BranchForm } from '../forms/BranchForm'

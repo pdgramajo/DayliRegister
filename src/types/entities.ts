@@ -37,6 +37,10 @@ export type CashSessionStatus = 'open' | 'closed'
 /** Sesión de caja */
 export interface CashSession extends BaseEntity {
   branchId: string
+  name: string
+  initialAmount?: number
+  closingBalance?: number
+  notes?: string
   status: CashSessionStatus
   openedAt: string
   closedAt?: string
