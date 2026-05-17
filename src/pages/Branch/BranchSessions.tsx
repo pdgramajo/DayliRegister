@@ -4,30 +4,14 @@ import { fetchBranchById, clearCurrentBranch } from '../../store/branchSlice'
 import {
   fetchSessionsByBranch,
   closeSession,
+  deleteSession,
   clearSessions,
 } from '../../store/sessionSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
-import { PageHeader, Button, Badge } from '../../components/ui'
+import { Button } from '../../components/ui'
 import { Entities } from '../../types/entities'
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleString('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
-const formatMoney = (amount?: number) => {
-  if (amount === undefined || amount === null) return '-'
-  return new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-  }).format(amount)
-}
+import { OpenSessionCard, ClosedSessionCard } from './SessionCard'
 
 export const BranchSessions = () => {
   const { id: branchId } = useParams<{ id: string }>()
@@ -67,6 +51,12 @@ export const BranchSessions = () => {
     }
   }
 
+  const handleDeleteSession = (sessionId: string) => {
+    if (branchId) {
+      dispatch(deleteSession(sessionId))
+    }
+  }
+
   const isLoading = branchLoading || sessionsLoading
 
   if (isLoading || !currentBranch) {
@@ -78,102 +68,67 @@ export const BranchSessions = () => {
   }
 
   return (
-    <div>
-      <div className="mb-4">
-        <Button variant="ghost" onClick={() => navigate('/branches')}>
-          ← Seleccionar otra sucursal
-        </Button>
-      </div>
-
-      <PageHeader
-        title={`Sesiones - ${currentBranch.name}`}
-        description="Gestiona las sesiones de caja de esta sucursal"
-      />
-
+    <div className="max-w-2xl mx-auto px-4 pt-4">
       <div className="mb-6">
-        <Button onClick={() => navigate(`/branches/${branchId}/sessions/new`)}>
-          + Nueva Sesión
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => navigate('/branches')}
+            className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors"
+          >
+            ← Volver
+          </button>
+          <span className="text-sm font-medium text-content-600 dark:text-content-400">
+            {currentBranch.name}
+          </span>
+        </div>
+
+        <Button
+          onClick={() => navigate(`/branches/${branchId}/sessions/new`)}
+          className="w-full"
+        >
+          + Nueva sesión
         </Button>
       </div>
 
-      <div className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-6 mb-4">
-        <h2 className="text-lg font-semibold mb-4">Sesiones Abiertas</h2>
-        {openSessions.length === 0 ? (
-          <p className="text-content-500">No hay sesiones abiertas</p>
-        ) : (
+      {openSessions.length > 0 && (
+        <div className="mb-8">
+          <h2 className="flex items-center justify-center gap-3 text-xs font-medium text-green-600 uppercase tracking-wider mb-3">
+            <span className="h-px flex-1 bg-green-500/40" />
+            ABIERTAS
+            <span className="h-px flex-1 bg-green-500/40" />
+          </h2>
           <div className="space-y-3">
             {openSessions.map((session) => (
-              <div
+              <OpenSessionCard
                 key={session.id}
-                className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800"
-              >
-                <div>
-                  <p className="font-medium text-content-900 dark:text-content-100">
-                    {session.name}
-                  </p>
-                  <p className="text-sm text-content-500">
-                    Abierta: {formatDate(session.openedAt)}
-                  </p>
-                  {session.initialAmount !== undefined && (
-                    <p className="text-sm text-content-600 dark:text-content-300">
-                      Monto inicial: {formatMoney(session.initialAmount)}
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <Badge variant="success">Abierta</Badge>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      navigate(`/branches/${branchId}/sessions/${session.id}`)
-                    }
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleCloseSession(session.id)}
-                  >
-                    Cerrar
-                  </Button>
-                </div>
-              </div>
+                session={session}
+                branchId={branchId!}
+                onClose={handleCloseSession}
+              />
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      <div className="bg-surface-50 dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-6">
-        <h2 className="text-lg font-semibold mb-4">Sesiones Cerradas</h2>
+      <div>
+        <h2 className="flex items-center justify-center gap-3 text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+          <span className="h-px flex-1 bg-gray-500/40" />
+          HISTORIAL ({closedSessions.length})
+          <span className="h-px flex-1 bg-gray-500/40" />
+        </h2>
         {closedSessions.length === 0 ? (
-          <p className="text-content-500">No hay sesiones cerradas</p>
+          <p className="text-content-500 py-8 text-center">
+            No hay sesiones cerradas
+          </p>
         ) : (
           <div className="space-y-3">
             {closedSessions.map((session) => (
-              <div
+              <ClosedSessionCard
                 key={session.id}
-                className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-700/50 rounded-xl border border-surface-200 dark:border-surface-600"
-              >
-                <div>
-                  <p className="font-medium text-content-900 dark:text-content-100">
-                    {session.name}
-                  </p>
-                  <p className="text-sm text-content-500">
-                    {formatDate(session.openedAt)} -{' '}
-                    {session.closedAt ? formatDate(session.closedAt) : '-'}
-                  </p>
-                  {(session.initialAmount !== undefined ||
-                    session.closingBalance !== undefined) && (
-                    <p className="text-sm text-content-600 dark:text-content-300">
-                      Inicial: {formatMoney(session.initialAmount)} | Cierre:{' '}
-                      {formatMoney(session.closingBalance)}
-                    </p>
-                  )}
-                </div>
-                <Badge variant="secondary">Cerrada</Badge>
-              </div>
+                session={session}
+                branchId={branchId!}
+                onDelete={handleDeleteSession}
+              />
             ))}
           </div>
         )}
