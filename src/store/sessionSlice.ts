@@ -89,6 +89,20 @@ export const closeSession = createAsyncThunk(
   }
 )
 
+export const deleteSession = createAsyncThunk(
+  'sessions/delete',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await SessionService.deleteSession(id)
+      return id
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error al eliminar la sesión'
+      return rejectWithValue(message)
+    }
+  }
+)
+
 const sessionSlice = createSlice({
   name: 'sessions',
   initialState,
@@ -200,6 +214,22 @@ const sessionSlice = createSlice({
         }
       )
       .addCase(closeSession.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload as string
+      })
+      // Delete
+      .addCase(deleteSession.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(
+        deleteSession.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          state.isLoading = false
+          state.sessions = state.sessions.filter((s) => s.id !== action.payload)
+        }
+      )
+      .addCase(deleteSession.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload as string
       })

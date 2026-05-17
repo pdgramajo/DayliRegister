@@ -98,4 +98,12 @@ export const SessionService = {
   async getOpenSession(branchId: string): Promise<CashSession | undefined> {
     return SessionRepository.getOpenByBranchId(branchId)
   },
+
+  async deleteSession(id: string): Promise<void> {
+    const existing = await SessionRepository.getById(id)
+    if (!existing) {
+      throw new SessionNotFoundError(id)
+    }
+    await SessionRepository.delete(id)
+  },
 }
