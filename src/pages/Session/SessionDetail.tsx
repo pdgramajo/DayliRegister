@@ -9,21 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { PageHeader, Button } from '../../components/ui'
 import { Entities } from '../../types/entities'
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleString('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
-const formatMoney = (amount?: number) => {
-  if (amount === undefined || amount === null) return '-'
-  return new Intl.NumberFormat('es-AR').format(amount)
-}
+import { formatDate, formatMoney } from '../../lib/formatters'
 
 export const SessionDetail = () => {
   const { id: branchId, sessionId } = useParams<{
