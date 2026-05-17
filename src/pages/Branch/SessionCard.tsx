@@ -38,7 +38,7 @@ export const OpenSessionCard = ({
   return (
     <div
       onClick={() => navigate(`/branches/${branchId}/sessions/${session.id}`)}
-      className="group p-5 bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 cursor-pointer transition-all duration-300 hover:border-green-400 dark:hover:border-green-600 hover:shadow-lg hover:shadow-green-500/10"
+      className="group p-2 bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 cursor-pointer transition-all duration-300 hover:border-green-400 dark:hover:border-green-600 hover:shadow-lg hover:shadow-green-500/10"
     >
       <div className="flex items-center justify-between gap-4 mb-2">
         <h3 className="text-base font-medium text-content-900 dark:text-content-100 truncate">
