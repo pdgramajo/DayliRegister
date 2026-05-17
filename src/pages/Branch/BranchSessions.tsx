@@ -12,6 +12,7 @@ import type { RootState } from '../../store'
 import { Button } from '../../components/ui'
 import { Entities } from '../../types/entities'
 import { OpenSessionCard, ClosedSessionCard } from './SessionCard'
+import { BarChart3 } from 'lucide-react'
 
 export const BranchSessions = () => {
   const { id: branchId } = useParams<{ id: string }>()
@@ -80,6 +81,23 @@ export const BranchSessions = () => {
           <span className="text-sm font-medium text-content-600 dark:text-content-400">
             {currentBranch.name}
           </span>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <Button
+            variant="outline"
+            className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+          >
+            <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
+            <span className="text-xs">Recepciones</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+          >
+            <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
+            <span className="text-xs">Reportes</span>
+          </Button>
         </div>
 
         <Button
