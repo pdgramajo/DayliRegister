@@ -3,21 +3,31 @@ import type { CashSession } from '../types/entities'
 import type { CreateSessionDTO, UpdateSessionDTO } from '../types/dtos'
 import { Entities } from '../types/entities'
 
-const getTimestamp = () => new Date().toISOString()
+const getTimestamp = (() => {
+  let lastTime = 0
+
+  return () => {
+    const now = Date.now()
+    const time = now <= lastTime ? lastTime + 1 : now
+    lastTime = time
+    return new Date(time).toISOString()
+  }
+})()
 
 export const SessionRepository = {
   async getByBranchId(branchId: string): Promise<CashSession[]> {
-    return db.cashSessions
+    const sessions = await db.cashSessions
       .where('branchId')
       .equals(branchId)
       .and((session) => !session.deletedAt)
       .toArray()
-      .then((sessions) =>
-        sessions.sort(
-          (a, b) =>
-            new Date(b.openedAt).getTime() - new Date(a.openedAt).getTime()
-        )
-      )
+
+    return sessions.sort((a, b) => {
+      const timeDiff =
+        new Date(b.openedAt).getTime() - new Date(a.openedAt).getTime()
+      if (timeDiff !== 0) return timeDiff
+      return b.id.localeCompare(a.id)
+    })
   },
 
   async getById(id: string): Promise<CashSession | undefined> {
