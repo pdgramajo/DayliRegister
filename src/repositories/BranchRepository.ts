@@ -1,8 +1,7 @@
 import { db } from '../db'
 import type { Branch } from '../types/entities'
 import type { CreateBranchDTO, UpdateBranchDTO } from '../types/dtos'
-
-const getTimestamp = () => new Date().toISOString()
+import { getTimestamp } from '../lib/utils'
 
 export const BranchRepository = {
   async getAll(): Promise<Branch[]> {

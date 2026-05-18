@@ -4,17 +4,7 @@ import type {
   TransactionType,
   PaymentMethod,
 } from '../types/entities'
-
-const getTimestamp = (() => {
-  let lastTime = 0
-
-  return () => {
-    const now = Date.now()
-    const time = now <= lastTime ? lastTime + 1 : now
-    lastTime = time
-    return new Date(time).toISOString()
-  }
-})()
+import { getTimestamp } from '../lib/utils'
 
 export interface CreateTransactionDTO {
   sessionId: string

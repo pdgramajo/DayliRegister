@@ -2,17 +2,7 @@ import { db } from '../db'
 import type { CashSession } from '../types/entities'
 import type { CreateSessionDTO, UpdateSessionDTO } from '../types/dtos'
 import { Entities } from '../types/entities'
-
-const getTimestamp = (() => {
-  let lastTime = 0
-
-  return () => {
-    const now = Date.now()
-    const time = now <= lastTime ? lastTime + 1 : now
-    lastTime = time
-    return new Date(time).toISOString()
-  }
-})()
+import { getTimestamp } from '../lib/utils'
 
 export const SessionRepository = {
   async getByBranchId(branchId: string): Promise<CashSession[]> {
