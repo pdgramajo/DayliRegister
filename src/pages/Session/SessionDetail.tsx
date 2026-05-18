@@ -263,15 +263,39 @@ export const SessionDetail = () => {
       {activeTab === 'movements' && (
         <>
           <div className="flex justify-between gap-2 mb-2">
-            <Button variant="outline" className="h-8 flex-1">
+            <Button
+              variant="outline"
+              className="h-8 flex-1"
+              onClick={() =>
+                navigate(
+                  `/branches/${branchId}/sessions/${sessionId}/transaction/new?type=sale`
+                )
+              }
+            >
               <Plus className="size-4 mr-1" />
               Venta
             </Button>
-            <Button variant="outline" className="h-8 flex-1">
+            <Button
+              variant="outline"
+              className="h-8 flex-1"
+              onClick={() =>
+                navigate(
+                  `/branches/${branchId}/sessions/${sessionId}/transaction/new?type=expense`
+                )
+              }
+            >
               <Plus className="size-4 mr-1" />
               Gasto
             </Button>
-            <Button variant="outline" className="h-8 flex-1">
+            <Button
+              variant="outline"
+              className="h-8 flex-1"
+              onClick={() =>
+                navigate(
+                  `/branches/${branchId}/sessions/${sessionId}/transaction/new?type=withdrawal`
+                )
+              }
+            >
               <Plus className="size-4 mr-1" />
               Retiro
             </Button>

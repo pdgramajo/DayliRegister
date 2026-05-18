@@ -1,0 +1,245 @@
+import { useState } from 'react'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useForm, Controller } from 'react-hook-form'
+import { ArrowLeft } from 'lucide-react'
+import { Button, MoneyInput } from '../../components/ui'
+import { createTransaction } from '../../store/transactionSlice'
+import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
+import type { RootState } from '../../store'
+import { Entities } from '../../types/entities'
+import type { TransactionType, PaymentMethod } from '../../types/entities'
+import { formatMoney } from '../../lib/formatters'
+
+const QUICK_VALUES = [100, 200, 500, 1000, 2000, 5000, 10000]
+
+interface TransactionFormData {
+  amount?: number
+  description: string
+  paymentMethod?: PaymentMethod
+}
+
+export const TransactionNew = () => {
+  const { id: branchId, sessionId } = useParams<{
+    id: string
+    sessionId: string
+  }>()
+  const [searchParams] = useSearchParams()
+  const type =
+    (searchParams.get('type') as TransactionType) ||
+    Entities.TransactionTypes.SALE
+
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const { isLoading } = useAppSelector((state: RootState) => state.transactions)
+
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    PaymentMethod | undefined
+  >(
+    type === Entities.TransactionTypes.SALE
+      ? Entities.PaymentMethods.CASH
+      : undefined
+  )
+
+  const {
+    handleSubmit,
+    control,
+    register,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<TransactionFormData>({
+    defaultValues: {
+      amount: undefined,
+      description: '',
+      paymentMethod: selectedPaymentMethod,
+    },
+  })
+
+  const amount = watch('amount')
+
+  const handleQuickValue = (value: number) => {
+    setValue('amount', value, { shouldValidate: true })
+  }
+
+  const onSubmit = async (data: TransactionFormData) => {
+    if (!sessionId || !branchId || !data.amount) return
+
+    await dispatch(
+      createTransaction({
+        sessionId,
+        branchId,
+        type,
+        amount: data.amount,
+        paymentMethod: data.paymentMethod,
+        description: data.description,
+      })
+    )
+
+    navigate(`/branches/${branchId}/sessions/${sessionId}`)
+  }
+
+  const getTitle = () => {
+    if (type === Entities.TransactionTypes.SALE) return 'Nueva Venta'
+    if (type === Entities.TransactionTypes.EXPENSE) return 'Nuevo Gasto'
+    if (type === Entities.TransactionTypes.WITHDRAWAL) return 'Nuevo Retiro'
+    return 'Nueva Transacción'
+  }
+
+  const getPaymentMethodSelector = () => (
+    <div className="space-y-2">
+      <label className="text-sm font-medium text-content-700 dark:text-content-300">
+        Método de pago
+      </label>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedPaymentMethod(Entities.PaymentMethods.CASH)
+            setValue('paymentMethod', Entities.PaymentMethods.CASH)
+          }}
+          className={`flex-1 py-2.5 text-sm font-medium rounded-lg border transition-colors ${
+            selectedPaymentMethod === Entities.PaymentMethods.CASH
+              ? 'bg-green-500/15 text-green-700 dark:text-green-400 border-green-500/30'
+              : 'bg-white dark:bg-surface-800 text-content-600 dark:text-content-400 border-surface-200 dark:border-surface-700 hover:border-green-400'
+          }`}
+        >
+          Efectivo
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedPaymentMethod(Entities.PaymentMethods.TRANSFER)
+            setValue('paymentMethod', Entities.PaymentMethods.TRANSFER)
+          }}
+          className={`flex-1 py-2.5 text-sm font-medium rounded-lg border transition-colors ${
+            selectedPaymentMethod === Entities.PaymentMethods.TRANSFER
+              ? 'bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30'
+              : 'bg-white dark:bg-surface-800 text-content-600 dark:text-content-400 border-surface-200 dark:border-surface-700 hover:border-blue-400'
+          }`}
+        >
+          Transferencia
+        </button>
+      </div>
+    </div>
+  )
+
+  const getQuickValues = () => (
+    <div className="space-y-2">
+      <label className="text-sm font-medium text-content-700 dark:text-content-300">
+        Valores rápidos
+      </label>
+      <div className="flex flex-wrap gap-2">
+        {QUICK_VALUES.map((value) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => handleQuickValue(value)}
+            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface-100 dark:bg-surface-700 text-content-600 dark:text-content-300 hover:bg-surface-200 dark:hover:bg-surface-600 transition-colors"
+          >
+            {formatMoney(value)}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="min-h-screen bg-surface-50 dark:bg-surface-900 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="max-w-lg mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-content-900 dark:text-white tracking-tight">
+            {getTitle()}
+          </h1>
+        </div>
+
+        <div className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-6">
+          <div className="flex justify-between items-center mb-6 -mt-2">
+            <button
+              onClick={() =>
+                navigate(`/branches/${branchId}/sessions/${sessionId}`)
+              }
+              className="text-sm text-content-600 dark:text-content-400 hover:text-content-900 dark:hover:text-content-100 transition-colors"
+            >
+              <ArrowLeft className="size-4 inline mr-1" />
+              Cancelar
+            </button>
+            <Button type="submit" form="transaction-form" loading={isLoading}>
+              Guardar
+            </Button>
+          </div>
+
+          <form
+            id="transaction-form"
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-5"
+          >
+            {type === Entities.TransactionTypes.SALE &&
+              getPaymentMethodSelector()}
+
+            <div className="space-y-2">
+              <label
+                htmlFor="amount"
+                className="text-sm font-medium text-content-700 dark:text-content-300"
+              >
+                Monto *
+              </label>
+              <Controller
+                name="amount"
+                control={control}
+                rules={{ required: 'El monto es requerido' }}
+                render={({ field }) => (
+                  <MoneyInput
+                    {...field}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="0"
+                    className={
+                      errors.amount
+                        ? 'border-red-500 focus-visible:ring-red-500'
+                        : ''
+                    }
+                  />
+                )}
+              />
+              {errors.amount && (
+                <p className="text-sm text-red-500 dark:text-red-400">
+                  {errors.amount.message}
+                </p>
+              )}
+            </div>
+
+            {getQuickValues()}
+
+            <div className="space-y-2">
+              <label
+                htmlFor="description"
+                className="text-sm font-medium text-content-700 dark:text-content-300"
+              >
+                Descripción{' '}
+                {type !== Entities.TransactionTypes.SALE && '(opcional)'}
+              </label>
+              <input
+                id="description"
+                placeholder={
+                  type === Entities.TransactionTypes.SALE
+                    ? '¿Qué se vendió?'
+                    : type === Entities.TransactionTypes.EXPENSE
+                      ? '¿En qué se gastó?'
+                      : '¿Quién recibe el retiro?'
+                }
+                {...register('description')}
+                className="flex h-10 w-full rounded-xl border border-surface-200 bg-white px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-content-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-surface-700 dark:bg-surface-800 dark:text-content-100 dark:placeholder:text-content-500 dark:focus-visible:ring-offset-surface-900"
+              />
+            </div>
+
+            <input
+              type="hidden"
+              {...register('paymentMethod')}
+              value={selectedPaymentMethod || ''}
+            />
+          </form>
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -31,6 +31,11 @@ const SessionDetail = lazy(() =>
     default: m.SessionDetail,
   }))
 )
+const TransactionNew = lazy(() =>
+  import('./pages/Transaction/TransactionNew').then((m) => ({
+    default: m.TransactionNew,
+  }))
+)
 
 const ROUTES = {
   HOME: '/',
@@ -41,6 +46,8 @@ const ROUTES = {
   BRANCH_SESSION_NEW: '/branches/:id/sessions/new',
   BRANCH_SESSION_DETAIL: '/branches/:id/sessions/:sessionId',
   BRANCH_SESSION_EDIT: '/branches/:id/sessions/:sessionId/edit',
+  BRANCH_SESSION_TRANSACTION_NEW:
+    '/branches/:id/sessions/:sessionId/transaction/new',
 } as const
 
 const Loading = () => (
@@ -70,6 +77,10 @@ const App = () => {
             element={<SessionDetail />}
           />
           <Route path={ROUTES.BRANCH_SESSION_EDIT} element={<SessionEdit />} />
+          <Route
+            path={ROUTES.BRANCH_SESSION_TRANSACTION_NEW}
+            element={<TransactionNew />}
+          />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </Suspense>
