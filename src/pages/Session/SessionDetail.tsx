@@ -301,27 +301,51 @@ export const SessionDetail = () => {
             </Button>
           </div>
           <div className="flex justify-between gap-2 mb-2">
-            {(['all', 'cash', 'transfer', 'expenses'] as const).map(
-              (filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setTransactionFilter(filter)}
-                  className={`flex-1 px-3 py-1.5 text-xs rounded-lg transition-colors ${
-                    transactionFilter === filter
-                      ? 'bg-surface-200 dark:bg-surface-700 text-content-900 dark:text-content-100 font-medium'
-                      : 'bg-surface-100 dark:bg-surface-800 text-content-600 dark:text-content-400 hover:bg-surface-200 dark:hover:bg-surface-700'
-                  }`}
-                >
-                  {filter === 'all' && 'Todos'}
-                  {filter === 'cash' && 'Efectivo'}
-                  {filter === 'transfer' && 'Transf'}
-                  {filter === 'expenses' && 'Gastos'}
-                </button>
+            {(() => {
+              const allCount = transactions.length
+              const cashCount = transactions.filter(
+                (t) =>
+                  t.type === Entities.TransactionTypes.SALE &&
+                  t.paymentMethod === Entities.PaymentMethods.CASH
+              ).length
+              const transferCount = transactions.filter(
+                (t) =>
+                  t.type === Entities.TransactionTypes.SALE &&
+                  t.paymentMethod === Entities.PaymentMethods.TRANSFER
+              ).length
+              const expensesCount = transactions.filter(
+                (t) =>
+                  t.type === Entities.TransactionTypes.EXPENSE ||
+                  t.type === Entities.TransactionTypes.WITHDRAWAL
+              ).length
+              const counts = {
+                all: allCount,
+                cash: cashCount,
+                transfer: transferCount,
+                expenses: expensesCount,
+              }
+              return (['all', 'cash', 'transfer', 'expenses'] as const).map(
+                (filter) => (
+                  <button
+                    key={filter}
+                    onClick={() => setTransactionFilter(filter)}
+                    className={`flex-1 px-1 py-1.5 text-xs rounded-lg transition-colors ${
+                      transactionFilter === filter
+                        ? 'bg-surface-200 dark:bg-surface-700 text-content-900 dark:text-content-100 font-medium'
+                        : 'bg-surface-100 dark:bg-surface-800 text-content-600 dark:text-content-400 hover:bg-surface-200 dark:hover:bg-surface-700'
+                    }`}
+                  >
+                    {filter === 'all' && `Todos (${counts.all})`}
+                    {filter === 'cash' && `Efectivo (${counts.cash})`}
+                    {filter === 'transfer' && `Transf (${counts.transfer})`}
+                    {filter === 'expenses' && `Gastos (${counts.expenses})`}
+                  </button>
+                )
               )
-            )}
+            })()}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-[calc(100vh-400px)] overflow-y-auto">
             {transactionsLoading ? (
               <div className="flex justify-center py-8">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
@@ -402,63 +426,65 @@ export const SessionDetail = () => {
               Salida
             </Button>
           </div>
-          {transactionsLoading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
-            </div>
-          ) : inventoryMovements.length === 0 ? (
-            <p className="text-center text-content-500 py-8">
-              No hay movimientos de inventario
-            </p>
-          ) : (
-            inventoryMovements.map((movement) => (
-              <div
-                key={movement.id}
-                className="flex items-center justify-between p-3 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700"
-              >
-                <div className="flex items-center gap-2">
-                  {movement.type === Entities.InventoryMovementTypes.IN ? (
-                    <ArrowDownLeft className="size-4 text-green-600" />
-                  ) : (
-                    <ArrowUpLeft className="size-4 text-red-600" />
-                  )}
-                  <div>
-                    <p className="text-sm font-medium text-content-900 dark:text-content-100">
+          <div className="space-y-2 max-h-[calc(100vh-400px)] overflow-y-auto">
+            {transactionsLoading ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
+              </div>
+            ) : inventoryMovements.length === 0 ? (
+              <p className="text-center text-content-500 py-8">
+                No hay movimientos de inventario
+              </p>
+            ) : (
+              inventoryMovements.map((movement) => (
+                <div
+                  key={movement.id}
+                  className="flex items-center justify-between p-3 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700"
+                >
+                  <div className="flex items-center gap-2">
+                    {movement.type === Entities.InventoryMovementTypes.IN ? (
+                      <ArrowDownLeft className="size-4 text-green-600" />
+                    ) : (
+                      <ArrowUpLeft className="size-4 text-red-600" />
+                    )}
+                    <div>
+                      <p className="text-sm font-medium text-content-900 dark:text-content-100">
+                        {movement.type === Entities.InventoryMovementTypes.IN
+                          ? 'Entrada'
+                          : 'Salida'}
+                      </p>
+                      <p className="text-xs text-content-500">
+                        {movement.description}
+                      </p>
+                      <p className="text-xs text-content-400">
+                        {formatDate(movement.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-sm font-medium ${
+                        movement.type === Entities.InventoryMovementTypes.IN
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                      }`}
+                    >
                       {movement.type === Entities.InventoryMovementTypes.IN
-                        ? 'Entrada'
-                        : 'Salida'}
-                    </p>
-                    <p className="text-xs text-content-500">
-                      {movement.description}
-                    </p>
-                    <p className="text-xs text-content-400">
-                      {formatDate(movement.createdAt)}
-                    </p>
+                        ? '+'
+                        : '-'}
+                      {movement.quantity}
+                    </span>
+                    <button
+                      onClick={() => handleDeleteInventoryMovement(movement.id)}
+                      className="p-1 text-content-400 hover:text-red-600"
+                    >
+                      <X className="size-4" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`text-sm font-medium ${
-                      movement.type === Entities.InventoryMovementTypes.IN
-                        ? 'text-green-600'
-                        : 'text-red-600'
-                    }`}
-                  >
-                    {movement.type === Entities.InventoryMovementTypes.IN
-                      ? '+'
-                      : '-'}
-                    {movement.quantity}
-                  </span>
-                  <button
-                    onClick={() => handleDeleteInventoryMovement(movement.id)}
-                    className="p-1 text-content-400 hover:text-red-600"
-                  >
-                    <X className="size-4" />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
         </div>
       )}
     </div>
