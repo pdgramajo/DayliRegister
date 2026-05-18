@@ -23,13 +23,13 @@ DayliRegister es un sistema de gestión de negocios multisede diseñado para emp
 
 DayliRegister se organiza en módulos que permiten gestionar diferentes aspectos de tu negocio:
 
-| Módulo | Descripción | Estado |
-|--------|-------------|--------|
-| Sucursales | Gestión de puntos de venta | ✅ Disponible |
-| Sesiones de Caja | Control de caja diaria | 🔜 Próximamente |
-| Transacciones | Ventas, gastos, retiros | 🔜 Próximamente |
-| Inventario | Control de stock | 🔜 Próximamente |
-| Productos | Catálogo de productos | 🔜 Próximamente |
+| Módulo           | Descripción                | Estado          |
+| ---------------- | -------------------------- | --------------- |
+| Sucursales       | Gestión de puntos de venta | ✅ Disponible   |
+| Sesiones de Caja | Control de caja diaria     | 🔜 Próximamente |
+| Transacciones    | Ventas, gastos, retiros    | 🔜 Próximamente |
+| Inventario       | Control de stock           | 🔜 Próximamente |
+| Productos        | Catálogo de productos      | 🔜 Próximamente |
 
 ---
 

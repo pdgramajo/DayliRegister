@@ -6,10 +6,10 @@ Esta página muestra las funcionalidades planeadas y en desarrollo para DayliReg
 
 Las siguientes funciones ya están implementadas y listas para usar:
 
-| Módulo | Estado | Descripción |
-|--------|--------|-------------|
-| Sucursales | ✅ Disponible | CRUD completo de sucursales |
-| Tema Claro/Oscuro | ✅ Disponible | Personalización de interfaz |
+| Módulo             | Estado        | Descripción                     |
+| ------------------ | ------------- | ------------------------------- |
+| Sucursales         | ✅ Disponible | CRUD completo de sucursales     |
+| Tema Claro/Oscuro  | ✅ Disponible | Personalización de interfaz     |
 | Persistencia Local | ✅ Disponible | Datos guardados en el navegador |
 
 ## Próximas Funcionalidades
@@ -20,7 +20,7 @@ Las siguientes funciones ya están implementadas y listas para usar:
 
 - Abrir y cerrar sesiones de caja por sucursal
 - Control de efectivo inicial y final
--Historial de sesiones por fecha
+  -Historial de sesiones por fecha
 - Estados: abierta | cerrada
 
 #### Transacciones
@@ -31,6 +31,7 @@ Las siguientes funciones ya están implementadas y listas para usar:
 - **Ingresos**: Dinero adicionales recebos
 
 **Métodos de pago soportados:**
+
 - Efectivo
 - Transferencia
 

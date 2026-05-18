@@ -417,11 +417,27 @@ export const SessionDetail = () => {
       {activeTab === 'inventory' && (
         <div className="space-y-2">
           <div className="flex justify-between gap-2 mb-2">
-            <Button variant="outline" className="h-8 flex-1">
+            <Button
+              variant="outline"
+              className="h-8 flex-1"
+              onClick={() =>
+                navigate(
+                  `/branches/${branchId}/sessions/${sessionId}/inventory/new?type=in`
+                )
+              }
+            >
               <Plus className="size-4 mr-1" />
               Entrada
             </Button>
-            <Button variant="outline" className="h-8 flex-1">
+            <Button
+              variant="outline"
+              className="h-8 flex-1"
+              onClick={() =>
+                navigate(
+                  `/branches/${branchId}/sessions/${sessionId}/inventory/new?type=out`
+                )
+              }
+            >
               <Plus className="size-4 mr-1" />
               Salida
             </Button>

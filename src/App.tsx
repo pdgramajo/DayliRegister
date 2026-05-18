@@ -36,6 +36,11 @@ const TransactionNew = lazy(() =>
     default: m.TransactionNew,
   }))
 )
+const InventoryMovementNew = lazy(() =>
+  import('./pages/Inventory/InventoryMovementNew').then((m) => ({
+    default: m.InventoryMovementNew,
+  }))
+)
 
 const ROUTES = {
   HOME: '/',
@@ -48,6 +53,8 @@ const ROUTES = {
   BRANCH_SESSION_EDIT: '/branches/:id/sessions/:sessionId/edit',
   BRANCH_SESSION_TRANSACTION_NEW:
     '/branches/:id/sessions/:sessionId/transaction/new',
+  BRANCH_SESSION_INVENTORY_NEW:
+    '/branches/:id/sessions/:sessionId/inventory/new',
 } as const
 
 const Loading = () => (
@@ -80,6 +87,10 @@ const App = () => {
           <Route
             path={ROUTES.BRANCH_SESSION_TRANSACTION_NEW}
             element={<TransactionNew />}
+          />
+          <Route
+            path={ROUTES.BRANCH_SESSION_INVENTORY_NEW}
+            element={<InventoryMovementNew />}
           />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>

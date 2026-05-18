@@ -18,12 +18,12 @@ El módulo de sucursales te permite:
 1. En la pantalla principal, toca el botón **"Nueva Sucursal"**
 2. Completa los campos del formulario:
 
-| Campo | Tipo | Requerido | Descripción |
-|-------|------|-----------|-------------|
-| Nombre | Texto | Sí | Identificador único de la sucursal |
-| Dirección | Texto | No | Ubicación física de la sucursal |
-| Teléfono | Texto | No | Número de contacto |
-| Activa | Toggle | Sí | Estado de la sucursal |
+| Campo     | Tipo   | Requerido | Descripción                        |
+| --------- | ------ | --------- | ---------------------------------- |
+| Nombre    | Texto  | Sí        | Identificador único de la sucursal |
+| Dirección | Texto  | No        | Ubicación física de la sucursal    |
+| Teléfono  | Texto  | No        | Número de contacto                 |
+| Activa    | Toggle | Sí        | Estado de la sucursal              |
 
 3. Toca **"Crear Sucursal"** para guardar
 
@@ -83,14 +83,14 @@ Cada sucursal contiene la siguiente información:
 
 ```typescript
 interface Branch {
-  id: string          // Identificador único
-  name: string        // Nombre de la sucursal
-  address?: string    // Dirección (opcional)
-  phone?: string      // Teléfono (opcional)
-  isActive: boolean   // Estado activo/inactivo
-  createdAt: string   // Fecha de creación
-  updatedAt: string   // Fecha de última modificación
-  deletedAt?: string  // Fecha de eliminación (si aplica)
+  id: string // Identificador único
+  name: string // Nombre de la sucursal
+  address?: string // Dirección (opcional)
+  phone?: string // Teléfono (opcional)
+  isActive: boolean // Estado activo/inactivo
+  createdAt: string // Fecha de creación
+  updatedAt: string // Fecha de última modificación
+  deletedAt?: string // Fecha de eliminación (si aplica)
 }
 ```
 

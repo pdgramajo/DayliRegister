@@ -5,13 +5,15 @@ import {
 } from '@reduxjs/toolkit'
 import { TransactionService } from '../services/TransactionService'
 import { InventoryMovementService } from '../services/InventoryMovementService'
-import type { Transaction } from '../types/entities'
+import { InventoryCategoryService } from '../services/InventoryCategoryService'
+import type { Transaction, InventoryCategory } from '../types/entities'
 import type { CreateTransactionDTO } from '../repositories/TransactionRepository'
 import type { CreateInventoryMovementDTO } from '../repositories/InventoryMovementRepository'
 
 interface TransactionState {
   transactions: Transaction[]
   inventoryMovements: any[]
+  inventoryCategories: InventoryCategory[]
   isLoading: boolean
   error: string | null
 }
@@ -19,6 +21,7 @@ interface TransactionState {
 const initialState: TransactionState = {
   transactions: [],
   inventoryMovements: [],
+  inventoryCategories: [],
   isLoading: false,
   error: null,
 }
@@ -104,6 +107,21 @@ export const deleteInventoryMovement = createAsyncThunk(
         error instanceof Error
           ? error.message
           : 'Error al eliminar movimiento de inventario'
+      return rejectWithValue(message)
+    }
+  }
+)
+
+export const fetchInventoryCategories = createAsyncThunk(
+  'transactions/fetchInventoryCategories',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await InventoryCategoryService.getAllCategories()
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Error al cargar categorías de inventario'
       return rejectWithValue(message)
     }
   }
@@ -217,6 +235,22 @@ const transactionSlice = createSlice({
         }
       )
       .addCase(deleteInventoryMovement.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload as string
+      })
+      // Fetch inventory categories
+      .addCase(fetchInventoryCategories.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(
+        fetchInventoryCategories.fulfilled,
+        (state, action: PayloadAction<InventoryCategory[]>) => {
+          state.isLoading = false
+          state.inventoryCategories = action.payload
+        }
+      )
+      .addCase(fetchInventoryCategories.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload as string
       })

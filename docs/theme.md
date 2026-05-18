@@ -11,6 +11,7 @@ DayliRegister soporta dos temas de interfaz: modo claro y modo oscuro. El tema s
 3. El cambio es inmediato y se guarda automáticamente
 
 El botón muestra el icono del tema opuesto al actual:
+
 - Sol ☀️ para cambiar a modo claro
 - Luna 🌙 para cambiar a modo oscuro
 
@@ -64,12 +65,14 @@ El modo oscuro está diseñado para:
 ### Móvil
 
 El tema se adapta automáticamente al cambiar el modo del sistema en:
+
 - Android: Configuración > Pantalla > Tema oscuro
 - iOS: Configuración > Apariencia > Oscuro
 
 ### Escritorio
 
 En computadoras, puedes cambiar el tema desde:
+
 - macOS: Preferencias del Sistema > Apariencia
 - Windows: Configuración > Personalización > Colores
 
@@ -95,12 +98,12 @@ En computadoras, puedes cambiar el tema desde:
 
 ## Beneficios del Tema Oscuro
 
-| Beneficio | Descripción |
-|-----------|-------------|
-| Menos fatiga visual | Reduce el brillo en ambientes oscuros |
-| Ahorro de batería | En pantallas OLED, los píxeles oscuros consumen menos |
-| Mejor lectura nocturna | Menos luz emitida hacia los ojos |
-| Estilo moderno | Apariencia contemporánea y elegante |
+| Beneficio              | Descripción                                           |
+| ---------------------- | ----------------------------------------------------- |
+| Menos fatiga visual    | Reduce el brillo en ambientes oscuros                 |
+| Ahorro de batería      | En pantallas OLED, los píxeles oscuros consumen menos |
+| Mejor lectura nocturna | Menos luz emitida hacia los ojos                      |
+| Estilo moderno         | Apariencia contemporánea y elegante                   |
 
 ## Accesibilidad
 
