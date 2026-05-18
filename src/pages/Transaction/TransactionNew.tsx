@@ -45,7 +45,6 @@ export const TransactionNew = () => {
     control,
     register,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<TransactionFormData>({
     defaultValues: {
@@ -54,8 +53,6 @@ export const TransactionNew = () => {
       paymentMethod: selectedPaymentMethod,
     },
   })
-
-  const amount = watch('amount')
 
   const handleQuickValue = (value: number) => {
     setValue('amount', value, { shouldValidate: true })
@@ -78,12 +75,14 @@ export const TransactionNew = () => {
     navigate(`/branches/${branchId}/sessions/${sessionId}`)
   }
 
-  const getTitle = () => {
-    if (type === Entities.TransactionTypes.SALE) return 'Nueva Venta'
-    if (type === Entities.TransactionTypes.EXPENSE) return 'Nuevo Gasto'
-    if (type === Entities.TransactionTypes.WITHDRAWAL) return 'Nuevo Retiro'
-    return 'Nueva Transacción'
+  const titles = {
+    [Entities.TransactionTypes.SALE]: 'Nueva Venta',
+    [Entities.TransactionTypes.EXPENSE]: 'Nuevo Gasto',
+    [Entities.TransactionTypes.WITHDRAWAL]: 'Nuevo Retiro',
+    [Entities.TransactionTypes.INCOME]: 'Nuevo Ingreso',
   }
+
+  const title = titles[type] || 'Nueva Transacción'
 
   const getPaymentMethodSelector = () => (
     <div className="space-y-2">
@@ -148,7 +147,7 @@ export const TransactionNew = () => {
       <div className="max-w-lg mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-content-900 dark:text-white tracking-tight">
-            {getTitle()}
+            {title}
           </h1>
         </div>
 
