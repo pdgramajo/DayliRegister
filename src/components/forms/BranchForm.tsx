@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -5,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import type { CreateBranchDTO } from '../../types/dtos'
 import { Button, Input } from '../ui'
+import { formatPhoneForDisplay, parsePhoneToSave } from '../../lib/formatters'
 
 const branchSchema = z.object({
   name: z
@@ -34,6 +36,8 @@ export const BranchForm = ({
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<BranchFormData>({
     resolver: zodResolver(branchSchema),
@@ -46,26 +50,47 @@ export const BranchForm = ({
     },
   })
 
+  const phoneValue = watch('phone', '')
+  const [phoneDisplay, setPhoneDisplay] = useState(
+    initialValues?.phone ? formatPhoneForDisplay(initialValues.phone) : ''
+  )
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setPhoneDisplay(formatPhoneForDisplay(value))
+    setValue('phone', value, { shouldValidate: true })
+  }
+
+  const handleFormSubmit = (data: BranchFormData) => {
+    debugger
+    const dataToSubmit = {
+      ...data,
+      phone: data.phone ? parsePhoneToSave(data.phone) : undefined,
+    }
+    onSubmit(dataToSubmit)
+  }
+
+  useEffect(() => {
+    if (!phoneValue && initialValues?.phone) {
+      setPhoneDisplay(formatPhoneForDisplay(initialValues.phone))
+    }
+  }, [phoneValue, initialValues?.phone])
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-6 -mt-2">
-        <Link
-          to={cancelTo}
-          className="text-sm text-content-600 dark:text-content-400 hover:text-content-900 dark:hover:text-content-100 transition-colors"
-        >
-          <ArrowLeft className="size-4 inline mr-1" />
-          Cancelar
-        </Link>
-        <Button
-          type="submit"
-          loading={isLoading}
-          onClick={handleSubmit(onSubmit)}
-        >
-          {initialValues?.name ? 'Guardar' : 'Crear'}
-        </Button>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
+        <div className="flex justify-between items-center mb-6 -mt-2">
+          <Link
+            to={cancelTo}
+            className="text-sm text-content-600 dark:text-content-400 hover:text-content-900 dark:hover:text-content-100 transition-colors"
+          >
+            <ArrowLeft className="size-4 inline mr-1" />
+            Cancelar
+          </Link>
+          <Button type="submit" loading={isLoading}>
+            {initialValues?.name ? 'Guardar' : 'Crear'}
+          </Button>
+        </div>
         <div className="space-y-2">
           <label
             htmlFor="name"
@@ -112,7 +137,8 @@ export const BranchForm = ({
           <Input
             id="phone"
             placeholder="+54 388 123 4567"
-            {...register('phone')}
+            value={phoneDisplay}
+            onChange={handlePhoneChange}
           />
         </div>
 

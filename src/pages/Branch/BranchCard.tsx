@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { MapPin, Phone, Pencil, Trash2 } from 'lucide-react'
+import { Phone, MapPin, Pencil, Trash2 } from 'lucide-react'
 import { Button } from '../../components/ui'
 import type { Branch } from '../../types/entities'
+import { formatPhoneForDisplay } from '../../lib/formatters'
 
 interface BranchCardProps {
   branch: Branch
@@ -41,7 +42,7 @@ export const BranchCard = ({ branch, onDelete }: BranchCardProps) => {
           {branch.phone && (
             <span className="flex items-center gap-1 text-xs text-content-500 dark:text-content-400 mt-0.5">
               <Phone className="size-3 shrink-0 mt-0.5" />
-              <span>{branch.phone}</span>
+              <span>{formatPhoneForDisplay(branch.phone)}</span>
             </span>
           )}
         </div>
