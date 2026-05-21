@@ -2,12 +2,14 @@ import { Toaster as HotToaster } from 'react-hot-toast'
 
 export const ToastProvider = () => (
   <HotToaster
-    position="top-right"
+    position="top-center"
     toastOptions={{
-      duration: 4000,
+      duration: 1500,
       style: {
-        borderRadius: '8px',
-        padding: '12px 16px',
+        borderRadius: '6px',
+        padding: '6px 10px',
+        fontSize: '12px',
+        maxWidth: '120px',
       },
       success: {
         style: {
@@ -36,12 +38,28 @@ export const ToastProvider = () => (
 export const toast = {
   success: (message: string) => {
     import('react-hot-toast').then(({ default: toast }) => {
-      toast.success(message)
+      toast.success(message, {
+        duration: 1500,
+        style: {
+          borderRadius: '6px',
+          padding: '6px 10px',
+          fontSize: '12px',
+          maxWidth: '120px',
+        },
+      })
     })
   },
   error: (message: string) => {
     import('react-hot-toast').then(({ default: toast }) => {
-      toast.error(message)
+      toast.error(message, {
+        duration: 1500,
+        style: {
+          borderRadius: '6px',
+          padding: '6px 10px',
+          fontSize: '12px',
+          maxWidth: '120px',
+        },
+      })
     })
   },
 }
