@@ -58,9 +58,9 @@ const CategorySelector = ({
 }: CategorySelectorProps) => (
   <div className="space-y-2">
     <div className="flex items-center justify-between">
-      <label className="text-sm font-medium text-content-700 dark:text-content-300">
+      <span className="text-sm font-medium text-content-700 dark:text-content-300">
         Categoría *
-      </label>
+      </span>
       <button
         type="button"
         onClick={onToggleNew}
@@ -148,9 +148,9 @@ const QuantityInput = ({
     </div>
 
     <div className="space-y-2">
-      <label className="text-sm font-medium text-content-700 dark:text-content-300">
+      <span className="text-sm font-medium text-content-700 dark:text-content-300">
         Cantidades rápidas
-      </label>
+      </span>
       <div className="flex flex-wrap gap-2">
         {quickValues.map((value) => (
           <button

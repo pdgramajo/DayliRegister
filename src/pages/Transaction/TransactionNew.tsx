@@ -90,9 +90,9 @@ export const TransactionNew = () => {
 
   const getPaymentMethodSelector = () => (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-content-700 dark:text-content-300">
+      <span className="text-sm font-medium text-content-700 dark:text-content-300">
         Método de pago
-      </label>
+      </span>
       <div className="flex gap-2">
         <button
           type="button"
@@ -128,9 +128,9 @@ export const TransactionNew = () => {
 
   const getQuickValues = () => (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-content-700 dark:text-content-300">
+      <span className="text-sm font-medium text-content-700 dark:text-content-300">
         Valores rápidos
-      </label>
+      </span>
       <div className="flex flex-wrap gap-2">
         {QUICK_VALUES.map((value) => (
           <button
