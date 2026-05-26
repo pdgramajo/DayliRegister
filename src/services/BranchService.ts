@@ -1,4 +1,9 @@
-import { BranchRepository } from '../repositories'
+import {
+  BranchRepository,
+  SessionRepository,
+  TransactionRepository,
+  InventoryMovementRepository,
+} from '../repositories'
 import type { Branch } from '../types/entities'
 import type { CreateBranchDTO, UpdateBranchDTO } from '../types/dtos'
 
@@ -51,6 +56,26 @@ export const BranchService = {
     if (!existing) {
       throw new BranchNotFoundError(id)
     }
+
+    const sessions = await SessionRepository.getByBranchId(id)
+    for (const session of sessions) {
+      const transactions = await TransactionRepository.getBySessionId(
+        session.id
+      )
+      for (const t of transactions) {
+        await TransactionRepository.delete(t.id)
+      }
+
+      const movements = await InventoryMovementRepository.getBySessionId(
+        session.id
+      )
+      for (const m of movements) {
+        await InventoryMovementRepository.delete(m.id)
+      }
+
+      await SessionRepository.delete(session.id)
+    }
+
     await BranchRepository.delete(id)
   },
 

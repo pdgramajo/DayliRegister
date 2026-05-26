@@ -1,4 +1,8 @@
-import { SessionRepository } from '../repositories'
+import {
+  SessionRepository,
+  TransactionRepository,
+  InventoryMovementRepository,
+} from '../repositories'
 import type { CashSession } from '../types/entities'
 import type { CreateSessionDTO, UpdateSessionDTO } from '../types/dtos'
 import { Entities } from '../types/entities'
@@ -104,6 +108,17 @@ export const SessionService = {
     if (!existing) {
       throw new SessionNotFoundError(id)
     }
+
+    const transactions = await TransactionRepository.getBySessionId(id)
+    for (const t of transactions) {
+      await TransactionRepository.delete(t.id)
+    }
+
+    const movements = await InventoryMovementRepository.getBySessionId(id)
+    for (const m of movements) {
+      await InventoryMovementRepository.delete(m.id)
+    }
+
     await SessionRepository.delete(id)
   },
 }
