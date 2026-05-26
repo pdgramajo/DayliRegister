@@ -12,6 +12,7 @@ import {
   type SessionFormData,
 } from '../../components/forms/SessionForm'
 import { Entities } from '../../types/entities'
+import { toast } from '../../components/ui'
 
 export const SessionEdit = () => {
   const { id: branchId, sessionId } = useParams<{
@@ -54,7 +55,7 @@ export const SessionEdit = () => {
         }
       })
       .catch((error) => {
-        console.error(error)
+        toast.error(error || 'Error al actualizar la sesión')
       })
   }
 

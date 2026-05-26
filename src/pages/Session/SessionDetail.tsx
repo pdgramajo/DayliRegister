@@ -14,8 +14,7 @@ import {
 } from '../../store/transactionSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
-import { Button } from '../../components/ui'
-import { toast } from '../../components/ui/toast'
+import { Button, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
 import { formatDate, formatMoney } from '../../lib/formatters'
 import {
@@ -558,16 +557,30 @@ export const SessionDetail = () => {
     const closingBalance = balance ? parseFloat(balance) : undefined
     if (branchId && sessionId) {
       dispatch(closeSession({ id: sessionId, closingBalance }))
+        .unwrap()
+        .then(() => toast.success('Sesión cerrada correctamente'))
+        .catch((error) => toast.error(error || 'Error al cerrar la sesión'))
     }
   }
 
   const handleDeleteTransaction = (id: string) => {
-    if (confirm('¿Eliminar esta transacción?')) dispatch(deleteTransaction(id))
+    if (confirm('¿Eliminar esta transacción?'))
+      dispatch(deleteTransaction(id))
+        .unwrap()
+        .then(() => toast.success('Transacción eliminada'))
+        .catch((error) =>
+          toast.error(error || 'Error al eliminar la transacción')
+        )
   }
 
   const handleDeleteInventoryMovement = (id: string) => {
     if (confirm('¿Eliminar este movimiento de inventario?'))
       dispatch(deleteInventoryMovement(id))
+        .unwrap()
+        .then(() => toast.success('Movimiento eliminado'))
+        .catch((error) =>
+          toast.error(error || 'Error al eliminar el movimiento')
+        )
   }
 
   const navigateToTransaction = (type: string) =>

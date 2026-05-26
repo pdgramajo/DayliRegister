@@ -1,10 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { SessionService } from '../../services'
+import { SessionService, SessionAlreadyOpenError } from '../../services'
 import type { CreateSessionDTO } from '../../types/dtos'
 import {
   SessionForm,
   type SessionFormData,
 } from '../../components/forms/SessionForm'
+import { toast } from '../../components/ui'
 
 export const SessionNew = () => {
   const { id: branchId } = useParams<{ id: string }>()
@@ -22,7 +23,11 @@ export const SessionNew = () => {
       await SessionService.createSession(sessionData)
       navigate(`/branches/${branchId}/sessions`)
     } catch (error) {
-      console.error(error)
+      if (error instanceof SessionAlreadyOpenError) {
+        toast.error('Ya hay una sesión abierta para esta sucursal')
+      } else {
+        toast.error('Error al crear la sesión')
+      }
     }
   }
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
-import { Button, MoneyInput } from '../../components/ui'
+import { Button, MoneyInput, toast } from '../../components/ui'
 import { createTransaction } from '../../store/transactionSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
@@ -61,18 +61,22 @@ export const TransactionNew = () => {
   const onSubmit = async (data: TransactionFormData) => {
     if (!sessionId || !branchId || !data.amount) return
 
-    await dispatch(
-      createTransaction({
-        sessionId,
-        branchId,
-        type,
-        amount: data.amount,
-        paymentMethod: data.paymentMethod,
-        description: data.description,
-      })
-    )
+    try {
+      await dispatch(
+        createTransaction({
+          sessionId,
+          branchId,
+          type,
+          amount: data.amount,
+          paymentMethod: data.paymentMethod,
+          description: data.description,
+        })
+      ).unwrap()
 
-    navigate(`/branches/${branchId}/sessions/${sessionId}`)
+      navigate(`/branches/${branchId}/sessions/${sessionId}`)
+    } catch (error) {
+      toast.error((error as string) || 'Error al crear la transacción')
+    }
   }
 
   const titles = {

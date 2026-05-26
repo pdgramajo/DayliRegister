@@ -9,7 +9,7 @@ import {
 } from '../../store/sessionSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
-import { Button } from '../../components/ui'
+import { Button, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
 import { OpenSessionCard, ClosedSessionCard } from './SessionCard'
 import { BarChart3 } from 'lucide-react'
@@ -49,12 +49,18 @@ export const BranchSessions = () => {
     const closingBalance = balance ? parseFloat(balance) : undefined
     if (branchId) {
       dispatch(closeSession({ id: sessionId, closingBalance }))
+        .unwrap()
+        .then(() => toast.success('Sesión cerrada correctamente'))
+        .catch((error) => toast.error(error || 'Error al cerrar la sesión'))
     }
   }
 
   const handleDeleteSession = (sessionId: string) => {
     if (branchId) {
       dispatch(deleteSession(sessionId))
+        .unwrap()
+        .then(() => toast.success('Sesión eliminada correctamente'))
+        .catch((error) => toast.error(error || 'Error al eliminar la sesión'))
     }
   }
 

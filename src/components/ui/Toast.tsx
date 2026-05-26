@@ -1,4 +1,4 @@
-import { Toaster as HotToaster } from 'react-hot-toast'
+import { Toaster as HotToaster, toast as hotToast } from 'react-hot-toast'
 
 export const ToastProvider = () => (
   <HotToaster
@@ -7,9 +7,9 @@ export const ToastProvider = () => (
       duration: 1500,
       style: {
         borderRadius: '6px',
-        padding: '6px 10px',
-        fontSize: '12px',
-        maxWidth: '120px',
+        padding: '8px 14px',
+        fontSize: '13px',
+        maxWidth: '90vw',
       },
       success: {
         style: {
@@ -37,29 +37,9 @@ export const ToastProvider = () => (
 
 export const toast = {
   success: (message: string) => {
-    import('react-hot-toast').then(({ default: toast }) => {
-      toast.success(message, {
-        duration: 1500,
-        style: {
-          borderRadius: '6px',
-          padding: '6px 10px',
-          fontSize: '12px',
-          maxWidth: '120px',
-        },
-      })
-    })
+    hotToast.success(message)
   },
   error: (message: string) => {
-    import('react-hot-toast').then(({ default: toast }) => {
-      toast.error(message, {
-        duration: 1500,
-        style: {
-          borderRadius: '6px',
-          padding: '6px 10px',
-          fontSize: '12px',
-          maxWidth: '120px',
-        },
-      })
-    })
+    hotToast.error(message)
   },
 }

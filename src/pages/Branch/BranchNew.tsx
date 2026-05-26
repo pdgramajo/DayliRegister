@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { BranchService } from '../../services'
 import type { CreateBranchDTO } from '../../types/dtos'
 import { BranchForm } from '../../components/forms/BranchForm'
+import { toast } from '../../components/ui'
 
 export const BranchNew = () => {
   const navigate = useNavigate()
@@ -11,7 +12,7 @@ export const BranchNew = () => {
       await BranchService.createBranch(data)
       navigate('/branches')
     } catch (error) {
-      console.error(error)
+      toast.error('Error al crear la sucursal')
     }
   }
 

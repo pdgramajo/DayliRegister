@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
-import { Button } from '../../components/ui'
+import { Button, toast } from '../../components/ui'
 import {
   createInventoryMovement,
   fetchInventoryCategories,
@@ -193,12 +193,16 @@ export const InventoryMovementNew = () => {
 
   const handleCreateCategory = async () => {
     if (!newCategoryName.trim()) return
-    const { InventoryCategoryService } =
-      await import('../../services/InventoryCategoryService')
-    await InventoryCategoryService.createCategory(newCategoryName.trim())
-    dispatch(fetchInventoryCategories())
-    setNewCategoryName('')
-    setShowNewCategory(false)
+    try {
+      const { InventoryCategoryService } =
+        await import('../../services/InventoryCategoryService')
+      await InventoryCategoryService.createCategory(newCategoryName.trim())
+      dispatch(fetchInventoryCategories())
+      setNewCategoryName('')
+      setShowNewCategory(false)
+    } catch (error) {
+      toast.error('Error al crear la categoría')
+    }
   }
 
   const {
@@ -217,18 +221,22 @@ export const InventoryMovementNew = () => {
   const onSubmit = async (data: InventoryMovementFormData) => {
     if (!sessionId || !branchId || !data.quantity || !selectedCategoryId) return
 
-    await dispatch(
-      createInventoryMovement({
-        sessionId,
-        branchId,
-        inventoryCategoryId: selectedCategoryId,
-        type,
-        quantity: data.quantity,
-        description: data.description,
-      })
-    )
+    try {
+      await dispatch(
+        createInventoryMovement({
+          sessionId,
+          branchId,
+          inventoryCategoryId: selectedCategoryId,
+          type,
+          quantity: data.quantity,
+          description: data.description,
+        })
+      ).unwrap()
 
-    navigate(`/branches/${branchId}/sessions/${sessionId}`)
+      navigate(`/branches/${branchId}/sessions/${sessionId}`)
+    } catch (error) {
+      toast.error((error as string) || 'Error al crear el movimiento')
+    }
   }
 
   const showCategoryError =

@@ -8,7 +8,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import type { UpdateBranchDTO } from '../../types/dtos'
-import { BranchForm } from '../../components/ui'
+import { BranchForm, toast } from '../../components/ui'
 
 export const BranchEdit = () => {
   const { id } = useParams<{ id: string }>()
@@ -32,6 +32,9 @@ export const BranchEdit = () => {
     dispatch(updateBranch({ id, data }))
       .unwrap()
       .then(() => navigate('/branches'))
+      .catch((error) => {
+        toast.error(error || 'Error al actualizar la sucursal')
+      })
   }
 
   if (!currentBranch && !isLoading) {
