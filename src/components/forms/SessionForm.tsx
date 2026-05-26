@@ -90,6 +90,7 @@ export const SessionForm = ({
             control={control}
             render={({ field }) => (
               <MoneyInput
+                id="initialAmount"
                 {...field}
                 value={field.value}
                 onChange={field.onChange}

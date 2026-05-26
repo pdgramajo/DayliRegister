@@ -192,6 +192,7 @@ export const TransactionNew = () => {
                 rules={{ required: 'El monto es requerido' }}
                 render={({ field }) => (
                   <MoneyInput
+                    id="amount"
                     {...field}
                     value={field.value}
                     onChange={field.onChange}
