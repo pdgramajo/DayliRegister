@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchBranchById, clearCurrentBranch } from '../../store/branchSlice'
 import {
@@ -9,7 +9,7 @@ import {
 } from '../../store/sessionSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
-import { Button, toast } from '../../components/ui'
+import { Button, Modal, MoneyInput, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
 import { OpenSessionCard, ClosedSessionCard } from './SessionCard'
 import { BarChart3 } from 'lucide-react'
@@ -37,6 +37,10 @@ export const BranchSessions = () => {
     }
   }, [dispatch, branchId])
 
+  const [closingSessionId, setClosingSessionId] = useState<string | null>(null)
+  const [closingBalance, setClosingBalance] = useState<number | undefined>()
+  const [closeError, setCloseError] = useState<string | null>(null)
+
   const openSessions = sessions.filter(
     (s) => s.status === Entities.CashSessionStatus.OPEN
   )
@@ -45,14 +49,29 @@ export const BranchSessions = () => {
   )
 
   const handleCloseSession = (sessionId: string) => {
-    const balance = prompt('Ingrese el balance de cierre (opcional):')
-    const closingBalance = balance ? parseFloat(balance) : undefined
-    if (branchId) {
-      dispatch(closeSession({ id: sessionId, closingBalance }))
-        .unwrap()
-        .then(() => toast.success('Sesión cerrada correctamente'))
-        .catch((error) => toast.error(error || 'Error al cerrar la sesión'))
+    const session = sessions.find((s) => s.id === sessionId)
+    setClosingBalance(session?.initialAmount)
+    setCloseError(null)
+    setClosingSessionId(sessionId)
+  }
+
+  const confirmCloseSession = () => {
+    if (
+      closingBalance === undefined ||
+      isNaN(closingBalance) ||
+      closingBalance < 0
+    ) {
+      setCloseError('Ingrese un balance válido')
+      return
     }
+    if (!branchId || !closingSessionId) return
+    dispatch(closeSession({ id: closingSessionId, closingBalance }))
+      .unwrap()
+      .then(() => {
+        toast.success('Sesión cerrada correctamente')
+        setClosingSessionId(null)
+      })
+      .catch((error) => toast.error(error || 'Error al cerrar la sesión'))
   }
 
   const handleDeleteSession = (sessionId: string) => {
@@ -157,6 +176,38 @@ export const BranchSessions = () => {
           </div>
         )}
       </div>
+
+      <Modal
+        open={!!closingSessionId}
+        onClose={() => setClosingSessionId(null)}
+        title="Cerrar sesión"
+      >
+        <p className="text-sm text-content-500 mb-4">
+          {sessions.find((s) => s.id === closingSessionId)?.name}
+        </p>
+        <div className="space-y-2 mb-4">
+          <span className="text-sm font-medium text-content-700 dark:text-content-300">
+            Balance de cierre
+          </span>
+          <MoneyInput
+            id="closingBalance"
+            value={closingBalance}
+            onChange={(v) => {
+              setClosingBalance(v)
+              setCloseError(null)
+            }}
+          />
+          {closeError && <p className="text-sm text-red-500">{closeError}</p>}
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setClosingSessionId(null)}>
+            Cancelar
+          </Button>
+          <Button variant="destructive" onClick={confirmCloseSession}>
+            Cerrar sesión
+          </Button>
+        </div>
+      </Modal>
     </div>
   )
 }

@@ -10,6 +10,7 @@ export {
   CardContent,
 } from './card'
 export { Badge } from './badge'
+export { Modal } from './modal'
 export { PageHeader } from './page-header'
 export { ToastProvider, toast } from './toast'
 export { BranchForm } from '../forms/BranchForm'

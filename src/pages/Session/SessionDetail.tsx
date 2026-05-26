@@ -14,7 +14,7 @@ import {
 } from '../../store/transactionSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
-import { Button, toast } from '../../components/ui'
+import { Button, Modal, MoneyInput, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
 import { formatDate, formatMoney } from '../../lib/formatters'
 import {
@@ -530,6 +530,9 @@ export const SessionDetail = () => {
   const [activeTab, setActiveTab] = useState<TabType>('movements')
   const [transactionFilter, setTransactionFilter] =
     useState<TransactionFilter>('all')
+  const [showCloseModal, setShowCloseModal] = useState(false)
+  const [closingBalance, setClosingBalance] = useState<number | undefined>()
+  const [closeError, setCloseError] = useState<string | null>(null)
 
   const { currentSession, isLoading: sessionLoading } = useAppSelector(
     (state: RootState) => state.sessions
@@ -553,14 +556,28 @@ export const SessionDetail = () => {
   }, [dispatch, sessionId])
 
   const handleCloseSession = () => {
-    const balance = prompt('Ingrese el balance de cierre (opcional):')
-    const closingBalance = balance ? parseFloat(balance) : undefined
-    if (branchId && sessionId) {
-      dispatch(closeSession({ id: sessionId, closingBalance }))
-        .unwrap()
-        .then(() => toast.success('Sesión cerrada correctamente'))
-        .catch((error) => toast.error(error || 'Error al cerrar la sesión'))
+    setClosingBalance(cashInBox)
+    setCloseError(null)
+    setShowCloseModal(true)
+  }
+
+  const confirmCloseSession = () => {
+    if (
+      closingBalance === undefined ||
+      isNaN(closingBalance) ||
+      closingBalance < 0
+    ) {
+      setCloseError('Ingrese un balance válido')
+      return
     }
+    if (!branchId || !sessionId) return
+    dispatch(closeSession({ id: sessionId, closingBalance }))
+      .unwrap()
+      .then(() => {
+        toast.success('Sesión cerrada correctamente')
+        setShowCloseModal(false)
+      })
+      .catch((error) => toast.error(error || 'Error al cerrar la sesión'))
   }
 
   const handleDeleteTransaction = (id: string) => {
@@ -672,6 +689,36 @@ export const SessionDetail = () => {
           onDelete={handleDeleteInventoryMovement}
         />
       )}
+
+      <Modal
+        open={showCloseModal}
+        onClose={() => setShowCloseModal(false)}
+        title="Cerrar sesión"
+      >
+        <p className="text-sm text-content-500 mb-4">{currentSession?.name}</p>
+        <div className="space-y-2 mb-4">
+          <span className="text-sm font-medium text-content-700 dark:text-content-300">
+            Balance de cierre
+          </span>
+          <MoneyInput
+            id="closingBalance"
+            value={closingBalance}
+            onChange={(v) => {
+              setClosingBalance(v)
+              setCloseError(null)
+            }}
+          />
+          {closeError && <p className="text-sm text-red-500">{closeError}</p>}
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setShowCloseModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="destructive" onClick={confirmCloseSession}>
+            Cerrar sesión
+          </Button>
+        </div>
+      </Modal>
     </div>
   )
 }
