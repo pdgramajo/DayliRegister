@@ -62,7 +62,6 @@ export const BranchForm = ({
   }
 
   const handleFormSubmit = (data: BranchFormData) => {
-    debugger
     const dataToSubmit = {
       ...data,
       phone: data.phone ? parsePhoneToSave(data.phone) : undefined,
