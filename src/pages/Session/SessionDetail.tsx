@@ -203,10 +203,10 @@ const ActionButtons = ({
 }) => {
   if (type === 'movements') {
     return (
-      <div className="flex justify-between gap-2 mb-2">
+      <div className="grid grid-cols-4 gap-1 mb-2">
         <Button
           variant="outline"
-          className="h-8 flex-1"
+          className="h-8 gap-0"
           onClick={() => onNavigate('sale')}
         >
           <Plus className="size-4 mr-1" />
@@ -214,7 +214,7 @@ const ActionButtons = ({
         </Button>
         <Button
           variant="outline"
-          className="h-8 flex-1"
+          className="h-8 gap-0"
           onClick={() => onNavigate('expense')}
         >
           <Plus className="size-4 mr-1" />
@@ -222,11 +222,19 @@ const ActionButtons = ({
         </Button>
         <Button
           variant="outline"
-          className="h-8 flex-1"
+          className="h-8 gap-0"
           onClick={() => onNavigate('withdrawal')}
         >
           <Plus className="size-4 mr-1" />
           Retiro
+        </Button>
+        <Button
+          variant="outline"
+          className="h-8 gap-0"
+          onClick={() => onNavigate('income')}
+        >
+          <Plus className="size-4 mr-1" />
+          Ingreso
         </Button>
       </div>
     )
@@ -267,8 +275,9 @@ const TransactionFilters = ({
       all: transactions.length,
       cash: transactions.filter(
         (t) =>
-          t.type === Entities.TransactionTypes.SALE &&
-          t.paymentMethod === Entities.PaymentMethods.CASH
+          (t.type === Entities.TransactionTypes.SALE &&
+            t.paymentMethod === Entities.PaymentMethods.CASH) ||
+          t.type === Entities.TransactionTypes.INCOME
       ).length,
       transfer: transactions.filter(
         (t) =>
@@ -343,6 +352,8 @@ const TransactionItem = ({
 
   const isSale = transaction.type === Entities.TransactionTypes.SALE
   const isCash = transaction.paymentMethod === Entities.PaymentMethods.CASH
+  const isPositive =
+    isSale || transaction.type === Entities.TransactionTypes.INCOME
 
   return (
     <div className="flex items-center justify-between p-3 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700">
@@ -367,14 +378,16 @@ const TransactionItem = ({
       <div className="flex items-center gap-2">
         <span
           className={`text-sm font-medium ${
-            isSale
-              ? isCash
+            isPositive
+              ? isSale && isCash
                 ? 'text-green-600 dark:text-green-300'
-                : 'text-blue-600 dark:text-blue-400'
+                : isSale
+                  ? 'text-blue-600 dark:text-blue-400'
+                  : 'text-green-600 dark:text-green-300'
               : 'text-red-600 dark:text-red-400'
           }`}
         >
-          {isSale ? '+' : '-'}
+          {isPositive ? '+' : '-'}
           {formatMoney(transaction.amount)}
         </span>
         <button
@@ -450,8 +463,9 @@ const TransactionList = ({
     if (filter === 'cash')
       return transactions.filter(
         (t) =>
-          t.type === Entities.TransactionTypes.SALE &&
-          t.paymentMethod === Entities.PaymentMethods.CASH
+          (t.type === Entities.TransactionTypes.SALE &&
+            t.paymentMethod === Entities.PaymentMethods.CASH) ||
+          t.type === Entities.TransactionTypes.INCOME
       )
     if (filter === 'transfer')
       return transactions.filter(
@@ -659,9 +673,13 @@ export const SessionDetail = () => {
   const totalWithdrawals = transactions
     .filter((t) => t.type === Entities.TransactionTypes.WITHDRAWAL)
     .reduce((s, t) => s + t.amount, 0)
+  const totalIncome = transactions
+    .filter((t) => t.type === Entities.TransactionTypes.INCOME)
+    .reduce((s, t) => s + t.amount, 0)
   const cashInBox =
     (currentSession.initialAmount || 0) +
-    cashSales -
+    cashSales +
+    totalIncome -
     totalExpenses -
     totalWithdrawals
 
