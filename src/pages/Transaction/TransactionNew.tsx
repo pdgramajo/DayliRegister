@@ -2,15 +2,18 @@ import { useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
-import { Button, MoneyInput, toast } from '../../components/ui'
+import {
+  Button,
+  MoneyInput,
+  QuickValuesEditor,
+  toast,
+} from '../../components/ui'
 import { createTransaction } from '../../store/transactionSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Entities } from '../../types/entities'
 import type { TransactionType, PaymentMethod } from '../../types/entities'
 import { formatMoney } from '../../lib/formatters'
-
-const QUICK_VALUES = [100, 200, 500, 1000, 2000, 5000, 10000]
 
 interface TransactionFormData {
   amount?: number
@@ -53,10 +56,6 @@ export const TransactionNew = () => {
       paymentMethod: selectedPaymentMethod,
     },
   })
-
-  const handleQuickValue = (value: number) => {
-    setValue('amount', value, { shouldValidate: true })
-  }
 
   const onSubmit = async (data: TransactionFormData) => {
     if (!sessionId || !branchId || !data.amount) return
@@ -122,26 +121,6 @@ export const TransactionNew = () => {
         >
           Transferencia
         </button>
-      </div>
-    </div>
-  )
-
-  const getQuickValues = () => (
-    <div className="space-y-2">
-      <span className="text-sm font-medium text-content-700 dark:text-content-300">
-        Valores rápidos
-      </span>
-      <div className="flex flex-wrap gap-2">
-        {QUICK_VALUES.map((value) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => handleQuickValue(value)}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface-100 dark:bg-surface-700 text-content-600 dark:text-content-300 hover:bg-surface-200 dark:hover:bg-surface-600 transition-colors"
-          >
-            {formatMoney(value)}
-          </button>
-        ))}
       </div>
     </div>
   )
@@ -213,7 +192,11 @@ export const TransactionNew = () => {
               )}
             </div>
 
-            {getQuickValues()}
+            <QuickValuesEditor
+              storageKey={type}
+              onSelect={(v) => setValue('amount', v)}
+              formatValue={formatMoney}
+            />
 
             <div className="space-y-2">
               <label

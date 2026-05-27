@@ -1,6 +1,7 @@
 export { Button, buttonVariants } from './button'
 export { Input } from './input'
 export { MoneyInput } from './money-input'
+export { QuickValuesEditor } from './quick-values-editor'
 export {
   Card,
   CardHeader,

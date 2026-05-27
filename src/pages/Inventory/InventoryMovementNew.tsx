@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
-import { Button, toast } from '../../components/ui'
+import { Button, QuickValuesEditor, toast } from '../../components/ui'
 import {
   createInventoryMovement,
   fetchInventoryCategories,
@@ -11,8 +11,6 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Entities } from '../../types/entities'
 import type { InventoryMovementType } from '../../types/entities'
-
-const QUICK_VALUES = [1, 2, 5, 10, 20, 50]
 
 interface InventoryMovementFormData {
   quantity: number
@@ -110,64 +108,6 @@ const CategorySelector = ({
   </div>
 )
 
-const QuantityInput = ({
-  register,
-  errors,
-  quickValues,
-  onQuickValue,
-}: {
-  register: any
-  errors: any
-  quickValues: number[]
-  onQuickValue: (value: number) => void
-}) => (
-  <>
-    <div className="space-y-2">
-      <label
-        htmlFor="quantity"
-        className="text-sm font-medium text-content-700 dark:text-content-300"
-      >
-        Cantidad *
-      </label>
-      <input
-        id="quantity"
-        type="number"
-        autoComplete="off"
-        min="1"
-        placeholder="0"
-        {...register('quantity', {
-          required: 'La cantidad es requerida',
-          min: 1,
-        })}
-        className="flex h-10 w-full rounded-xl border border-surface-200 bg-white px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-content-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-surface-700 dark:bg-surface-800 dark:text-content-100 dark:placeholder:text-content-500 dark:focus-visible:ring-offset-surface-900"
-      />
-      {errors.quantity && (
-        <p className="text-sm text-red-500 dark:text-red-400">
-          {errors.quantity.message}
-        </p>
-      )}
-    </div>
-
-    <div className="space-y-2">
-      <span className="text-sm font-medium text-content-700 dark:text-content-300">
-        Cantidades rápidas
-      </span>
-      <div className="flex flex-wrap gap-2">
-        {quickValues.map((value) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => onQuickValue(value)}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface-100 dark:bg-surface-700 text-content-600 dark:text-content-300 hover:bg-surface-200 dark:hover:bg-surface-600 transition-colors"
-          >
-            {value}
-          </button>
-        ))}
-      </div>
-    </div>
-  </>
-)
-
 export const InventoryMovementNew = () => {
   const { id: branchId, sessionId } = useParams<{
     id: string
@@ -214,10 +154,6 @@ export const InventoryMovementNew = () => {
   } = useForm<InventoryMovementFormData>({
     defaultValues: { quantity: 0, description: '' },
   })
-
-  const handleQuickValue = (value: number) => {
-    setValue('quantity', value, { shouldValidate: true })
-  }
 
   const onSubmit = async (data: InventoryMovementFormData) => {
     if (!sessionId || !branchId || !data.quantity || !selectedCategoryId) return
@@ -285,11 +221,35 @@ export const InventoryMovementNew = () => {
               error={showCategoryError ? 'Selecciona una categoría' : undefined}
             />
 
-            <QuantityInput
-              register={register}
-              errors={errors}
-              quickValues={QUICK_VALUES}
-              onQuickValue={handleQuickValue}
+            <div className="space-y-2">
+              <label
+                htmlFor="quantity"
+                className="text-sm font-medium text-content-700 dark:text-content-300"
+              >
+                Cantidad *
+              </label>
+              <input
+                id="quantity"
+                type="number"
+                autoComplete="off"
+                min="1"
+                placeholder="0"
+                {...register('quantity', {
+                  required: 'La cantidad es requerida',
+                  min: 1,
+                })}
+                className="flex h-10 w-full rounded-xl border border-surface-200 bg-white px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-content-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-surface-700 dark:bg-surface-800 dark:text-content-100 dark:placeholder:text-content-500 dark:focus-visible:ring-offset-surface-900"
+              />
+              {errors.quantity && (
+                <p className="text-sm text-red-500 dark:text-red-400">
+                  {errors.quantity.message}
+                </p>
+              )}
+            </div>
+
+            <QuickValuesEditor
+              storageKey={`inventory_${type}`}
+              onSelect={(v) => setValue('quantity', v)}
             />
 
             <div className="space-y-2">
