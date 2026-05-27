@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import {
   fetchSessionById,
   closeSession,
@@ -403,12 +403,15 @@ const TransactionItem = ({
 
 const InventoryItem = ({
   movement,
+  categories,
   onDelete,
 }: {
   movement: any
+  categories: { id: string; name: string }[]
   onDelete: (id: string) => void
 }) => {
   const isIn = movement.type === Entities.InventoryMovementTypes.IN
+  const category = categories.find((c) => c.id === movement.inventoryCategoryId)
   return (
     <div className="flex items-center justify-between p-3 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700">
       <div className="flex items-center gap-2">
@@ -419,9 +422,14 @@ const InventoryItem = ({
         )}
         <div>
           <p className="text-sm font-medium text-content-900 dark:text-content-100">
-            {isIn ? 'Entrada' : 'Salida'}
+            {category?.name || 'Sin categoría'}
           </p>
-          <p className="text-xs text-content-500">{movement.description}</p>
+          {movement.notes && (
+            <p className="text-xs text-content-500 italic">{movement.notes}</p>
+          )}
+          {movement.description && (
+            <p className="text-xs text-content-500">{movement.description}</p>
+          )}
           <p className="text-xs text-content-400">
             {formatDate(movement.createdAt)}
           </p>
@@ -510,10 +518,12 @@ const TransactionList = ({
 
 const InventoryList = ({
   movements,
+  categories,
   isLoading,
   onDelete,
 }: {
   movements: any[]
+  categories: { id: string; name: string }[]
   isLoading: boolean
   onDelete: (id: string) => void
 }) => (
@@ -528,7 +538,12 @@ const InventoryList = ({
       </p>
     ) : (
       movements.map((m) => (
-        <InventoryItem key={m.id} movement={m} onDelete={onDelete} />
+        <InventoryItem
+          key={m.id}
+          movement={m}
+          categories={categories}
+          onDelete={onDelete}
+        />
       ))
     )}
   </div>
@@ -541,7 +556,12 @@ export const SessionDetail = () => {
   }>()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const [activeTab, setActiveTab] = useState<TabType>('movements')
+  const location = useLocation()
+  const initialTab =
+    new URLSearchParams(location.search).get('tab') === 'inventory'
+      ? 'inventory'
+      : 'movements'
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab)
   const [transactionFilter, setTransactionFilter] =
     useState<TransactionFilter>('all')
   const [showCloseModal, setShowCloseModal] = useState(false)
@@ -558,6 +578,7 @@ export const SessionDetail = () => {
   const {
     transactions,
     inventoryMovements,
+    inventoryCategories,
     isLoading: transactionsLoading,
   } = useAppSelector((state: RootState) => state.transactions)
 
@@ -720,6 +741,7 @@ export const SessionDetail = () => {
       ) : (
         <InventoryList
           movements={inventoryMovements}
+          categories={inventoryCategories}
           isLoading={transactionsLoading}
           onDelete={handleDeleteInventoryMovement}
         />

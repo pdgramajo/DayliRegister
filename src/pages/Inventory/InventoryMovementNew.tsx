@@ -180,7 +180,7 @@ export const InventoryMovementNew = () => {
         })
       ).unwrap()
 
-      navigate(`/branches/${branchId}/sessions/${sessionId}`)
+      navigate(`/branches/${branchId}/sessions/${sessionId}?tab=inventory`)
     } catch (error) {
       toast.error((error as string) || 'Error al crear el movimiento')
     }
@@ -202,7 +202,9 @@ export const InventoryMovementNew = () => {
           <div className="flex justify-between items-center mb-6 -mt-2">
             <button
               onClick={() =>
-                navigate(`/branches/${branchId}/sessions/${sessionId}`)
+                navigate(
+                  `/branches/${branchId}/sessions/${sessionId}?tab=inventory`
+                )
               }
               className="text-sm text-content-600 dark:text-content-400 hover:text-content-900 dark:hover:text-content-100 transition-colors"
             >
