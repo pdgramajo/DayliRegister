@@ -86,9 +86,7 @@ export const ClosedSessionCard = ({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (confirm('¿Estás seguro de eliminar esta sesión?')) {
-      onDelete(session.id)
-    }
+    onDelete(session.id)
   }
 
   return (

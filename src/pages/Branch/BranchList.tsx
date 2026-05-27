@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Plus,
@@ -13,7 +13,7 @@ import { fetchBranches, deleteBranch } from '../../store/branchSlice'
 import type { RootState } from '../../store'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import { useTheme } from '../../hooks/useTheme'
-import { Button, toast } from '../../components/ui'
+import { Button, Modal, toast } from '../../components/ui'
 import { BranchCard } from './BranchCard'
 
 export const BranchList = () => {
@@ -27,14 +27,22 @@ export const BranchList = () => {
     dispatch(fetchBranches())
   }, [dispatch])
 
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string
+    name: string
+  } | null>(null)
+
   const handleDelete = (id: string, name: string) => {
-    if (!confirm(`¿Estás seguro de que quieres eliminar "${name}"?`)) {
-      return
-    }
-    dispatch(deleteBranch(id))
+    setDeleteTarget({ id, name })
+  }
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return
+    dispatch(deleteBranch(deleteTarget.id))
       .unwrap()
       .then(() => {
         toast.success('Sucursal eliminada correctamente')
+        setDeleteTarget(null)
       })
       .catch(() => {
         toast.error('Error al eliminar la sucursal')
@@ -133,6 +141,24 @@ export const BranchList = () => {
           )}
         </div>
       </div>
+
+      <Modal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title="Eliminar sucursal"
+      >
+        <p className="text-sm text-content-500 mb-6">
+          ¿Estás seguro de que quieres eliminar "{deleteTarget?.name}"?
+        </p>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+            Cancelar
+          </Button>
+          <Button variant="destructive" onClick={confirmDelete}>
+            Eliminar
+          </Button>
+        </div>
+      </Modal>
     </div>
   )
 }

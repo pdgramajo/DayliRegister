@@ -533,6 +533,10 @@ export const SessionDetail = () => {
   const [showCloseModal, setShowCloseModal] = useState(false)
   const [closingBalance, setClosingBalance] = useState<number | undefined>()
   const [closeError, setCloseError] = useState<string | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<{
+    type: 'transaction' | 'inventory'
+    id: string
+  } | null>(null)
 
   const { currentSession, isLoading: sessionLoading } = useAppSelector(
     (state: RootState) => state.sessions
@@ -581,23 +585,36 @@ export const SessionDetail = () => {
   }
 
   const handleDeleteTransaction = (id: string) => {
-    if (confirm('¿Eliminar esta transacción?'))
-      dispatch(deleteTransaction(id))
-        .unwrap()
-        .then(() => toast.success('Transacción eliminada'))
-        .catch((error) =>
-          toast.error(error || 'Error al eliminar la transacción')
-        )
+    setDeleteTarget({ type: 'transaction', id })
   }
 
   const handleDeleteInventoryMovement = (id: string) => {
-    if (confirm('¿Eliminar este movimiento de inventario?'))
-      dispatch(deleteInventoryMovement(id))
+    setDeleteTarget({ type: 'inventory', id })
+  }
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return
+    if (deleteTarget.type === 'transaction') {
+      dispatch(deleteTransaction(deleteTarget.id))
         .unwrap()
-        .then(() => toast.success('Movimiento eliminado'))
+        .then(() => {
+          toast.success('Transacción eliminada')
+          setDeleteTarget(null)
+        })
+        .catch((error) =>
+          toast.error(error || 'Error al eliminar la transacción')
+        )
+    } else {
+      dispatch(deleteInventoryMovement(deleteTarget.id))
+        .unwrap()
+        .then(() => {
+          toast.success('Movimiento eliminado')
+          setDeleteTarget(null)
+        })
         .catch((error) =>
           toast.error(error || 'Error al eliminar el movimiento')
         )
+    }
   }
 
   const navigateToTransaction = (type: string) =>
@@ -702,6 +719,7 @@ export const SessionDetail = () => {
           </span>
           <MoneyInput
             id="closingBalance"
+            autoComplete="off"
             value={closingBalance}
             onChange={(v) => {
               setClosingBalance(v)
@@ -716,6 +734,30 @@ export const SessionDetail = () => {
           </Button>
           <Button variant="destructive" onClick={confirmCloseSession}>
             Cerrar sesión
+          </Button>
+        </div>
+      </Modal>
+
+      <Modal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title={
+          deleteTarget?.type === 'transaction'
+            ? 'Eliminar transacción'
+            : 'Eliminar movimiento'
+        }
+      >
+        <p className="text-sm text-content-500 mb-6">
+          {deleteTarget?.type === 'transaction'
+            ? '¿Eliminar esta transacción?'
+            : '¿Eliminar este movimiento de inventario?'}
+        </p>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+            Cancelar
+          </Button>
+          <Button variant="destructive" onClick={confirmDelete}>
+            Eliminar
           </Button>
         </div>
       </Modal>

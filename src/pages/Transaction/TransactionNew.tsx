@@ -193,6 +193,7 @@ export const TransactionNew = () => {
                 render={({ field }) => (
                   <MoneyInput
                     id="amount"
+                    autoComplete="off"
                     {...field}
                     value={field.value}
                     onChange={field.onChange}
@@ -224,6 +225,7 @@ export const TransactionNew = () => {
               </label>
               <input
                 id="description"
+                autoComplete="off"
                 placeholder={
                   type === Entities.TransactionTypes.SALE
                     ? '¿Qué se vendió?'

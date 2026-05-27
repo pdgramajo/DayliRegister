@@ -99,6 +99,7 @@ export const BranchForm = ({
           </label>
           <Input
             id="name"
+            autoComplete="organization"
             placeholder="Nombre de la sucursal"
             {...register('name')}
             className={
@@ -121,6 +122,7 @@ export const BranchForm = ({
           </label>
           <Input
             id="address"
+            autoComplete="street-address"
             placeholder="Dirección"
             {...register('address')}
           />
@@ -135,6 +137,7 @@ export const BranchForm = ({
           </label>
           <Input
             id="phone"
+            autoComplete="tel"
             placeholder="+54 388 123 4567"
             value={phoneDisplay}
             onChange={handlePhoneChange}
@@ -145,6 +148,7 @@ export const BranchForm = ({
           <input
             type="checkbox"
             id="isActive"
+            autoComplete="off"
             {...register('isActive')}
             className="size-5 rounded border-surface-300 text-brand-600 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600"
           />

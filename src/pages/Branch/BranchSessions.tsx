@@ -40,6 +40,7 @@ export const BranchSessions = () => {
   const [closingSessionId, setClosingSessionId] = useState<string | null>(null)
   const [closingBalance, setClosingBalance] = useState<number | undefined>()
   const [closeError, setCloseError] = useState<string | null>(null)
+  const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null)
 
   const openSessions = sessions.filter(
     (s) => s.status === Entities.CashSessionStatus.OPEN
@@ -75,12 +76,18 @@ export const BranchSessions = () => {
   }
 
   const handleDeleteSession = (sessionId: string) => {
-    if (branchId) {
-      dispatch(deleteSession(sessionId))
-        .unwrap()
-        .then(() => toast.success('Sesión eliminada correctamente'))
-        .catch((error) => toast.error(error || 'Error al eliminar la sesión'))
-    }
+    setDeleteSessionId(sessionId)
+  }
+
+  const confirmDeleteSession = () => {
+    if (!branchId || !deleteSessionId) return
+    dispatch(deleteSession(deleteSessionId))
+      .unwrap()
+      .then(() => {
+        toast.success('Sesión eliminada correctamente')
+        setDeleteSessionId(null)
+      })
+      .catch((error) => toast.error(error || 'Error al eliminar la sesión'))
   }
 
   const isLoading = branchLoading || sessionsLoading
@@ -191,6 +198,7 @@ export const BranchSessions = () => {
           </span>
           <MoneyInput
             id="closingBalance"
+            autoComplete="off"
             value={closingBalance}
             onChange={(v) => {
               setClosingBalance(v)
@@ -205,6 +213,24 @@ export const BranchSessions = () => {
           </Button>
           <Button variant="destructive" onClick={confirmCloseSession}>
             Cerrar sesión
+          </Button>
+        </div>
+      </Modal>
+
+      <Modal
+        open={!!deleteSessionId}
+        onClose={() => setDeleteSessionId(null)}
+        title="Eliminar sesión"
+      >
+        <p className="text-sm text-content-500 mb-6">
+          ¿Estás seguro de eliminar esta sesión?
+        </p>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setDeleteSessionId(null)}>
+            Cancelar
+          </Button>
+          <Button variant="destructive" onClick={confirmDeleteSession}>
+            Eliminar
           </Button>
         </div>
       </Modal>
