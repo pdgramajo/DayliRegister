@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
-import { Button, QuickValuesEditor, toast } from '../../components/ui'
+import {
+  Button,
+  QuickValuesEditor,
+  QuickNotesEditor,
+  toast,
+} from '../../components/ui'
 import {
   createInventoryMovement,
   fetchInventoryCategories,
@@ -14,6 +19,7 @@ import type { InventoryMovementType } from '../../types/entities'
 
 interface InventoryMovementFormData {
   quantity: number
+  notes: string
   description: string
 }
 
@@ -150,10 +156,13 @@ export const InventoryMovementNew = () => {
     handleSubmit,
     register,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<InventoryMovementFormData>({
-    defaultValues: { quantity: 0, description: '' },
+    defaultValues: { quantity: 0, notes: '', description: '' },
   })
+
+  const notesValue = watch('notes')
 
   const onSubmit = async (data: InventoryMovementFormData) => {
     if (!sessionId || !branchId || !data.quantity || !selectedCategoryId) return
@@ -166,6 +175,7 @@ export const InventoryMovementNew = () => {
           inventoryCategoryId: selectedCategoryId,
           type,
           quantity: data.quantity,
+          notes: data.notes,
           description: data.description,
         })
       ).unwrap()
@@ -251,6 +261,17 @@ export const InventoryMovementNew = () => {
               storageKey={`inventory_${type}`}
               onSelect={(v) => setValue('quantity', v)}
             />
+
+            <div className="space-y-2">
+              <span className="text-sm font-medium text-content-700 dark:text-content-300">
+                Notas (opcional)
+              </span>
+              <QuickNotesEditor
+                storageKey="inventory_notes"
+                selected={notesValue}
+                onSelect={(v) => setValue('notes', v)}
+              />
+            </div>
 
             <div className="space-y-2">
               <label
