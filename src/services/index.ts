@@ -5,3 +5,4 @@ export {
   SessionAlreadyOpenError,
   SessionClosedError,
 } from './SessionService'
+export { ProductService, ProductNotFoundError } from './ProductService'

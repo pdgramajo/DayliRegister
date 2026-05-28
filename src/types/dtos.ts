@@ -1,4 +1,4 @@
-import type { Branch, CashSession } from './entities'
+import type { Branch, CashSession, Product } from './entities'
 
 export type CreateBranchDTO = Pick<
   Branch,
@@ -13,3 +13,12 @@ export type CreateSessionDTO = Pick<
 >
 
 export type UpdateSessionDTO = Partial<CreateSessionDTO>
+
+export type CreateProductDTO = Pick<Product, 'branchId' | 'name' | 'price'> & {
+  offerPrice?: number
+  category?: string
+}
+
+export type UpdateProductDTO = Partial<
+  Pick<Product, 'name' | 'price' | 'offerPrice' | 'category'>
+>

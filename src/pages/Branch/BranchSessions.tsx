@@ -12,7 +12,7 @@ import type { RootState } from '../../store'
 import { Button, Modal, MoneyInput, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
 import { OpenSessionCard, ClosedSessionCard } from './SessionCard'
-import { BarChart3 } from 'lucide-react'
+import { BarChart3, Package } from 'lucide-react'
 
 export const BranchSessions = () => {
   const { id: branchId } = useParams<{ id: string }>()
@@ -129,6 +129,14 @@ export const BranchSessions = () => {
           >
             <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
             <span className="text-xs">Reportes</span>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate(`/branches/${branchId}/products`)}
+            className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+          >
+            <Package className="size-5 text-emerald-500 dark:text-emerald-400" />
+            <span className="text-xs">Productos</span>
           </Button>
         </div>
 

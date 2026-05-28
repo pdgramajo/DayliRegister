@@ -55,7 +55,26 @@ const ROUTES = {
     '/branches/:id/sessions/:sessionId/transaction/new',
   BRANCH_SESSION_INVENTORY_NEW:
     '/branches/:id/sessions/:sessionId/inventory/new',
+  BRANCH_PRODUCTS: '/branches/:id/products',
+  BRANCH_PRODUCT_NEW: '/branches/:id/products/new',
+  BRANCH_PRODUCT_EDIT: '/branches/:id/products/:productId/edit',
 } as const
+
+const ProductList = lazy(() =>
+  import('./pages/Product/ProductList').then((m) => ({
+    default: m.ProductList,
+  }))
+)
+const ProductNew = lazy(() =>
+  import('./pages/Product/ProductNew').then((m) => ({
+    default: m.ProductNew,
+  }))
+)
+const ProductEdit = lazy(() =>
+  import('./pages/Product/ProductEdit').then((m) => ({
+    default: m.ProductEdit,
+  }))
+)
 
 const Loading = () => (
   <div
@@ -92,6 +111,9 @@ const App = () => {
             path={ROUTES.BRANCH_SESSION_INVENTORY_NEW}
             element={<InventoryMovementNew />}
           />
+          <Route path={ROUTES.BRANCH_PRODUCTS} element={<ProductList />} />
+          <Route path={ROUTES.BRANCH_PRODUCT_NEW} element={<ProductNew />} />
+          <Route path={ROUTES.BRANCH_PRODUCT_EDIT} element={<ProductEdit />} />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </Suspense>
