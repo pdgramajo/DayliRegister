@@ -1,4 +1,10 @@
-import type { Branch, CashSession, Product } from './entities'
+import type {
+  Branch,
+  CashSession,
+  Client,
+  DebtEntry,
+  Product,
+} from './entities'
 
 export type CreateBranchDTO = Pick<
   Branch,
@@ -22,3 +28,16 @@ export type CreateProductDTO = Pick<Product, 'branchId' | 'name' | 'price'> & {
 export type UpdateProductDTO = Partial<
   Pick<Product, 'name' | 'price' | 'offerPrice' | 'category'>
 >
+
+export type CreateClientDTO = Pick<Client, 'branchId' | 'name' | 'phone'> & {
+  notes?: string
+}
+
+export type UpdateClientDTO = Partial<Pick<Client, 'name' | 'phone' | 'notes'>>
+
+export type CreateDebtEntryDTO = Pick<
+  DebtEntry,
+  'clientId' | 'branchId' | 'type' | 'amount'
+> & {
+  description?: string
+}

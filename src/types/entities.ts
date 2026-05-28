@@ -108,6 +108,30 @@ export interface Product extends BaseEntity {
 }
 
 /* =========================================================
+ * CLIENTS & DEBTS
+ * ========================================================= */
+
+/** Cliente */
+export interface Client extends BaseEntity {
+  branchId: string
+  name: string
+  phone: string
+  notes?: string
+}
+
+/** Tipo de entrada de deuda */
+export type DebtEntryType = 'debt' | 'payment'
+
+/** Movimiento de deuda (carga o pago) */
+export interface DebtEntry extends BaseEntity {
+  clientId: string
+  branchId: string
+  type: DebtEntryType
+  amount: number
+  description?: string
+}
+
+/* =========================================================
  * EXPORTS
  * ========================================================= */
 

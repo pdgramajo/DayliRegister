@@ -6,3 +6,8 @@ export {
   SessionClosedError,
 } from './SessionService'
 export { ProductService, ProductNotFoundError } from './ProductService'
+export {
+  ClientService,
+  ClientNotFoundError,
+  DebtEntryNotFoundError,
+} from './ClientService'

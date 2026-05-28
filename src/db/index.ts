@@ -3,6 +3,8 @@ import type {
   BaseEntity,
   Branch,
   CashSession,
+  Client,
+  DebtEntry,
   Transaction,
   TransactionType,
   PaymentMethod,
@@ -15,6 +17,8 @@ export type {
   BaseEntity,
   Branch,
   CashSession,
+  Client,
+  DebtEntry,
   Transaction,
   TransactionType,
   PaymentMethod,
@@ -40,10 +44,14 @@ export class DayliRegisterDB extends Dexie {
 
   products!: EntityTable<Product, 'id'>
 
+  clients!: EntityTable<Client, 'id'>
+
+  debtEntries!: EntityTable<DebtEntry, 'id'>
+
   constructor() {
     super('dayliRegisterDB')
 
-    this.version(1).stores({
+    this.version(2).stores({
       branches: 'id, name, isActive, createdAt, updatedAt, deletedAt',
 
       cashSessions:
@@ -58,6 +66,11 @@ export class DayliRegisterDB extends Dexie {
         'id, sessionId, branchId, inventoryCategoryId, type, quantity, createdAt, updatedAt, deletedAt',
 
       products: 'id, branchId, name, price, createdAt, updatedAt, deletedAt',
+
+      clients: 'id, branchId, name, phone, createdAt, updatedAt, deletedAt',
+
+      debtEntries:
+        'id, clientId, branchId, type, amount, createdAt, updatedAt, deletedAt',
     })
   }
 }

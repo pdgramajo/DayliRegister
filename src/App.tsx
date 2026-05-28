@@ -58,6 +58,9 @@ const ROUTES = {
   BRANCH_PRODUCTS: '/branches/:id/products',
   BRANCH_PRODUCT_NEW: '/branches/:id/products/new',
   BRANCH_PRODUCT_EDIT: '/branches/:id/products/:productId/edit',
+  BRANCH_CLIENTS: '/branches/:id/clients',
+  BRANCH_CLIENT_NEW: '/branches/:id/clients/new',
+  BRANCH_CLIENT_EDIT: '/branches/:id/clients/:clientId/edit',
 } as const
 
 const ProductList = lazy(() =>
@@ -73,6 +76,21 @@ const ProductNew = lazy(() =>
 const ProductEdit = lazy(() =>
   import('./pages/Product/ProductEdit').then((m) => ({
     default: m.ProductEdit,
+  }))
+)
+const ClientList = lazy(() =>
+  import('./pages/Client/ClientList').then((m) => ({
+    default: m.ClientList,
+  }))
+)
+const ClientNew = lazy(() =>
+  import('./pages/Client/ClientNew').then((m) => ({
+    default: m.ClientNew,
+  }))
+)
+const ClientEdit = lazy(() =>
+  import('./pages/Client/ClientEdit').then((m) => ({
+    default: m.ClientEdit,
   }))
 )
 
@@ -114,6 +132,9 @@ const App = () => {
           <Route path={ROUTES.BRANCH_PRODUCTS} element={<ProductList />} />
           <Route path={ROUTES.BRANCH_PRODUCT_NEW} element={<ProductNew />} />
           <Route path={ROUTES.BRANCH_PRODUCT_EDIT} element={<ProductEdit />} />
+          <Route path={ROUTES.BRANCH_CLIENTS} element={<ClientList />} />
+          <Route path={ROUTES.BRANCH_CLIENT_NEW} element={<ClientNew />} />
+          <Route path={ROUTES.BRANCH_CLIENT_EDIT} element={<ClientEdit />} />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </Suspense>

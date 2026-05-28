@@ -3,6 +3,7 @@ import branchReducer from './branchSlice'
 import sessionReducer from './sessionSlice'
 import transactionReducer from './transactionSlice'
 import productReducer from './productSlice'
+import clientReducer from './clientSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     sessions: sessionReducer,
     transactions: transactionReducer,
     products: productReducer,
+    clients: clientReducer,
   },
 })
 
