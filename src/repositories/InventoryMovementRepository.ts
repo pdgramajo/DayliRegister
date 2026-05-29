@@ -1,19 +1,7 @@
 import { db } from '../db'
-import type {
-  InventoryMovement,
-  InventoryMovementType,
-} from '../types/entities'
+import type { InventoryMovement } from '../types/entities'
+import type { CreateInventoryMovementDTO } from '../types/dtos'
 import { getTimestamp } from '../lib/utils'
-
-export interface CreateInventoryMovementDTO {
-  sessionId: string
-  branchId: string
-  inventoryCategoryId: string
-  type: InventoryMovementType
-  quantity: number
-  description?: string
-  notes?: string
-}
 
 export const InventoryMovementRepository = {
   async getBySessionId(sessionId: string): Promise<InventoryMovement[]> {

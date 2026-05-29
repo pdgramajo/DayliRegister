@@ -1,20 +1,7 @@
 import { db } from '../db'
-import type {
-  Transaction,
-  TransactionType,
-  PaymentMethod,
-} from '../types/entities'
+import type { Transaction } from '../types/entities'
+import type { CreateTransactionDTO } from '../types/dtos'
 import { getTimestamp } from '../lib/utils'
-
-export interface CreateTransactionDTO {
-  sessionId: string
-  branchId: string
-  type: TransactionType
-  amount: number
-  paymentMethod?: PaymentMethod
-  description?: string
-  notes?: string
-}
 
 export const TransactionRepository = {
   async getBySessionId(sessionId: string): Promise<Transaction[]> {

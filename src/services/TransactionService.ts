@@ -1,8 +1,6 @@
-import {
-  TransactionRepository,
-  type CreateTransactionDTO,
-} from '../repositories/TransactionRepository'
+import { TransactionRepository } from '../repositories/TransactionRepository'
 import type { Transaction } from '../types/entities'
+import type { CreateTransactionDTO } from '../types/dtos'
 
 export class TransactionNotFoundError extends Error {
   constructor(id: string) {

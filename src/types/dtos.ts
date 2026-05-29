@@ -3,7 +3,10 @@ import type {
   CashSession,
   Client,
   DebtEntry,
+  InventoryMovementType,
   Product,
+  TransactionType,
+  PaymentMethod,
 } from './entities'
 
 export type CreateBranchDTO = Pick<
@@ -41,3 +44,25 @@ export type CreateDebtEntryDTO = Pick<
 > & {
   description?: string
 }
+
+export interface CreateTransactionDTO {
+  sessionId: string
+  branchId: string
+  type: TransactionType
+  amount: number
+  paymentMethod?: PaymentMethod
+  description?: string
+  notes?: string
+}
+
+export interface CreateInventoryMovementDTO {
+  sessionId: string
+  branchId: string
+  inventoryCategoryId: string
+  type: InventoryMovementType
+  quantity: number
+  description?: string
+  notes?: string
+}
+
+export type CreateInventoryCategoryDTO = { name: string }

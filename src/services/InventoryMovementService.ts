@@ -1,8 +1,6 @@
-import {
-  InventoryMovementRepository,
-  type CreateInventoryMovementDTO,
-} from '../repositories/InventoryMovementRepository'
+import { InventoryMovementRepository } from '../repositories/InventoryMovementRepository'
 import type { InventoryMovement } from '../types/entities'
+import type { CreateInventoryMovementDTO } from '../types/dtos'
 
 export class InventoryMovementNotFoundError extends Error {
   constructor(id: string) {

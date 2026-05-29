@@ -7,8 +7,10 @@ import { TransactionService } from '../services/TransactionService'
 import { InventoryMovementService } from '../services/InventoryMovementService'
 import { InventoryCategoryService } from '../services/InventoryCategoryService'
 import type { Transaction, InventoryCategory } from '../types/entities'
-import type { CreateTransactionDTO } from '../repositories/TransactionRepository'
-import type { CreateInventoryMovementDTO } from '../repositories/InventoryMovementRepository'
+import type {
+  CreateTransactionDTO,
+  CreateInventoryMovementDTO,
+} from '../types/dtos'
 
 interface TransactionState {
   transactions: Transaction[]
