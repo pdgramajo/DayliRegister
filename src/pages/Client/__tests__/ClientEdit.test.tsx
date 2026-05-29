@@ -80,6 +80,16 @@ describe('ClientEdit', () => {
 
   it('should call updateClient and navigate on submit', async () => {
     const user = userEvent.setup()
+    vi.spyOn(ClientService, 'getClientById').mockResolvedValue({
+      id: 'client-1',
+      branchId: 'branch-1',
+      name: 'Juan Pérez',
+      phone: '+543884123456',
+      balance: 2500,
+      entries: [],
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+    })
     vi.spyOn(ClientService, 'updateClient').mockResolvedValue({
       id: 'client-1',
     } as any)
@@ -109,6 +119,9 @@ describe('ClientEdit', () => {
 
     await user.clear(screen.getByLabelText('Nombre'))
     await user.type(screen.getByLabelText('Nombre'), 'Juan Editado')
+    await waitFor(() => {
+      expect(screen.getByText('Guardar')).not.toBeDisabled()
+    })
     await user.click(screen.getByText('Guardar'))
 
     await waitFor(() => {
@@ -119,6 +132,16 @@ describe('ClientEdit', () => {
 
   it('should not navigate when updateClient fails', async () => {
     const user = userEvent.setup()
+    vi.spyOn(ClientService, 'getClientById').mockResolvedValue({
+      id: 'client-1',
+      branchId: 'branch-1',
+      name: 'Juan Pérez',
+      phone: '+543884123456',
+      balance: 2500,
+      entries: [],
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+    })
     vi.spyOn(ClientService, 'updateClient').mockRejectedValue(new Error('fail'))
 
     const { ClientEdit } = await import('../ClientEdit')
@@ -145,6 +168,9 @@ describe('ClientEdit', () => {
     )
 
     await user.type(screen.getByLabelText('Nombre'), ' Falla')
+    await waitFor(() => {
+      expect(screen.getByText('Guardar')).not.toBeDisabled()
+    })
     await user.click(screen.getByText('Guardar'))
 
     await waitFor(() => {
