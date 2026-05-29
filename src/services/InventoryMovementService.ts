@@ -10,6 +10,10 @@ export class InventoryMovementNotFoundError extends Error {
 }
 
 export const InventoryMovementService = {
+  async getByBranchId(branchId: string): Promise<InventoryMovement[]> {
+    return InventoryMovementRepository.getByBranchId(branchId)
+  },
+
   async getMovementsBySession(sessionId: string): Promise<InventoryMovement[]> {
     return InventoryMovementRepository.getBySessionId(sessionId)
   },

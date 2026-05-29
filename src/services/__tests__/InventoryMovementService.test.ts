@@ -10,6 +10,104 @@ describe('InventoryMovementService', () => {
     await db.inventoryMovements.clear()
   })
 
+  describe('getByBranchId', () => {
+    it('should return movements for a branch', async () => {
+      await db.inventoryMovements.add({
+        id: crypto.randomUUID(),
+        sessionId: 'session-1',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-1',
+        type: 'in',
+        quantity: 10,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+      await db.inventoryMovements.add({
+        id: crypto.randomUUID(),
+        sessionId: 'session-2',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-2',
+        type: 'out',
+        quantity: 3,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+
+      const movements = await InventoryMovementService.getByBranchId('branch-1')
+
+      expect(movements).toHaveLength(2)
+    })
+
+    it('should not return deleted movements', async () => {
+      const id = crypto.randomUUID()
+      await db.inventoryMovements.add({
+        id,
+        sessionId: 'session-1',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-1',
+        type: 'in',
+        quantity: 5,
+        deletedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+
+      const movements = await InventoryMovementService.getByBranchId('branch-1')
+
+      expect(movements).toHaveLength(0)
+    })
+
+    it('should return empty array for branch with no movements', async () => {
+      const movements =
+        await InventoryMovementService.getByBranchId('empty-branch')
+      expect(movements).toEqual([])
+    })
+
+    it('should return movements sorted by newest first', async () => {
+      await db.inventoryMovements.add({
+        id: crypto.randomUUID(),
+        sessionId: 'session-1',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-1',
+        type: 'in',
+        quantity: 1,
+        createdAt: '2026-05-25T10:00:00.000Z',
+        updatedAt: '2026-05-25T10:00:00.000Z',
+      })
+      await db.inventoryMovements.add({
+        id: crypto.randomUUID(),
+        sessionId: 'session-2',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-2',
+        type: 'in',
+        quantity: 2,
+        createdAt: '2026-05-27T10:00:00.000Z',
+        updatedAt: '2026-05-27T10:00:00.000Z',
+      })
+      await db.inventoryMovements.add({
+        id: crypto.randomUUID(),
+        sessionId: 'session-3',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-3',
+        type: 'out',
+        quantity: 3,
+        createdAt: '2026-05-26T10:00:00.000Z',
+        updatedAt: '2026-05-26T10:00:00.000Z',
+      })
+
+      const movements = await InventoryMovementService.getByBranchId('branch-1')
+
+      expect(movements).toHaveLength(3)
+      // Newest first
+      expect(
+        new Date(movements[0].createdAt) > new Date(movements[1].createdAt)
+      ).toBe(true)
+      expect(
+        new Date(movements[1].createdAt) > new Date(movements[2].createdAt)
+      ).toBe(true)
+    })
+  })
+
   describe('getMovementsBySession', () => {
     it('should return movements for a session', async () => {
       await db.inventoryMovements.add({

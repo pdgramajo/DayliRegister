@@ -61,6 +61,7 @@ const ROUTES = {
   BRANCH_CLIENT_NEW: '/branches/:id/clients/new',
   BRANCH_CLIENT_EDIT: '/branches/:id/clients/:clientId/edit',
   BRANCH_REPORT: '/branches/:id/report',
+  BRANCH_INVENTORY: '/branches/:id/inventory',
 } as const
 
 const ProductList = lazy(() =>
@@ -96,6 +97,11 @@ const ClientEdit = lazy(() =>
 const ReportPage = lazy(() =>
   import('./pages/Report/ReportPage').then((m) => ({
     default: m.ReportPage,
+  }))
+)
+const InventoryMovements = lazy(() =>
+  import('./pages/Inventory/InventoryMovements').then((m) => ({
+    default: m.InventoryMovements,
   }))
 )
 
@@ -141,6 +147,10 @@ const App = () => {
           <Route path={ROUTES.BRANCH_CLIENT_NEW} element={<ClientNew />} />
           <Route path={ROUTES.BRANCH_CLIENT_EDIT} element={<ClientEdit />} />
           <Route path={ROUTES.BRANCH_REPORT} element={<ReportPage />} />
+          <Route
+            path={ROUTES.BRANCH_INVENTORY}
+            element={<InventoryMovements />}
+          />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </Suspense>
