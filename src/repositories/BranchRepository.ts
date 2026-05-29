@@ -44,12 +44,4 @@ export const BranchRepository = {
         branches.filter((branch) => branch.isActive && !branch.deletedAt)
       )
   },
-
-  async getByBranchId(branchId: string): Promise<Branch | undefined> {
-    return db.branches
-      .where('id')
-      .equals(branchId)
-      .and((branch) => !branch.deletedAt)
-      .first()
-  },
 }
