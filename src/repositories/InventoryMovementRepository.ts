@@ -4,6 +4,21 @@ import type { CreateInventoryMovementDTO } from '../types/dtos'
 import { getTimestamp } from '../lib/utils'
 
 export const InventoryMovementRepository = {
+  async getByBranchId(branchId: string): Promise<InventoryMovement[]> {
+    const movements = await db.inventoryMovements
+      .where('branchId')
+      .equals(branchId)
+      .and((m) => !m.deletedAt)
+      .toArray()
+
+    return movements.sort((a, b) => {
+      const timeDiff =
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      if (timeDiff !== 0) return timeDiff
+      return b.id.localeCompare(a.id)
+    })
+  },
+
   async getBySessionId(sessionId: string): Promise<InventoryMovement[]> {
     const movements = await db.inventoryMovements
       .where('sessionId')

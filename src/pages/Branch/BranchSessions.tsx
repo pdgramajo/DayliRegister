@@ -125,6 +125,7 @@ export const BranchSessions = () => {
           </Button>
           <Button
             variant="outline"
+            onClick={() => navigate(`/branches/${branchId}/report`)}
             className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
           >
             <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />

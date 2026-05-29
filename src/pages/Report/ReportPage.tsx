@@ -1,0 +1,321 @@
+import { useEffect, useState, useCallback, useRef } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { fetchBranchById, clearCurrentBranch } from '../../store/branchSlice'
+import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
+import type { RootState } from '../../store'
+import { Button, Input, toast } from '../../components/ui'
+import { openWhatsApp } from '../../lib/whatsapp'
+import {
+  getReportData,
+  generateReportText,
+  getWeekRange,
+  snapToMonday,
+  snapToSunday,
+} from '../../services/ReportService'
+import { InventoryCategoryService } from '../../services/InventoryCategoryService'
+import { useReportStorage } from './useReportStorage'
+import { ReportResult } from './ReportResult'
+import type { ReportData } from '../../services/ReportService'
+import type { InventoryCategory } from '../../types/entities'
+import {
+  MessageCircle,
+  BarChart3,
+  ArrowLeft,
+  CalendarDays,
+  Check,
+} from 'lucide-react'
+import { DatePickerCard } from './DatePickerCard'
+
+const ToggleRow = ({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean
+  onChange: (v: boolean) => void
+  label: string
+}) => (
+  <label className="flex items-center justify-between py-3 cursor-pointer group">
+    <span className="text-sm text-content-700 dark:text-content-300 group-hover:text-content-900 dark:group-hover:text-white transition-colors">
+      {label}
+    </span>
+    <div
+      className={`relative inline-flex h-6 w-10 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ${
+        checked ? 'bg-brand-500' : 'bg-surface-300 dark:bg-surface-600'
+      }`}
+    >
+      <span
+        className={`inline-block size-[18px] transform rounded-full bg-white shadow-sm ring-0 transition-transform duration-200 ${
+          checked ? 'translate-x-[19px]' : 'translate-x-[3px]'
+        }`}
+      />
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="sr-only"
+      />
+    </div>
+  </label>
+)
+
+export const ReportPage = () => {
+  const { id: branchId } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
+  const { currentBranch } = useAppSelector((state: RootState) => state.branches)
+
+  const { config, updateConfig } = useReportStorage(branchId ?? '')
+
+  const [categories, setCategories] = useState<InventoryCategory[]>([])
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
+  const [reportData, setReportData] = useState<ReportData | null>(null)
+  const [reportText, setReportText] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const whatsappRef = useRef<HTMLDivElement>(null)
+
+  // Load branch and categories
+  useEffect(() => {
+    if (branchId) {
+      dispatch(fetchBranchById(branchId))
+      InventoryCategoryService.getAllCategories().then(setCategories)
+    }
+    return () => {
+      dispatch(clearCurrentBranch())
+    }
+  }, [dispatch, branchId])
+
+  // Set default date range (Monday to today)
+  useEffect(() => {
+    const [monday, sunday] = getWeekRange()
+    setFromDate(monday)
+    setToDate(sunday)
+  }, [])
+
+  const handleGenerate = useCallback(async () => {
+    if (!branchId || !currentBranch || !fromDate || !toDate) return
+
+    setIsGenerating(true)
+    try {
+      const data = await getReportData(
+        branchId,
+        currentBranch.name,
+        fromDate,
+        toDate,
+        config
+      )
+      const text = generateReportText(data, config)
+      setReportData(data)
+      setReportText(text)
+      toast.success('Reporte generado correctamente')
+      // Scroll to WhatsApp section after a brief delay so the DOM updates
+      setTimeout(() => {
+        whatsappRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        })
+      }, 100)
+    } catch (error) {
+      toast.error('Error al generar el reporte')
+      console.error(error)
+    } finally {
+      setIsGenerating(false)
+    }
+  }, [branchId, currentBranch, fromDate, toDate, config])
+
+  // Auto-generate on mount or when config changes
+  useEffect(() => {
+    if (branchId && currentBranch && fromDate && toDate && !reportData) {
+      handleGenerate()
+    }
+  }, [branchId, currentBranch, fromDate, toDate, reportData, handleGenerate])
+
+  const handleSendWhatsApp = useCallback(() => {
+    if (!config.phone) {
+      toast.error('Ingresá un número de teléfono')
+      return
+    }
+    if (!reportText) {
+      toast.error('Generá el reporte primero')
+      return
+    }
+    openWhatsApp(config.phone, reportText)
+  }, [config.phone, reportText])
+
+  const handleToggleCategory = useCallback(
+    (categoryId: string) => {
+      const selected = config.selectedCategoryIds.includes(categoryId)
+        ? config.selectedCategoryIds.filter((id) => id !== categoryId)
+        : [...config.selectedCategoryIds, categoryId]
+      updateConfig({ selectedCategoryIds: selected })
+    },
+    [config.selectedCategoryIds, updateConfig]
+  )
+
+  if (!currentBranch) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="h-screen flex flex-col bg-surface-50 dark:bg-surface-900">
+      <div className="max-w-2xl mx-auto w-full flex flex-col flex-1 min-h-0">
+        {/* Header */}
+        <div className="shrink-0 px-4 pt-6 sm:px-6 lg:px-8">
+          <button
+            onClick={() => navigate(`/branches/${branchId}/sessions`)}
+            className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors mb-4 block"
+          >
+            <ArrowLeft className="size-4 inline mr-1" />
+            Volver a {currentBranch.name}
+          </button>
+
+          <div className="flex items-center gap-3 mb-6">
+            <BarChart3 className="size-6 text-indigo-500" />
+            <h1 className="text-xl font-bold text-content-900 dark:text-white">
+              Reporte
+            </h1>
+          </div>
+
+          {/* Date picker cards */}
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <DatePickerCard
+              label="Desde"
+              value={fromDate}
+              onChange={(v) => setFromDate(snapToMonday(v))}
+            />
+            <DatePickerCard
+              label="Hasta"
+              value={toDate}
+              onChange={(v) => setToDate(snapToSunday(v))}
+            />
+          </div>
+
+          <Button
+            onClick={handleGenerate}
+            loading={isGenerating}
+            className="w-full h-11 mb-6 text-sm font-semibold gap-2"
+          >
+            <CalendarDays className="size-4" />
+            Generar reporte
+          </Button>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto min-h-0 px-4 pb-8 sm:px-6 lg:px-8 space-y-6">
+          {/* Config section */}
+          <section className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+            <div className="px-4 py-3 border-b border-surface-100 dark:border-surface-700/50">
+              <h2 className="text-sm font-semibold text-content-700 dark:text-content-300">
+                Configuración del reporte
+              </h2>
+            </div>
+            <div className="divide-y divide-surface-100 dark:divide-surface-700/50 px-4">
+              <ToggleRow
+                checked={config.showPaymentBreakdown}
+                onChange={(v) => updateConfig({ showPaymentBreakdown: v })}
+                label="Desglose efectivo/transferencia"
+              />
+              <ToggleRow
+                checked={config.showExpenses}
+                onChange={(v) => updateConfig({ showExpenses: v })}
+                label="Gastos"
+              />
+              <ToggleRow
+                checked={config.showWithdrawals}
+                onChange={(v) => updateConfig({ showWithdrawals: v })}
+                label="Retiros"
+              />
+              <ToggleRow
+                checked={config.showIncome}
+                onChange={(v) => updateConfig({ showIncome: v })}
+                label="Ingresos"
+              />
+              <ToggleRow
+                checked={config.showMovements}
+                onChange={(v) => updateConfig({ showMovements: v })}
+                label="Medias res recibidas"
+              />
+
+              {config.showMovements && categories.length > 0 && (
+                <div className="py-2 pl-8 space-y-1">
+                  {categories.map((cat) => (
+                    <label
+                      key={cat.id}
+                      className="flex items-center gap-3 py-1.5 cursor-pointer group"
+                    >
+                      <div className="relative flex items-center justify-center size-4">
+                        <input
+                          type="checkbox"
+                          checked={config.selectedCategoryIds.includes(cat.id)}
+                          onChange={() => handleToggleCategory(cat.id)}
+                          className="peer sr-only"
+                        />
+                        <div className="size-4 rounded border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 transition-all peer-checked:bg-brand-500 peer-checked:border-brand-500 peer-checked:ring-2 peer-checked:ring-brand-500/20 flex items-center justify-center">
+                          {config.selectedCategoryIds.includes(cat.id) && (
+                            <Check className="size-3 text-white" />
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-sm text-content-600 dark:text-content-400 group-hover:text-content-800 dark:group-hover:text-content-200 transition-colors">
+                        {cat.name}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              <ToggleRow
+                checked={config.showBalance}
+                onChange={(v) => updateConfig({ showBalance: v })}
+                label="Balance"
+              />
+            </div>
+          </section>
+
+          {/* WhatsApp section */}
+          <section
+            ref={whatsappRef}
+            className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-4 space-y-3 scroll-mt-4"
+          >
+            <h2 className="text-sm font-semibold text-content-700 dark:text-content-300">
+              Enviar por WhatsApp
+            </h2>
+            <div className="flex gap-2">
+              <Input
+                type="tel"
+                placeholder="+54 388 412 3456"
+                value={config.phone}
+                onChange={(e) => updateConfig({ phone: e.target.value })}
+                className="flex-1 h-10 text-sm"
+              />
+              <Button
+                variant="default"
+                onClick={handleSendWhatsApp}
+                disabled={!reportText}
+                className="gap-1.5 shrink-0"
+              >
+                <MessageCircle className="size-4" />
+                Enviar
+              </Button>
+            </div>
+            <p className="text-xs text-content-400">
+              El reporte se abrirá en WhatsApp Web con el texto listo para
+              enviar.
+            </p>
+          </section>
+
+          {/* Report preview */}
+          {reportData && (
+            <ReportResult data={reportData} reportText={reportText} />
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -4,6 +4,21 @@ import type { CreateTransactionDTO } from '../types/dtos'
 import { getTimestamp } from '../lib/utils'
 
 export const TransactionRepository = {
+  async getByBranchId(branchId: string): Promise<Transaction[]> {
+    const transactions = await db.transactions
+      .where('branchId')
+      .equals(branchId)
+      .and((t) => !t.deletedAt)
+      .toArray()
+
+    return transactions.sort((a, b) => {
+      const timeDiff =
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      if (timeDiff !== 0) return timeDiff
+      return b.id.localeCompare(a.id)
+    })
+  },
+
   async getBySessionId(sessionId: string): Promise<Transaction[]> {
     const transactions = await db.transactions
       .where('sessionId')
