@@ -1,5 +1,6 @@
 import { db } from '../db'
 import type { InventoryCategory } from '../types/entities'
+import { getTimestamp } from '../lib/utils'
 
 export const InventoryCategoryRepository = {
   async getAll(): Promise<InventoryCategory[]> {
@@ -12,7 +13,7 @@ export const InventoryCategoryRepository = {
   },
 
   async create(name: string): Promise<string> {
-    const now = new Date().toISOString()
+    const now = getTimestamp()
     return db.inventoryCategories.add({
       id: crypto.randomUUID(),
       name,
