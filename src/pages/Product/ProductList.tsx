@@ -98,63 +98,65 @@ export const ProductList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-surface-50 dark:bg-surface-900 px-4 py-6 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-6">
-          <button
-            onClick={() => navigate(`/branches/${branchId}/sessions`)}
-            className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors mb-4 block"
-          >
-            ← Volver a {currentBranch.name}
-          </button>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-content-900 dark:text-white tracking-tight">
-                Productos
-              </h1>
-              <p className="mt-1 text-sm text-content-500 dark:text-content-400">
-                {products.length} producto{products.length !== 1 ? 's' : ''}
-              </p>
-            </div>
-            <Button
-              onClick={() => navigate(`/branches/${branchId}/products/new`)}
+    <div className="h-screen flex flex-col bg-surface-50 dark:bg-surface-900">
+      <div className="max-w-2xl mx-auto w-full flex flex-col flex-1 min-h-0">
+        <div className="shrink-0 px-4 pt-6 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <button
+              onClick={() => navigate(`/branches/${branchId}/sessions`)}
+              className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors mb-4 block"
             >
-              + Nuevo
-            </Button>
+              ← Volver a {currentBranch.name}
+            </button>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-content-900 dark:text-white tracking-tight">
+                  Productos
+                </h1>
+                <p className="mt-1 text-sm text-content-500 dark:text-content-400">
+                  {products.length} producto{products.length !== 1 ? 's' : ''}
+                </p>
+              </div>
+              <Button
+                onClick={() => navigate(`/branches/${branchId}/products/new`)}
+              >
+                + Nuevo
+              </Button>
+            </div>
           </div>
+
+          {products.length > 0 && (
+            <div className="flex gap-2 mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyAll}
+                className="gap-1.5"
+              >
+                <Copy className="size-4" />
+                Copiar todo
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopySelected}
+                disabled={selectedIds.size === 0}
+                className="gap-1.5"
+              >
+                {copied ? (
+                  <Check className="size-4 text-green-500" />
+                ) : (
+                  <Copy className="size-4" />
+                )}
+                Copiar seleccionados ({selectedIds.size})
+              </Button>
+            </div>
+          )}
         </div>
 
-        {products.length > 0 && (
-          <div className="flex gap-2 mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopyAll}
-              className="gap-1.5"
-            >
-              <Copy className="size-4" />
-              Copiar todo
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopySelected}
-              disabled={selectedIds.size === 0}
-              className="gap-1.5"
-            >
-              {copied ? (
-                <Check className="size-4 text-green-500" />
-              ) : (
-                <Copy className="size-4" />
-              )}
-              Copiar seleccionados ({selectedIds.size})
-            </Button>
-          </div>
-        )}
-
         {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8 sm:px-6 lg:px-8 text-center">
             <Package className="size-12 text-content-300 dark:text-content-600 mb-4" />
             <p className="text-content-500 dark:text-content-400 mb-2">
               No hay productos registrados
@@ -170,7 +172,7 @@ export const ProductList = () => {
             </Button>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="flex-1 overflow-y-auto min-h-0 space-y-2 px-4 pb-8 sm:px-6 lg:px-8">
             {products.map((product) => (
               <ProductCard
                 key={product.id}
