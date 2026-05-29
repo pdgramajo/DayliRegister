@@ -201,11 +201,14 @@ const TabButton = ({
 
 const ActionButtons = ({
   type,
+  isOpen,
   onNavigate,
 }: {
   type: TabType
+  isOpen: boolean
   onNavigate: (path: string) => void
 }) => {
+  if (!isOpen) return null
   if (type === 'movements') {
     return (
       <div className="grid grid-cols-4 gap-1 mb-2">
@@ -326,9 +329,11 @@ const TransactionFilters = ({
 
 const TransactionItem = ({
   transaction,
+  isOpen,
   onDelete,
 }: {
   transaction: Transaction
+  isOpen: boolean
   onDelete: (id: string) => void
 }) => {
   const getLabel = (type: string) => {
@@ -395,12 +400,14 @@ const TransactionItem = ({
           {isPositive ? '+' : '-'}
           {formatMoney(transaction.amount)}
         </span>
-        <button
-          onClick={() => onDelete(transaction.id)}
-          className="p-1 text-content-400 hover:text-red-600"
-        >
-          <X className="size-4" />
-        </button>
+        {isOpen && (
+          <button
+            onClick={() => onDelete(transaction.id)}
+            className="p-1 text-content-400 hover:text-red-600"
+          >
+            <X className="size-4" />
+          </button>
+        )}
       </div>
     </div>
   )
@@ -409,10 +416,12 @@ const TransactionItem = ({
 const InventoryItem = ({
   movement,
   categories,
+  isOpen,
   onDelete,
 }: {
   movement: InventoryMovement
   categories: { id: string; name: string }[]
+  isOpen: boolean
   onDelete: (id: string) => void
 }) => {
   const isIn = movement.type === Entities.InventoryMovementTypes.IN
@@ -447,12 +456,14 @@ const InventoryItem = ({
           {isIn ? '+' : '-'}
           {movement.quantity}
         </span>
-        <button
-          onClick={() => onDelete(movement.id)}
-          className="p-1 text-content-400 hover:text-red-600"
-        >
-          <X className="size-4" />
-        </button>
+        {isOpen && (
+          <button
+            onClick={() => onDelete(movement.id)}
+            className="p-1 text-content-400 hover:text-red-600"
+          >
+            <X className="size-4" />
+          </button>
+        )}
       </div>
     </div>
   )
@@ -462,12 +473,14 @@ const TransactionList = ({
   transactions,
   isLoading,
   filter,
+  isOpen,
   onFilterChange,
   onDelete,
 }: {
   transactions: Transaction[]
   isLoading: boolean
   filter: TransactionFilter
+  isOpen: boolean
   onFilterChange: (f: TransactionFilter) => void
   onDelete: (id: string) => void
 }) => {
@@ -513,7 +526,12 @@ const TransactionList = ({
           </p>
         ) : (
           filtered.map((t) => (
-            <TransactionItem key={t.id} transaction={t} onDelete={onDelete} />
+            <TransactionItem
+              key={t.id}
+              transaction={t}
+              isOpen={isOpen}
+              onDelete={onDelete}
+            />
           ))
         )}
       </div>
@@ -525,11 +543,13 @@ const InventoryList = ({
   movements,
   categories,
   isLoading,
+  isOpen,
   onDelete,
 }: {
   movements: InventoryMovement[]
   categories: { id: string; name: string }[]
   isLoading: boolean
+  isOpen: boolean
   onDelete: (id: string) => void
 }) => (
   <div className="space-y-2 max-h-[calc(100vh-400px)] overflow-y-auto">
@@ -547,6 +567,7 @@ const InventoryList = ({
           key={m.id}
           movement={m}
           categories={categories}
+          isOpen={isOpen}
           onDelete={onDelete}
         />
       ))
@@ -735,12 +756,17 @@ export const SessionDetail = () => {
         transactionCount={transactions.length}
         inventoryCount={inventoryMovements.length}
       />
-      <ActionButtons type={activeTab} onNavigate={handleNavigate} />
+      <ActionButtons
+        type={activeTab}
+        isOpen={isOpen}
+        onNavigate={handleNavigate}
+      />
       {activeTab === 'movements' ? (
         <TransactionList
           transactions={transactions}
           isLoading={transactionsLoading}
           filter={transactionFilter}
+          isOpen={isOpen}
           onFilterChange={setTransactionFilter}
           onDelete={handleDeleteTransaction}
         />
@@ -749,6 +775,7 @@ export const SessionDetail = () => {
           movements={inventoryMovements}
           categories={inventoryCategories}
           isLoading={transactionsLoading}
+          isOpen={isOpen}
           onDelete={handleDeleteInventoryMovement}
         />
       )}
