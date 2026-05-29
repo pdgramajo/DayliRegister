@@ -41,7 +41,7 @@ export const ClientForm = ({
     setValue,
     formState: { errors },
   } = useForm<ClientFormData>({
-    resolver: zodResolver(clientSchema) as any,
+    resolver: zodResolver(clientSchema),
     defaultValues: {
       name: initialValues?.name || '',
       phone: initialValues?.phone || '',

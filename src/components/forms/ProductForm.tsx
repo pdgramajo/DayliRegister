@@ -40,7 +40,7 @@ export const ProductForm = ({
     watch,
     formState: { errors },
   } = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema) as any,
+    resolver: zodResolver(productSchema),
     defaultValues: {
       name: initialValues?.name || '',
       price: initialValues?.price,

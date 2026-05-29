@@ -6,7 +6,11 @@ import {
 import { TransactionService } from '../services/TransactionService'
 import { InventoryMovementService } from '../services/InventoryMovementService'
 import { InventoryCategoryService } from '../services/InventoryCategoryService'
-import type { Transaction, InventoryCategory } from '../types/entities'
+import type {
+  Transaction,
+  InventoryCategory,
+  InventoryMovement,
+} from '../types/entities'
 import type {
   CreateTransactionDTO,
   CreateInventoryMovementDTO,
@@ -14,7 +18,7 @@ import type {
 
 interface TransactionState {
   transactions: Transaction[]
-  inventoryMovements: any[]
+  inventoryMovements: InventoryMovement[]
   inventoryCategories: InventoryCategory[]
   isLoading: boolean
   error: string | null
@@ -163,7 +167,7 @@ const transactionSlice = createSlice({
       })
       .addCase(
         fetchInventoryMovementsBySession.fulfilled,
-        (state, action: PayloadAction<any[]>) => {
+        (state, action: PayloadAction<InventoryMovement[]>) => {
           state.isLoading = false
           state.inventoryMovements = action.payload
         }
@@ -213,7 +217,7 @@ const transactionSlice = createSlice({
       })
       .addCase(
         createInventoryMovement.fulfilled,
-        (state, action: PayloadAction<any>) => {
+        (state, action: PayloadAction<InventoryMovement>) => {
           state.isLoading = false
           state.inventoryMovements.unshift(action.payload)
         }

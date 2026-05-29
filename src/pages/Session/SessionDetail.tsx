@@ -15,7 +15,11 @@ import {
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Button, Modal, MoneyInput, toast } from '../../components/ui'
-import { Entities } from '../../types/entities'
+import {
+  Entities,
+  type Transaction,
+  type InventoryMovement,
+} from '../../types/entities'
 import { formatDate, formatMoney } from '../../lib/formatters'
 import {
   Wallet,
@@ -266,7 +270,7 @@ const TransactionFilters = ({
   filter,
   onChange,
 }: {
-  transactions: any[]
+  transactions: Transaction[]
   filter: TransactionFilter
   onChange: (f: TransactionFilter) => void
 }) => {
@@ -323,7 +327,7 @@ const TransactionItem = ({
   transaction,
   onDelete,
 }: {
-  transaction: any
+  transaction: Transaction
   onDelete: (id: string) => void
 }) => {
   const getLabel = (type: string) => {
@@ -406,7 +410,7 @@ const InventoryItem = ({
   categories,
   onDelete,
 }: {
-  movement: any
+  movement: InventoryMovement
   categories: { id: string; name: string }[]
   onDelete: (id: string) => void
 }) => {
@@ -460,7 +464,7 @@ const TransactionList = ({
   onFilterChange,
   onDelete,
 }: {
-  transactions: any[]
+  transactions: Transaction[]
   isLoading: boolean
   filter: TransactionFilter
   onFilterChange: (f: TransactionFilter) => void
@@ -522,7 +526,7 @@ const InventoryList = ({
   isLoading,
   onDelete,
 }: {
-  movements: any[]
+  movements: InventoryMovement[]
   categories: { id: string; name: string }[]
   isLoading: boolean
   onDelete: (id: string) => void
