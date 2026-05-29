@@ -532,4 +532,203 @@ describe('BranchSessions', () => {
 
     await user.click(screen.getByText('Eliminar'))
   })
+
+  it('should show close session modal when clicking Cerrar on open session', async () => {
+    vi.spyOn(BranchService, 'getBranchById').mockResolvedValue({
+      id: 'branch-1',
+      name: 'Test',
+    } as any)
+    vi.spyOn(SessionService, 'getSessionsByBranch').mockResolvedValue([
+      openSession,
+    ])
+    const user = userEvent.setup()
+
+    const { BranchSessions } = await import('../BranchSessions')
+    render(
+      <Provider
+        store={createStore({
+          currentBranch: { id: 'branch-1', name: 'Test' },
+        })}
+      >
+        <MemoryRouter>
+          <BranchSessions />
+        </MemoryRouter>
+      </Provider>
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText('Sesión Mañana')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTitle('Cerrar'))
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Cerrar sesión').length).toBe(2)
+    })
+  })
+
+  it('should close close-session modal on cancel', async () => {
+    vi.spyOn(BranchService, 'getBranchById').mockResolvedValue({
+      id: 'branch-1',
+      name: 'Test',
+    } as any)
+    vi.spyOn(SessionService, 'getSessionsByBranch').mockResolvedValue([
+      openSession,
+    ])
+    const user = userEvent.setup()
+
+    const { BranchSessions } = await import('../BranchSessions')
+    render(
+      <Provider
+        store={createStore({
+          currentBranch: { id: 'branch-1', name: 'Test' },
+        })}
+      >
+        <MemoryRouter>
+          <BranchSessions />
+        </MemoryRouter>
+      </Provider>
+    )
+
+    await user.click(await screen.findByTitle('Cerrar'))
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Cerrar sesión').length).toBe(2)
+    })
+
+    await user.click(screen.getByText('Cancelar'))
+
+    await waitFor(() => {
+      expect(screen.queryAllByText('Cerrar sesión').length).toBe(0)
+    })
+  })
+
+  it('should call closeSession on confirm close', async () => {
+    vi.spyOn(BranchService, 'getBranchById').mockResolvedValue({
+      id: 'branch-1',
+      name: 'Test',
+    } as any)
+    vi.spyOn(SessionService, 'getSessionsByBranch').mockResolvedValue([
+      openSession,
+    ])
+    vi.spyOn(SessionService, 'closeSession').mockResolvedValue({
+      ...openSession,
+      closingBalance: 8000,
+      status: 'closed' as const,
+    })
+    const user = userEvent.setup()
+
+    const { BranchSessions } = await import('../BranchSessions')
+    render(
+      <Provider
+        store={createStore({
+          currentBranch: { id: 'branch-1', name: 'Test' },
+        })}
+      >
+        <MemoryRouter>
+          <BranchSessions />
+        </MemoryRouter>
+      </Provider>
+    )
+
+    await user.click(await screen.findByTitle('Cerrar'))
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Cerrar sesión').length).toBe(2)
+    })
+
+    const amountInput = screen.getByPlaceholderText('0')
+    await user.clear(amountInput)
+    await user.type(amountInput, '8000')
+
+    await user.click(screen.getAllByText('Cerrar sesión')[1])
+
+    await waitFor(() => {
+      expect(SessionService.closeSession).toHaveBeenCalledWith(
+        'session-1',
+        8000
+      )
+    })
+
+    await waitFor(() => {
+      expect(screen.queryAllByText('Cerrar sesión').length).toBe(0)
+    })
+  })
+
+  it('should show validation error when closing balance is empty', async () => {
+    vi.spyOn(BranchService, 'getBranchById').mockResolvedValue({
+      id: 'branch-1',
+      name: 'Test',
+    } as any)
+    vi.spyOn(SessionService, 'getSessionsByBranch').mockResolvedValue([
+      openSession,
+    ])
+    const user = userEvent.setup()
+
+    const { BranchSessions } = await import('../BranchSessions')
+    render(
+      <Provider
+        store={createStore({
+          currentBranch: { id: 'branch-1', name: 'Test' },
+        })}
+      >
+        <MemoryRouter>
+          <BranchSessions />
+        </MemoryRouter>
+      </Provider>
+    )
+
+    await user.click(await screen.findByTitle('Cerrar'))
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Cerrar sesión').length).toBe(2)
+    })
+
+    const amountInput = screen.getByPlaceholderText('0')
+    await user.clear(amountInput)
+    await user.click(screen.getAllByText('Cerrar sesión')[1])
+
+    await waitFor(() => {
+      expect(screen.getByText('Ingrese un balance válido')).toBeInTheDocument()
+    })
+  })
+
+  it('should show error toast on close session failure', async () => {
+    vi.spyOn(BranchService, 'getBranchById').mockResolvedValue({
+      id: 'branch-1',
+      name: 'Test',
+    } as any)
+    vi.spyOn(SessionService, 'getSessionsByBranch').mockResolvedValue([
+      openSession,
+    ])
+    vi.spyOn(SessionService, 'closeSession').mockRejectedValue(
+      new Error('Close failed')
+    )
+    const user = userEvent.setup()
+
+    const { BranchSessions } = await import('../BranchSessions')
+    render(
+      <Provider
+        store={createStore({
+          currentBranch: { id: 'branch-1', name: 'Test' },
+        })}
+      >
+        <MemoryRouter>
+          <BranchSessions />
+        </MemoryRouter>
+      </Provider>
+    )
+
+    await user.click(await screen.findByTitle('Cerrar'))
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Cerrar sesión').length).toBe(2)
+    })
+
+    const amountInput = screen.getByPlaceholderText('0')
+    await user.clear(amountInput)
+    await user.type(amountInput, '8000')
+
+    await user.click(screen.getAllByText('Cerrar sesión')[1])
+  })
 })

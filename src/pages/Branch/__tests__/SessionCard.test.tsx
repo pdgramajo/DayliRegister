@@ -110,6 +110,22 @@ describe('OpenSessionCard', () => {
 
     await user.click(screen.getByTitle('Editar'))
   })
+
+  it('should call onClose when close button is clicked', async () => {
+    const user = userEvent.setup()
+    const handleClose = vi.fn()
+    renderWithRouter(
+      <OpenSessionCard
+        session={openSession}
+        branchId="branch-1"
+        onClose={handleClose}
+      />
+    )
+
+    await user.click(screen.getByTitle('Cerrar'))
+
+    expect(handleClose).toHaveBeenCalledWith('session-1')
+  })
 })
 
 describe('ClosedSessionCard', () => {
