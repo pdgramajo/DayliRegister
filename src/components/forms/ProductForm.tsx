@@ -56,12 +56,8 @@ export const ProductForm = ({
       name: data.name,
       price: data.price,
       branchId,
-    }
-    if (data.offerPrice !== undefined) {
-      payload.offerPrice = data.offerPrice
-    }
-    if (data.category) {
-      payload.category = data.category
+      offerPrice: data.offerPrice,
+      category: data.category || undefined,
     }
     onSubmit(payload)
   }

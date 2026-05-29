@@ -103,6 +103,44 @@ describe('ProductForm', () => {
     })
   })
 
+  it('should clear offerPrice when field is emptied on edit', async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn()
+    const initialValues = {
+      name: 'Producto Existente',
+      price: 1500,
+      offerPrice: 1200,
+      category: 'Bebidas',
+    }
+    renderForm({ initialValues, onSubmit })
+
+    // Clear offer price input (MoneyInput con formato)
+    const offerPriceInput = screen.getByLabelText(/Precio de oferta/)
+    await user.clear(offerPriceInput)
+
+    // Clear category input
+    const categoryInput = screen.getByLabelText(/Categoría/)
+    await user.clear(categoryInput)
+
+    await user.click(screen.getByText('Guardar'))
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalled()
+      const payload = onSubmit.mock.calls[0][0]
+      expect(payload).toMatchObject({
+        name: 'Producto Existente',
+        price: 1500,
+        branchId: 'branch-1',
+      })
+      // offerPrice y category deben estar explícitamente como undefined
+      // para que Dexie los actualice (borre) en IndexedDB
+      expect(payload).toHaveProperty('offerPrice')
+      expect(payload.offerPrice).toBeUndefined()
+      expect(payload).toHaveProperty('category')
+      expect(payload.category).toBeUndefined()
+    })
+  })
+
   it('should show cancel link', () => {
     renderForm()
 
