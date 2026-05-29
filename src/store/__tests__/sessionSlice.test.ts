@@ -6,258 +6,291 @@ import sessionReducer, {
   createSession,
   updateSession,
   closeSession,
+  deleteSession,
   clearCurrentSession,
   clearSessions,
   clearError,
 } from '../sessionSlice'
 import type { CashSession } from '../../types/entities'
-import { Entities } from '../../types/entities'
-
-const createTestStore = (preloadedState = {}) => {
-  return configureStore({
-    reducer: {
-      sessions: sessionReducer,
-    },
-    preloadedState,
-  })
-}
 
 const mockSession: CashSession = {
-  id: 'session-id-1',
-  name: 'Test Session',
-  branchId: 'branch-id-1',
-  status: Entities.CashSessionStatus.OPEN,
-  openedAt: new Date().toISOString(),
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  id: 'session-1',
+  branchId: 'branch-1',
+  name: 'Sesión Test',
+  initialAmount: 5000,
+  status: 'open',
+  openedAt: '2024-06-01T08:00:00Z',
+  createdAt: '2024-06-01T08:00:00Z',
+  updatedAt: '2024-06-01T08:00:00Z',
 }
+
+const mockSessionClosed: CashSession = {
+  ...mockSession,
+  id: 'session-2',
+  name: 'Sesión Cerrada',
+  closingBalance: 8500,
+  status: 'closed',
+  closedAt: '2024-06-01T20:00:00Z',
+  updatedAt: '2024-06-01T20:00:00Z',
+}
+
+const createStore = (preloadedState = {}) =>
+  configureStore({
+    reducer: { sessions: sessionReducer },
+    preloadedState: {
+      sessions: {
+        sessions: [],
+        currentSession: null,
+        isLoading: false,
+        error: null,
+        ...preloadedState,
+      },
+    },
+  })
 
 describe('sessionSlice', () => {
   describe('reducers', () => {
-    it('should return initial state', () => {
-      const store = createTestStore()
-      const state = store.getState().sessions
-
-      expect(state.sessions).toEqual([])
-      expect(state.currentSession).toBeNull()
-      expect(state.isLoading).toBe(false)
-      expect(state.error).toBeNull()
-    })
-
     it('should handle clearCurrentSession', () => {
-      const store = createTestStore({
-        sessions: {
-          sessions: [],
-          currentSession: mockSession,
-          isLoading: false,
-          error: null,
-        },
-      })
-
+      const store = createStore({ currentSession: mockSession })
       store.dispatch(clearCurrentSession())
-      const state = store.getState().sessions
-
-      expect(state.currentSession).toBeNull()
+      expect(store.getState().sessions.currentSession).toBeNull()
     })
 
     it('should handle clearSessions', () => {
-      const store = createTestStore({
-        sessions: {
-          sessions: [mockSession],
-          currentSession: mockSession,
-          isLoading: false,
-          error: null,
-        },
+      const store = createStore({
+        sessions: [mockSession],
+        currentSession: mockSession,
       })
-
       store.dispatch(clearSessions())
-      const state = store.getState().sessions
-
-      expect(state.sessions).toEqual([])
-      expect(state.currentSession).toBeNull()
+      expect(store.getState().sessions.sessions).toEqual([])
+      expect(store.getState().sessions.currentSession).toBeNull()
     })
 
     it('should handle clearError', () => {
-      const store = createTestStore({
-        sessions: {
-          sessions: [],
-          currentSession: null,
-          isLoading: false,
-          error: 'Some error',
-        },
-      })
-
+      const store = createStore({ error: 'some error' })
       store.dispatch(clearError())
-      const state = store.getState().sessions
-
-      expect(state.error).toBeNull()
+      expect(store.getState().sessions.error).toBeNull()
     })
   })
 
-  describe('async thunks - fetchSessionsByBranch', () => {
-    it('should set loading to true when pending', () => {
-      const store = createTestStore()
-
-      store.dispatch(fetchSessionsByBranch.pending(undefined, 'branch-id-1'))
-
-      const state = store.getState().sessions
-      expect(state.isLoading).toBe(true)
-      expect(state.error).toBeNull()
+  describe('fetchSessionsByBranch', () => {
+    it('should set loading on pending', () => {
+      const store = createStore()
+      store.dispatch(fetchSessionsByBranch.pending('', ''))
+      expect(store.getState().sessions.isLoading).toBe(true)
+      expect(store.getState().sessions.error).toBeNull()
     })
 
-    it('should set sessions when fulfilled', () => {
-      const store = createTestStore()
-
-      store.dispatch(
-        fetchSessionsByBranch.fulfilled(
-          [mockSession],
-          'fulfilled',
-          'branch-id-1'
-        )
-      )
-
-      const state = store.getState().sessions
-      expect(state.sessions).toHaveLength(1)
-      expect(state.sessions[0].name).toBe('Test Session')
-      expect(state.isLoading).toBe(false)
+    it('should set sessions on fulfilled', () => {
+      const store = createStore()
+      store.dispatch(fetchSessionsByBranch.fulfilled([mockSession], '', ''))
+      expect(store.getState().sessions.isLoading).toBe(false)
+      expect(store.getState().sessions.sessions).toEqual([mockSession])
     })
 
-    it('should set error when rejected', () => {
-      const store = createTestStore()
-
+    it('should set error on rejected', () => {
+      const store = createStore()
       store.dispatch(
         fetchSessionsByBranch.rejected(
-          null,
-          'rejected',
-          'branch-id-1',
-          'Error al cargar'
+          new Error('fail'),
+          '',
+          '',
+          'Error al cargar las sesiones'
         )
       )
-
-      const state = store.getState().sessions
-      expect(state.error).toBe('Error al cargar')
-      expect(state.isLoading).toBe(false)
-    })
-  })
-
-  describe('async thunks - fetchSessionById', () => {
-    it('should set currentSession when fulfilled', () => {
-      const store = createTestStore()
-
-      store.dispatch(
-        fetchSessionById.fulfilled(mockSession, 'fulfilled', 'session-id-1')
+      expect(store.getState().sessions.isLoading).toBe(false)
+      expect(store.getState().sessions.error).toBe(
+        'Error al cargar las sesiones'
       )
-
-      const state = store.getState().sessions
-      expect(state.currentSession).toEqual(mockSession)
-      expect(state.isLoading).toBe(false)
     })
   })
 
-  describe('async thunks - createSession', () => {
-    it('should add session when fulfilled', () => {
-      const store = createTestStore()
+  describe('fetchSessionById', () => {
+    it('should set loading on pending', () => {
+      const store = createStore()
+      store.dispatch(fetchSessionById.pending('', ''))
+      expect(store.getState().sessions.isLoading).toBe(true)
+    })
 
+    it('should set currentSession on fulfilled', () => {
+      const store = createStore()
+      store.dispatch(fetchSessionById.fulfilled(mockSession, '', ''))
+      expect(store.getState().sessions.isLoading).toBe(false)
+      expect(store.getState().sessions.currentSession).toEqual(mockSession)
+    })
+
+    it('should set error on rejected', () => {
+      const store = createStore()
       store.dispatch(
-        createSession.fulfilled(mockSession, 'fulfilled', {
-          name: 'Test Session',
-          branchId: 'branch-id-1',
+        fetchSessionById.rejected(
+          new Error('fail'),
+          '',
+          '',
+          'Error al cargar la sesión'
+        )
+      )
+      expect(store.getState().sessions.error).toBe('Error al cargar la sesión')
+    })
+  })
+
+  describe('createSession', () => {
+    it('should set loading on pending', () => {
+      const store = createStore()
+      store.dispatch(
+        createSession.pending('', {
+          name: 'New',
+          branchId: 'b1',
+          initialAmount: 0,
         })
       )
-
-      const state = store.getState().sessions
-      expect(state.sessions).toHaveLength(1)
-      expect(state.sessions[0].name).toBe('Test Session')
-      expect(state.currentSession).toEqual(mockSession)
-      expect(state.isLoading).toBe(false)
+      expect(store.getState().sessions.isLoading).toBe(true)
     })
 
-    it('should set error when rejected', () => {
-      const store = createTestStore()
-
+    it('should prepend session and set as current on fulfilled', () => {
+      const store = createStore({ sessions: [mockSessionClosed] })
       store.dispatch(
-        createSession.rejected(null, 'rejected', undefined, 'Error al crear')
+        createSession.fulfilled(mockSession, '', {
+          name: 'New',
+          branchId: 'b1',
+          initialAmount: 0,
+        })
       )
+      expect(store.getState().sessions.isLoading).toBe(false)
+      expect(store.getState().sessions.sessions).toEqual([
+        mockSession,
+        mockSessionClosed,
+      ])
+      expect(store.getState().sessions.currentSession).toEqual(mockSession)
+    })
 
-      const state = store.getState().sessions
-      expect(state.error).toBe('Error al crear')
-      expect(state.isLoading).toBe(false)
+    it('should set error on rejected', () => {
+      const store = createStore()
+      store.dispatch(
+        createSession.rejected(
+          new Error('fail'),
+          '',
+          { name: 'New', branchId: 'b1', initialAmount: 0 },
+          'Error al crear la sesión'
+        )
+      )
+      expect(store.getState().sessions.error).toBe('Error al crear la sesión')
     })
   })
 
-  describe('async thunks - updateSession', () => {
-    it('should update session when fulfilled', () => {
-      const store = createTestStore({
-        sessions: {
-          sessions: [mockSession],
-          currentSession: null,
-          isLoading: false,
-          error: null,
-        },
-      })
-
-      const updatedSession = { ...mockSession, name: 'Updated Session' }
-      store.dispatch(
-        updateSession.fulfilled(updatedSession, 'fulfilled', {
-          id: 'session-id-1',
-          data: { name: 'Updated Session' },
-        })
-      )
-
-      const state = store.getState().sessions
-      expect(state.sessions[0].name).toBe('Updated Session')
+  describe('updateSession', () => {
+    it('should set loading on pending', () => {
+      const store = createStore()
+      store.dispatch(updateSession.pending('', { id: 'session-1', data: {} }))
+      expect(store.getState().sessions.isLoading).toBe(true)
     })
 
-    it('should update currentSession when fulfilled', () => {
-      const store = createTestStore({
-        sessions: {
-          sessions: [mockSession],
-          currentSession: mockSession,
-          isLoading: false,
-          error: null,
-        },
+    it('should update session in list on fulfilled', () => {
+      const updated = { ...mockSession, name: 'Updated' }
+      const store = createStore({
+        sessions: [mockSession, mockSessionClosed],
+        currentSession: mockSession,
       })
-
-      const updatedSession = { ...mockSession, name: 'Updated Session' }
       store.dispatch(
-        updateSession.fulfilled(updatedSession, 'fulfilled', {
-          id: 'session-id-1',
-          data: { name: 'Updated Session' },
-        })
+        updateSession.fulfilled(updated, '', { id: 'session-1', data: {} })
       )
+      expect(store.getState().sessions.sessions[0].name).toBe('Updated')
+      expect(store.getState().sessions.currentSession?.name).toBe('Updated')
+    })
 
-      const state = store.getState().sessions
-      expect(state.currentSession?.name).toBe('Updated Session')
+    it('should not crash if session not in list on fulfilled', () => {
+      const store = createStore({ sessions: [], currentSession: null })
+      store.dispatch(
+        updateSession.fulfilled(mockSession, '', { id: 'session-1', data: {} })
+      )
+      expect(store.getState().sessions.isLoading).toBe(false)
+    })
+
+    it('should set error on rejected', () => {
+      const store = createStore()
+      store.dispatch(
+        updateSession.rejected(
+          new Error('fail'),
+          '',
+          { id: 'session-1', data: {} },
+          'Error al actualizar la sesión'
+        )
+      )
+      expect(store.getState().sessions.error).toBe(
+        'Error al actualizar la sesión'
+      )
     })
   })
 
-  describe('async thunks - closeSession', () => {
-    it('should update session when closed', () => {
-      const store = createTestStore({
-        sessions: {
-          sessions: [mockSession],
-          currentSession: null,
-          isLoading: false,
-          error: null,
-        },
-      })
+  describe('closeSession', () => {
+    it('should set loading on pending', () => {
+      const store = createStore()
+      store.dispatch(closeSession.pending('', { id: 'session-1' }))
+      expect(store.getState().sessions.isLoading).toBe(true)
+    })
 
-      const closedSession = {
+    it('should update session in list on fulfilled', () => {
+      const closed = {
         ...mockSession,
-        status: Entities.CashSessionStatus.CLOSED,
-        closingBalance: 1500,
-        closedAt: new Date().toISOString(),
+        status: 'closed' as const,
+        closingBalance: 8000,
       }
-      store.dispatch(
-        closeSession.fulfilled(closedSession, 'fulfilled', {
-          id: 'session-id-1',
-          closingBalance: 1500,
-        })
-      )
+      const store = createStore({
+        sessions: [mockSession],
+        currentSession: mockSession,
+      })
+      store.dispatch(closeSession.fulfilled(closed, '', { id: 'session-1' }))
+      expect(store.getState().sessions.sessions[0].status).toBe('closed')
+      expect(store.getState().sessions.currentSession?.status).toBe('closed')
+    })
 
-      const state = store.getState().sessions
-      expect(state.sessions[0].status).toBe(Entities.CashSessionStatus.CLOSED)
-      expect(state.sessions[0].closingBalance).toBe(1500)
+    it('should not crash if session not in list on fulfilled', () => {
+      const store = createStore({ sessions: [] })
+      store.dispatch(
+        closeSession.fulfilled(mockSession, '', { id: 'session-1' })
+      )
+      expect(store.getState().sessions.isLoading).toBe(false)
+    })
+
+    it('should set error on rejected', () => {
+      const store = createStore()
+      store.dispatch(
+        closeSession.rejected(
+          new Error('fail'),
+          '',
+          { id: 'session-1' },
+          'Error al cerrar la sesión'
+        )
+      )
+      expect(store.getState().sessions.error).toBe('Error al cerrar la sesión')
+    })
+  })
+
+  describe('deleteSession', () => {
+    it('should set loading on pending', () => {
+      const store = createStore()
+      store.dispatch(deleteSession.pending('', ''))
+      expect(store.getState().sessions.isLoading).toBe(true)
+    })
+
+    it('should remove session from list on fulfilled', () => {
+      const store = createStore({ sessions: [mockSession, mockSessionClosed] })
+      store.dispatch(deleteSession.fulfilled('session-1', '', ''))
+      expect(store.getState().sessions.sessions).toEqual([mockSessionClosed])
+    })
+
+    it('should set error on rejected', () => {
+      const store = createStore()
+      store.dispatch(
+        deleteSession.rejected(
+          new Error('fail'),
+          '',
+          '',
+          'Error al eliminar la sesión'
+        )
+      )
+      expect(store.getState().sessions.error).toBe(
+        'Error al eliminar la sesión'
+      )
     })
   })
 })
