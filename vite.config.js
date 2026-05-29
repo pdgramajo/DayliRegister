@@ -9,5 +9,11 @@ export default defineConfig({
     setupFiles: './src/setupTests.ts',
     environment: 'jsdom',
     css: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.test.*', 'src/**/__tests__/**', 'src/**/*.d.ts'],
+    },
   },
 })
