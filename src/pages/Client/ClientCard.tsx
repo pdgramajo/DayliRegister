@@ -88,6 +88,7 @@ const HistoryPanel = ({
               )}
               <button
                 onClick={() => onDeleteEntry(entry.id, clientId)}
+                data-testid="delete-entry-button"
                 className="p-1 rounded-md text-content-300 opacity-0 group-hover:opacity-100 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all shrink-0"
                 title="Eliminar"
               >
@@ -151,6 +152,7 @@ export const ClientCard = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => onToggleExpand(client.id)}
+            data-testid="expand-button"
             className="shrink-0 text-content-300 hover:text-content-600 dark:hover:text-content-400 transition-colors -ml-0.5"
           >
             {isExpanded ? (
@@ -204,6 +206,7 @@ export const ClientCard = ({
             variant="outline"
             size="sm"
             onClick={() => onRegisterDebt(client.id, 'debt')}
+            data-testid="add-debt-button"
             className="text-xs gap-1 h-8 flex-1"
           >
             <Plus className="size-3.5" />
@@ -239,6 +242,7 @@ export const ClientCard = ({
           </button>
           <button
             onClick={() => onDeleteClient(client.id)}
+            data-testid="delete-client-button"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-content-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors"
           >
             <Trash2 className="size-3.5" />
