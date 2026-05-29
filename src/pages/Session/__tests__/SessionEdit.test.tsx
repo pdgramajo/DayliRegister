@@ -167,4 +167,113 @@ describe('SessionEdit', () => {
     })
     expect(mockNavigate).toHaveBeenCalledWith('/branches/branch-1/sessions')
   })
+
+  it('should redirect to sessions when session is closed', async () => {
+    vi.spyOn(SessionService, 'getSessionById').mockResolvedValue({
+      id: 'session-1',
+      branchId: 'branch-1',
+      name: 'Sesión Cerrada',
+      status: 'closed',
+      initialAmount: 5000,
+      closingBalance: 6000,
+      openedAt: '2024-06-01T08:00:00Z',
+      closedAt: '2024-06-01T20:00:00Z',
+      createdAt: '2024-06-01T08:00:00Z',
+      updatedAt: '2024-06-01T20:00:00Z',
+    })
+
+    const { SessionEdit } = await import('../SessionEdit')
+    render(
+      <Provider
+        store={createStore({
+          currentSession: {
+            id: 'session-1',
+            branchId: 'branch-1',
+            name: 'Sesión Cerrada',
+            status: 'closed',
+            initialAmount: 5000,
+            closingBalance: 6000,
+            openedAt: '2024-06-01T08:00:00Z',
+            closedAt: '2024-06-01T20:00:00Z',
+            createdAt: '2024-06-01T08:00:00Z',
+            updatedAt: '2024-06-01T20:00:00Z',
+          },
+          isLoading: false,
+        })}
+      >
+        <MemoryRouter>
+          <SessionEdit />
+        </MemoryRouter>
+      </Provider>
+    )
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/branches/branch-1/sessions')
+    })
+  })
+
+  it('should show loading fallback when no session and not loading', async () => {
+    mockParams.mockReturnValue({
+      id: 'branch-1',
+      sessionId: undefined,
+    })
+
+    const { SessionEdit } = await import('../SessionEdit')
+    render(
+      <Provider
+        store={createStore({
+          currentSession: null,
+          isLoading: false,
+        })}
+      >
+        <MemoryRouter>
+          <SessionEdit />
+        </MemoryRouter>
+      </Provider>
+    )
+
+    expect(screen.getByText('Cargando...')).toBeInTheDocument()
+  })
+
+  it('should show error toast on update failure', async () => {
+    vi.spyOn(SessionService, 'getSessionById').mockResolvedValue({
+      id: 'session-1',
+      branchId: 'branch-1',
+      name: 'Sesión Mañana',
+      status: 'open',
+      initialAmount: 5000,
+      openedAt: '2024-06-01T08:00:00Z',
+      createdAt: '2024-06-01T08:00:00Z',
+      updatedAt: '2024-06-01T08:00:00Z',
+    })
+    vi.spyOn(SessionService, 'updateSession').mockRejectedValue(
+      new Error('Update failed')
+    )
+    const user = userEvent.setup()
+
+    const { SessionEdit } = await import('../SessionEdit')
+    render(
+      <Provider
+        store={createStore({
+          currentSession: {
+            id: 'session-1',
+            branchId: 'branch-1',
+            name: 'Sesión Mañana',
+            status: 'open',
+            initialAmount: 5000,
+            openedAt: '2024-06-01T08:00:00Z',
+            createdAt: '2024-06-01T08:00:00Z',
+            updatedAt: '2024-06-01T08:00:00Z',
+          },
+          isLoading: false,
+        })}
+      >
+        <MemoryRouter>
+          <SessionEdit />
+        </MemoryRouter>
+      </Provider>
+    )
+
+    await user.click(screen.getByText('Guardar'))
+  })
 })

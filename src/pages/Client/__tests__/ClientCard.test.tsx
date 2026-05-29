@@ -203,4 +203,47 @@ describe('ClientCard', () => {
 
     expect(screen.queryByText('WhatsApp')).not.toBeInTheDocument()
   })
+
+  it('should call openWhatsApp when clicking WhatsApp', async () => {
+    const user = userEvent.setup()
+    const { openWhatsApp } = await import('../../../lib/whatsapp')
+    const debtor = { ...baseClient, balance: 1500 }
+
+    renderWithRouter(<ClientCard client={debtor} {...defaultProps} />)
+
+    await user.click(screen.getByText('WhatsApp'))
+
+    expect(openWhatsApp).toHaveBeenCalledWith(
+      '+543884123456',
+      'Hola Juan Pérez, tu deuda actual es de $1.500'
+    )
+  })
+
+  it('should show history pagination toggle when more than 5 entries', async () => {
+    const entries = Array.from({ length: 7 }, (_, i) => ({
+      id: `entry-${i}`,
+      clientId: 'client-1',
+      branchId: 'branch-1',
+      type: 'debt' as const,
+      amount: 500,
+      createdAt: `2024-06-${String(15 - i).padStart(2, '0')}T00:00:00Z`,
+      updatedAt: `2024-06-${String(15 - i).padStart(2, '0')}T00:00:00Z`,
+    }))
+    const withManyEntries = { ...baseClient, balance: 3500, entries }
+
+    renderWithRouter(
+      <ClientCard
+        client={withManyEntries}
+        {...defaultProps}
+        isExpanded={true}
+      />
+    )
+
+    expect(screen.getByText('Ver más historial →')).toBeInTheDocument()
+
+    const user = userEvent.setup()
+    await user.click(screen.getByText('Ver más historial →'))
+
+    expect(screen.getByText('Mostrar menos ↑')).toBeInTheDocument()
+  })
 })

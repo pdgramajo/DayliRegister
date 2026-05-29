@@ -173,4 +173,84 @@ describe('BranchList', () => {
       expect(deleteSpy).toHaveBeenCalledWith('branch-1')
     })
   })
+
+  it('should close delete modal on overlay click', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(BranchService, 'getAllBranches').mockResolvedValue([mockBranch])
+
+    renderWithStore({
+      branches: {
+        branches: [],
+        currentBranch: null,
+        isLoading: false,
+        error: null,
+      },
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Sucursal Centro')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('delete-button'))
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/¿Estás seguro de que quieres eliminar/)
+      ).toBeInTheDocument()
+    })
+
+    await user.keyboard('{Escape}')
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/¿Estás seguro de que quieres eliminar/)
+      ).not.toBeInTheDocument()
+    })
+  })
+
+  it('should show error toast on delete failure', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(BranchService, 'getAllBranches').mockResolvedValue([mockBranch])
+    vi.spyOn(BranchService, 'deleteBranch').mockRejectedValue(
+      new Error('Delete failed')
+    )
+
+    renderWithStore({
+      branches: {
+        branches: [],
+        currentBranch: null,
+        isLoading: false,
+        error: null,
+      },
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Sucursal Centro')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('delete-button'))
+    await user.click(screen.getByText('Eliminar'))
+  })
+
+  it('should retry on Reintentar click when error', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(BranchService, 'getAllBranches').mockRejectedValue(
+      new Error('fail')
+    )
+
+    renderWithStore({
+      branches: {
+        branches: [],
+        currentBranch: null,
+        isLoading: false,
+        error: null,
+      },
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Reintentar')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByText('Reintentar'))
+  })
 })

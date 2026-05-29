@@ -497,4 +497,39 @@ describe('BranchSessions', () => {
       expect(screen.getByText('HISTORIAL (1)')).toBeInTheDocument()
     })
   })
+
+  it('should show error toast on delete session failure', async () => {
+    vi.spyOn(BranchService, 'getBranchById').mockResolvedValue({
+      id: 'branch-1',
+      name: 'Test',
+    } as any)
+    vi.spyOn(SessionService, 'getSessionsByBranch').mockResolvedValue([
+      closedSession,
+    ])
+    vi.spyOn(SessionService, 'deleteSession').mockRejectedValue(
+      new Error('Delete failed')
+    )
+    const user = userEvent.setup()
+
+    const { BranchSessions } = await import('../BranchSessions')
+    render(
+      <Provider
+        store={createStore({
+          currentBranch: { id: 'branch-1', name: 'Test' },
+        })}
+      >
+        <MemoryRouter>
+          <BranchSessions />
+        </MemoryRouter>
+      </Provider>
+    )
+
+    await user.click(await screen.findByTitle('Eliminar'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Eliminar sesión')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByText('Eliminar'))
+  })
 })

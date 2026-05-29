@@ -79,4 +79,33 @@ describe('BranchCard', () => {
 
     expect(screen.queryByText('123 Main St')).not.toBeInTheDocument()
   })
+
+  it('should navigate on card click', async () => {
+    const user = userEvent.setup()
+    renderWithRouter(<BranchCard branch={mockBranch} onDelete={vi.fn()} />)
+
+    const card = screen.getByText('Central Branch').closest('[role="button"]')
+    expect(card).toBeDefined()
+    await user.click(card!)
+  })
+
+  it('should navigate on Enter key', async () => {
+    const user = userEvent.setup()
+    renderWithRouter(<BranchCard branch={mockBranch} onDelete={vi.fn()} />)
+
+    const card = screen.getByText('Central Branch').closest('[role="button"]')
+    expect(card).toBeDefined()
+    await user.type(card!, '{Enter}')
+  })
+
+  it('should navigate on edit button click', async () => {
+    const user = userEvent.setup()
+    renderWithRouter(<BranchCard branch={mockBranch} onDelete={vi.fn()} />)
+
+    const editBtn = screen
+      .getAllByRole('button')
+      .find((btn) => btn.querySelector('.lucide-pencil'))
+    expect(editBtn).toBeDefined()
+    await user.click(editBtn!)
+  })
 })

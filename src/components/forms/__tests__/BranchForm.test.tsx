@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
@@ -64,5 +65,15 @@ describe('BranchForm', () => {
     expect(screen.getByLabelText(/Dirección/)).toHaveValue('123 Street')
     expect(screen.getByLabelText(/Teléfono/)).toHaveValue('123456789')
     expect(screen.getByLabelText(/Sucursal activa/)).not.toBeChecked()
+  })
+
+  it('should handle phone input changes', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<BranchForm onSubmit={vi.fn()} />)
+
+    const phoneInput = screen.getByLabelText(/Teléfono/)
+    await user.type(phoneInput, '3884123456')
+
+    expect(phoneInput).toHaveValue('388 412 3456')
   })
 })

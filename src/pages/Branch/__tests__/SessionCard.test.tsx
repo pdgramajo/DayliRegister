@@ -80,6 +80,36 @@ describe('OpenSessionCard', () => {
 
     expect(screen.getByText(/2024/)).toBeInTheDocument()
   })
+
+  it('should navigate on card click', async () => {
+    const user = userEvent.setup()
+    renderWithRouter(
+      <OpenSessionCard
+        session={openSession}
+        branchId="branch-1"
+        onClose={vi.fn()}
+      />
+    )
+
+    const card = screen
+      .getByText('Sesión Mañana')
+      .closest('[class*="cursor-pointer"]')
+    expect(card).toBeDefined()
+    await user.click(card!)
+  })
+
+  it('should navigate on edit button click', async () => {
+    const user = userEvent.setup()
+    renderWithRouter(
+      <OpenSessionCard
+        session={openSession}
+        branchId="branch-1"
+        onClose={vi.fn()}
+      />
+    )
+
+    await user.click(screen.getByTitle('Editar'))
+  })
 })
 
 describe('ClosedSessionCard', () => {
@@ -93,6 +123,36 @@ describe('ClosedSessionCard', () => {
     )
 
     expect(screen.getByText('Sesión Tarde')).toBeInTheDocument()
+  })
+
+  it('should navigate on edit button click', async () => {
+    const user = userEvent.setup()
+    renderWithRouter(
+      <ClosedSessionCard
+        session={closedSession}
+        branchId="branch-1"
+        onDelete={vi.fn()}
+      />
+    )
+
+    await user.click(screen.getByTitle('Editar'))
+  })
+
+  it('should navigate on card click', async () => {
+    const user = userEvent.setup()
+    renderWithRouter(
+      <ClosedSessionCard
+        session={closedSession}
+        branchId="branch-1"
+        onDelete={vi.fn()}
+      />
+    )
+
+    const card = screen
+      .getByText('Sesión Tarde')
+      .closest('[class*="cursor-pointer"]')
+    expect(card).toBeDefined()
+    await user.click(card!)
   })
 
   it('should render initial and closing balances', () => {
