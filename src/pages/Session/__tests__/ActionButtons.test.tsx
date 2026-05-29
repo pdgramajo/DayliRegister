@@ -44,6 +44,12 @@ describe('ActionButtons', () => {
 
     await user.click(screen.getByText('Gasto'))
     expect(handleNavigate).toHaveBeenCalledWith('expense')
+
+    await user.click(screen.getByText('Retiro'))
+    expect(handleNavigate).toHaveBeenCalledWith('withdrawal')
+
+    await user.click(screen.getByText('Ingreso'))
+    expect(handleNavigate).toHaveBeenCalledWith('income')
   })
 
   it('calls onNavigate for inventory buttons', async () => {

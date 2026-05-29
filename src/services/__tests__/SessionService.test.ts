@@ -5,6 +5,7 @@ import {
   SessionAlreadyOpenError,
   SessionClosedError,
 } from '../SessionService'
+import { SessionRepository } from '../../repositories'
 import { db } from '../../db'
 import { Entities } from '../../types/entities'
 
@@ -181,6 +182,48 @@ describe('SessionService', () => {
       await expect(SessionService.closeSession(session.id)).rejects.toThrow(
         SessionClosedError
       )
+    })
+  })
+
+  describe('deleteSession', () => {
+    it('should soft delete a session', async () => {
+      const session = await SessionService.createSession({
+        name: 'To Delete',
+        branchId,
+      })
+
+      await SessionService.deleteSession(session.id)
+
+      const deleted = await SessionRepository.getById(session.id)
+      expect(deleted?.deletedAt).toBeDefined()
+    })
+
+    it('should throw SessionNotFoundError for non-existent session', async () => {
+      await expect(
+        SessionService.deleteSession('non-existent')
+      ).rejects.toThrow(SessionNotFoundError)
+    })
+
+    it('should delete a session with transactions', async () => {
+      const session = await SessionService.createSession({
+        name: 'Session With Tx',
+        branchId,
+      })
+
+      await db.transactions.add({
+        id: crypto.randomUUID(),
+        sessionId: session.id,
+        type: 'sale' as const,
+        amount: 500,
+        paymentMethod: 'cash' as const,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+
+      await SessionService.deleteSession(session.id)
+
+      const deleted = await SessionRepository.getById(session.id)
+      expect(deleted?.deletedAt).toBeDefined()
     })
   })
 

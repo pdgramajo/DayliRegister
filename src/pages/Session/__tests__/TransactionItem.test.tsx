@@ -164,4 +164,80 @@ describe('TransactionItem', () => {
     )
     expect(screen.getByText('No hay movimientos')).toBeInTheDocument()
   })
+
+  it('filters by cash sales and income', () => {
+    const transferSale: Transaction = {
+      ...sale,
+      id: 'tx-3',
+      paymentMethod: 'transfer',
+    }
+    const income: Transaction = {
+      id: 'tx-4',
+      sessionId: 's1',
+      branchId: 'b1',
+      type: 'income',
+      amount: 500,
+      createdAt: '2024-06-15T12:00:00Z',
+      updatedAt: '2024-06-15T12:00:00Z',
+    }
+    render(
+      <TransactionList
+        transactions={[sale, transferSale, expense, income]}
+        isLoading={false}
+        filter="cash"
+        isOpen={true}
+        onFilterChange={vi.fn()}
+        onDelete={vi.fn()}
+      />
+    )
+    expect(screen.getByText('Venta')).toBeInTheDocument()
+    expect(screen.getByText('Ingreso')).toBeInTheDocument()
+    expect(screen.queryByText(/\(Transferencia\)/)).not.toBeInTheDocument()
+    expect(screen.queryByText('Gasto')).not.toBeInTheDocument()
+  })
+
+  it('filters by transfer sales', () => {
+    const transferSale: Transaction = {
+      ...sale,
+      id: 'tx-3',
+      paymentMethod: 'transfer',
+    }
+    render(
+      <TransactionList
+        transactions={[sale, transferSale]}
+        isLoading={false}
+        filter="transfer"
+        isOpen={true}
+        onFilterChange={vi.fn()}
+        onDelete={vi.fn()}
+      />
+    )
+    expect(screen.getByText(/\(Transferencia\)/)).toBeInTheDocument()
+    expect(screen.queryByText(/\(Efectivo\)/)).not.toBeInTheDocument()
+  })
+
+  it('filters by expenses and withdrawals', () => {
+    const withdrawal: Transaction = {
+      id: 'tx-5',
+      sessionId: 's1',
+      branchId: 'b1',
+      type: 'withdrawal',
+      amount: 200,
+      createdAt: '2024-06-15T13:00:00Z',
+      updatedAt: '2024-06-15T13:00:00Z',
+    }
+    render(
+      <TransactionList
+        transactions={[sale, expense, withdrawal]}
+        isLoading={false}
+        filter="expenses"
+        isOpen={true}
+        onFilterChange={vi.fn()}
+        onDelete={vi.fn()}
+      />
+    )
+    expect(screen.getByText('Gasto')).toBeInTheDocument()
+    expect(screen.getByText('Retiro')).toBeInTheDocument()
+    expect(screen.queryByText('Venta')).not.toBeInTheDocument()
+  })
 })

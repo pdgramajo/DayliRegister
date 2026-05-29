@@ -100,5 +100,73 @@ describe('BranchService', () => {
       const branch = await BranchService.getBranchById(id)
       expect(branch?.deletedAt).toBeDefined()
     })
+
+    it('should throw BranchNotFoundError for non-existent id', async () => {
+      await expect(BranchService.deleteBranch('non-existent')).rejects.toThrow(
+        BranchNotFoundError
+      )
+    })
+
+    it('should delete a branch with sessions and transactions', async () => {
+      const branchId = crypto.randomUUID()
+      await db.branches.add({
+        id: branchId,
+        name: 'Branch With Sessions',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+
+      const sessionId = crypto.randomUUID()
+      await db.cashSessions.add({
+        id: sessionId,
+        branchId,
+        name: 'Session',
+        status: 'open' as const,
+        initialAmount: 1000,
+        openedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+
+      await db.transactions.add({
+        id: crypto.randomUUID(),
+        sessionId,
+        type: 'sale' as const,
+        amount: 500,
+        paymentMethod: 'cash' as const,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+
+      await BranchService.deleteBranch(branchId)
+
+      const branch = await BranchService.getBranchById(branchId)
+      expect(branch?.deletedAt).toBeDefined()
+    })
+  })
+
+  describe('getActiveBranches', () => {
+    it('should return only active branches', async () => {
+      await db.branches.add({
+        id: crypto.randomUUID(),
+        name: 'Active 1',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+      await db.branches.add({
+        id: crypto.randomUUID(),
+        name: 'Active 2',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+
+      const branches = await BranchService.getActiveBranches()
+
+      expect(branches).toHaveLength(2)
+      expect(branches.every((b) => b.isActive)).toBe(true)
+    })
   })
 })

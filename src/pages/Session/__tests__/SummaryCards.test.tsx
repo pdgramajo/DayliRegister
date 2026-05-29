@@ -44,4 +44,52 @@ describe('SummaryCards', () => {
     await user.click(buttons[0])
     expect(writeText).toHaveBeenCalledWith('1500')
   })
+
+  it('copies transfer sales on second card click', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.fn()
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+      writable: true,
+    })
+
+    render(<SummaryCards {...defaultProps} />)
+
+    const buttons = screen.getAllByTitle('Clic para copiar')
+    await user.click(buttons[1])
+    expect(writeText).toHaveBeenCalledWith('3000')
+  })
+
+  it('copies total sales on third card click', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.fn()
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+      writable: true,
+    })
+
+    render(<SummaryCards {...defaultProps} />)
+
+    const buttons = screen.getAllByTitle('Clic para copiar')
+    await user.click(buttons[2])
+    expect(writeText).toHaveBeenCalledWith('4500')
+  })
+
+  it('copies cash in box on fourth card click', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.fn()
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+      writable: true,
+    })
+
+    render(<SummaryCards {...defaultProps} />)
+
+    const buttons = screen.getAllByTitle('Clic para copiar')
+    await user.click(buttons[3])
+    expect(writeText).toHaveBeenCalledWith('6000')
+  })
 })

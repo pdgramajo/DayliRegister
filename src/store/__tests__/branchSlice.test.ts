@@ -85,6 +85,25 @@ describe('branchSlice', () => {
   })
 
   describe('async thunks - createBranch', () => {
+    it('should set loading when pending', () => {
+      const store = createTestStore({
+        branches: {
+          branches: [],
+          currentBranch: null,
+          isLoading: false,
+          error: 'old error',
+        },
+      })
+
+      store.dispatch(
+        createBranch.pending('pending', { name: 'Test', isActive: true })
+      )
+
+      const state = store.getState().branches
+      expect(state.isLoading).toBe(true)
+      expect(state.error).toBeNull()
+    })
+
     it('should add branch when fulfilled', () => {
       const store = createTestStore()
 
@@ -155,6 +174,23 @@ describe('branchSlice', () => {
 
       const state = store.getState().branches
       expect(state.branches).toHaveLength(0)
+    })
+
+    it('should set error when rejected', () => {
+      const store = createTestStore()
+
+      store.dispatch(
+        deleteBranch.rejected(
+          null,
+          'rejected',
+          'test-id-1',
+          'Error al eliminar la sucursal'
+        )
+      )
+
+      const state = store.getState().branches
+      expect(state.error).toBe('Error al eliminar la sucursal')
+      expect(state.isLoading).toBe(false)
     })
   })
 })

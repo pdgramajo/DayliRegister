@@ -17,7 +17,7 @@ describe('TabSwitch', () => {
     expect(screen.getByText('Inventario (3)')).toBeInTheDocument()
   })
 
-  it('calls onChange when clicking a tab', async () => {
+  it('calls onChange with inventory when clicking Inventario tab', async () => {
     const user = userEvent.setup()
     const handleChange = vi.fn()
     render(
@@ -30,5 +30,20 @@ describe('TabSwitch', () => {
     )
     await user.click(screen.getByText('Inventario (0)'))
     expect(handleChange).toHaveBeenCalledWith('inventory')
+  })
+
+  it('calls onChange with movements when clicking Movimientos tab', async () => {
+    const user = userEvent.setup()
+    const handleChange = vi.fn()
+    render(
+      <TabSwitch
+        activeTab="inventory"
+        onChange={handleChange}
+        transactionCount={5}
+        inventoryCount={3}
+      />
+    )
+    await user.click(screen.getByText('Movimientos (5)'))
+    expect(handleChange).toHaveBeenCalledWith('movements')
   })
 })

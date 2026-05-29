@@ -213,6 +213,23 @@ describe('productSlice', () => {
   })
 
   describe('async thunks - deleteProduct', () => {
+    it('should set loading when pending', () => {
+      const store = createTestStore({
+        products: {
+          products: [mockProduct],
+          currentProduct: null,
+          isLoading: false,
+          error: 'old error',
+        },
+      })
+
+      store.dispatch(deleteProduct.pending('pending', 'test-id-1'))
+
+      const state = store.getState().products
+      expect(state.isLoading).toBe(true)
+      expect(state.error).toBeNull()
+    })
+
     it('should remove product when fulfilled', () => {
       const store = createTestStore({
         products: {
@@ -229,6 +246,23 @@ describe('productSlice', () => {
 
       const state = store.getState().products
       expect(state.products).toHaveLength(0)
+    })
+
+    it('should set error when rejected', () => {
+      const store = createTestStore()
+
+      store.dispatch(
+        deleteProduct.rejected(
+          null,
+          'rejected',
+          'test-id-1',
+          'Error al eliminar el producto'
+        )
+      )
+
+      const state = store.getState().products
+      expect(state.error).toBe('Error al eliminar el producto')
+      expect(state.isLoading).toBe(false)
     })
   })
 })

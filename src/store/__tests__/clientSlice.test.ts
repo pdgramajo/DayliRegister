@@ -316,6 +316,30 @@ describe('clientSlice', () => {
 
       expect(result.payload).toBe('client-1')
     })
+
+    it('should reset currentClient when fulfilled and matches', () => {
+      const store = createTestStore({
+        clients: {
+          clients: [mockClientWithBalance],
+          currentClient: mockClientWithBalance,
+          isLoading: true,
+          error: null,
+        },
+      })
+
+      store.dispatch(
+        addDebtEntry.fulfilled('client-1', 'fulfilled', {
+          clientId: 'client-1',
+          branchId: 'branch-1',
+          type: 'debt',
+          amount: 1000,
+        })
+      )
+
+      const state = store.getState().clients
+      expect(state.currentClient).toBeNull()
+      expect(state.isLoading).toBe(false)
+    })
   })
 
   describe('async thunks - deleteDebtEntry', () => {
@@ -334,6 +358,28 @@ describe('clientSlice', () => {
         entryId: 'entry-1',
         clientId: 'client-1',
       })
+    })
+
+    it('should reset currentClient when fulfilled and matches', () => {
+      const store = createTestStore({
+        clients: {
+          clients: [mockClientWithBalance],
+          currentClient: mockClientWithBalance,
+          isLoading: true,
+          error: null,
+        },
+      })
+
+      store.dispatch(
+        deleteDebtEntry.fulfilled(
+          { entryId: 'entry-1', clientId: 'client-1' },
+          'fulfilled',
+          { entryId: 'entry-1', clientId: 'client-1' }
+        )
+      )
+
+      const state = store.getState().clients
+      expect(state.currentClient).toBeNull()
     })
   })
 })
