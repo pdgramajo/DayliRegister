@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import './App.css'
 
 const BranchList = lazy(() =>
   import('./pages/Branch/BranchList').then((m) => ({ default: m.BranchList }))
