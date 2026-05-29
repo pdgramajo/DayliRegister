@@ -8,6 +8,7 @@ import {
 import {
   fetchTransactionsBySession,
   fetchInventoryMovementsBySession,
+  fetchInventoryCategories,
   deleteTransaction,
   deleteInventoryMovement,
   clearTransactions,
@@ -591,6 +592,7 @@ export const SessionDetail = () => {
       dispatch(fetchSessionById(sessionId))
       dispatch(fetchTransactionsBySession(sessionId))
       dispatch(fetchInventoryMovementsBySession(sessionId))
+      dispatch(fetchInventoryCategories())
     }
     return () => {
       dispatch(clearCurrentSession())
