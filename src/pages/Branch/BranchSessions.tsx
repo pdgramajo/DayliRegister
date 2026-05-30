@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Button, Modal, MoneyInput, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
+import { ROUTES, buildRoute } from '../../constants/routes'
 import { OpenSessionCard, ClosedSessionCard } from './SessionCard'
 import { BarChart3, Package, Users, ClipboardList } from 'lucide-react'
 
@@ -105,7 +106,7 @@ export const BranchSessions = () => {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={() => navigate('/branches')}
+            onClick={() => navigate(ROUTES.BRANCHES)}
             className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors"
           >
             ← Volver
@@ -118,7 +119,9 @@ export const BranchSessions = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
           <Button
             variant="outline"
-            onClick={() => navigate(`/branches/${branchId}/inventory`)}
+            onClick={() =>
+              navigate(buildRoute(ROUTES.BRANCH_INVENTORY, { id: branchId }))
+            }
             className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
           >
             <ClipboardList className="size-5 text-emerald-500 dark:text-emerald-400" />
@@ -126,7 +129,9 @@ export const BranchSessions = () => {
           </Button>
           <Button
             variant="outline"
-            onClick={() => navigate(`/branches/${branchId}/report`)}
+            onClick={() =>
+              navigate(buildRoute(ROUTES.BRANCH_REPORT, { id: branchId }))
+            }
             className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
           >
             <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
@@ -134,7 +139,9 @@ export const BranchSessions = () => {
           </Button>
           <Button
             variant="outline"
-            onClick={() => navigate(`/branches/${branchId}/products`)}
+            onClick={() =>
+              navigate(buildRoute(ROUTES.BRANCH_PRODUCTS, { id: branchId }))
+            }
             className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
           >
             <Package className="size-5 text-emerald-500 dark:text-emerald-400" />
@@ -142,7 +149,9 @@ export const BranchSessions = () => {
           </Button>
           <Button
             variant="outline"
-            onClick={() => navigate(`/branches/${branchId}/clients`)}
+            onClick={() =>
+              navigate(buildRoute(ROUTES.BRANCH_CLIENTS, { id: branchId }))
+            }
             className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
           >
             <Users className="size-5 text-sky-500 dark:text-sky-400" />
@@ -151,7 +160,9 @@ export const BranchSessions = () => {
         </div>
 
         <Button
-          onClick={() => navigate(`/branches/${branchId}/sessions/new`)}
+          onClick={() =>
+            navigate(buildRoute(ROUTES.BRANCH_SESSION_NEW, { id: branchId }))
+          }
           className="w-full"
         >
           + Nueva sesión

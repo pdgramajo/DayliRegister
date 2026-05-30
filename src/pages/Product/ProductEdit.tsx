@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import type { CreateProductDTO } from '../../types/dtos'
 import { ProductForm, toast } from '../../components/ui'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 export const ProductEdit = () => {
   const { id: branchId, productId } = useParams<{
@@ -35,7 +36,9 @@ export const ProductEdit = () => {
     const { branchId: _, ...updateData } = data
     dispatch(updateProduct({ id: productId, data: updateData }))
       .unwrap()
-      .then(() => navigate(`/branches/${branchId}/products`))
+      .then(() =>
+        navigate(buildRoute(ROUTES.BRANCH_PRODUCTS, { id: branchId }))
+      )
       .catch((error) => {
         toast.error(error || 'Error al actualizar el producto')
       })

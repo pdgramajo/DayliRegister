@@ -17,6 +17,7 @@ import type { RootState } from '../../store'
 import { Entities } from '../../types/entities'
 import type { InventoryMovementType } from '../../types/entities'
 import { TABS } from '../../constants/session'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 interface InventoryMovementFormData {
   quantity: number
@@ -182,7 +183,7 @@ export const InventoryMovementNew = () => {
       ).unwrap()
 
       navigate(
-        `/branches/${branchId}/sessions/${sessionId}?tab=${TABS.INVENTORY}`
+        `${buildRoute(ROUTES.BRANCH_SESSION_DETAIL, { id: branchId, sessionId })}?tab=${TABS.INVENTORY}`
       )
     } catch (error) {
       toast.error((error as string) || 'Error al crear el movimiento')
@@ -206,7 +207,7 @@ export const InventoryMovementNew = () => {
             <button
               onClick={() =>
                 navigate(
-                  `/branches/${branchId}/sessions/${sessionId}?tab=${TABS.INVENTORY}`
+                  `${buildRoute(ROUTES.BRANCH_SESSION_DETAIL, { id: branchId, sessionId })}?tab=${TABS.INVENTORY}`
                 )
               }
               className="text-sm text-content-600 dark:text-content-400 hover:text-content-900 dark:hover:text-content-100 transition-colors"

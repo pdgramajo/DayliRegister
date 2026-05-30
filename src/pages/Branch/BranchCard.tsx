@@ -3,6 +3,7 @@ import { Phone, MapPin, Pencil, Trash2 } from 'lucide-react'
 import { Button } from '../../components/ui'
 import type { Branch } from '../../types/entities'
 import { formatPhoneForDisplay } from '../../lib/formatters'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 interface BranchCardProps {
   branch: Branch
@@ -18,9 +19,12 @@ export const BranchCard = ({ branch, onDelete }: BranchCardProps) => {
     <div
       role="button"
       tabIndex={0}
-      onClick={() => navigate(`/branches/${branch.id}/sessions`)}
+      onClick={() =>
+        navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branch.id }))
+      }
       onKeyDown={(e) =>
-        e.key === 'Enter' && navigate(`/branches/${branch.id}/sessions`)
+        e.key === 'Enter' &&
+        navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branch.id }))
       }
       className={`flex items-center justify-between p-3 rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800/50 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors cursor-pointer ${hasContactInfo ? 'py-3' : 'py-2'}`}
     >
@@ -56,7 +60,9 @@ export const BranchCard = ({ branch, onDelete }: BranchCardProps) => {
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() => navigate(`/branches/${branch.id}`)}
+          onClick={() =>
+            navigate(buildRoute(ROUTES.BRANCH_EDIT, { id: branch.id }))
+          }
         >
           <Pencil className="size-4" />
         </Button>

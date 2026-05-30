@@ -6,6 +6,7 @@ import {
   type SessionFormData,
 } from '../../components/forms/SessionForm'
 import { toast } from '../../components/ui'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 export const SessionNew = () => {
   const { id: branchId } = useParams<{ id: string }>()
@@ -21,7 +22,7 @@ export const SessionNew = () => {
         notes: data.notes,
       }
       await SessionService.createSession(sessionData)
-      navigate(`/branches/${branchId}/sessions`)
+      navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
     } catch (error) {
       if (error instanceof SessionAlreadyOpenError) {
         toast.error('Ya hay una sesión abierta para esta sucursal')
@@ -54,7 +55,7 @@ export const SessionNew = () => {
         <div className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-6">
           <SessionForm
             onSubmit={handleSubmit}
-            cancelTo={`/branches/${branchId}/sessions`}
+            cancelTo={buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId })}
           />
         </div>
       </div>

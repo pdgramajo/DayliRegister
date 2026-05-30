@@ -12,6 +12,7 @@ import { Button, Modal, toast } from '../../components/ui'
 import { ProductCard } from './ProductCard'
 import { Copy, Check, Package } from 'lucide-react'
 import { formatMoney } from '../../lib/formatters'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 export const ProductList = () => {
   const { id: branchId } = useParams<{ id: string }>()
@@ -103,7 +104,9 @@ export const ProductList = () => {
         <div className="shrink-0 px-4 pt-6 sm:px-6 lg:px-8">
           <div className="mb-6">
             <button
-              onClick={() => navigate(`/branches/${branchId}/sessions`)}
+              onClick={() =>
+                navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
+              }
               className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors mb-4 block"
             >
               ← Volver a {currentBranch.name}
@@ -119,7 +122,11 @@ export const ProductList = () => {
                 </p>
               </div>
               <Button
-                onClick={() => navigate(`/branches/${branchId}/products/new`)}
+                onClick={() =>
+                  navigate(
+                    buildRoute(ROUTES.BRANCH_PRODUCT_NEW, { id: branchId })
+                  )
+                }
               >
                 + Nuevo
               </Button>
@@ -166,7 +173,11 @@ export const ProductList = () => {
             </p>
             <Button
               variant="outline"
-              onClick={() => navigate(`/branches/${branchId}/products/new`)}
+              onClick={() =>
+                navigate(
+                  buildRoute(ROUTES.BRANCH_PRODUCT_NEW, { id: branchId })
+                )
+              }
             >
               + Agregar producto
             </Button>
@@ -180,7 +191,12 @@ export const ProductList = () => {
                 isSelected={selectedIds.has(product.id)}
                 onToggleSelect={toggleSelect}
                 onEdit={(id) =>
-                  navigate(`/branches/${branchId}/products/${id}/edit`)
+                  navigate(
+                    buildRoute(ROUTES.BRANCH_PRODUCT_EDIT, {
+                      id: branchId,
+                      productId: id,
+                    })
+                  )
                 }
                 onDelete={(id) => setDeleteProductId(id)}
               />

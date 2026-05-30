@@ -3,6 +3,7 @@ import { ProductService } from '../../services/ProductService'
 import type { CreateProductDTO } from '../../types/dtos'
 import { ProductForm } from '../../components/forms/ProductForm'
 import { toast } from '../../components/ui'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 export const ProductNew = () => {
   const { id: branchId } = useParams<{ id: string }>()
@@ -12,7 +13,7 @@ export const ProductNew = () => {
     if (!branchId) return
     try {
       await ProductService.createProduct(data)
-      navigate(`/branches/${branchId}/products`)
+      navigate(buildRoute(ROUTES.BRANCH_PRODUCTS, { id: branchId }))
     } catch (error) {
       toast.error('Error al crear el producto')
     }

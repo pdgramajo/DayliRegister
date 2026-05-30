@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import type { CashSession } from '../../types/entities'
 import { formatDate, formatMoney } from '../../lib/formatters'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 interface OpenSessionCardProps {
   session: CashSession
@@ -17,12 +18,24 @@ export const OpenSessionCard = ({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation()
-    navigate(`/branches/${branchId}/sessions/${session.id}/edit`)
+    navigate(
+      buildRoute(ROUTES.BRANCH_SESSION_EDIT, {
+        id: branchId,
+        sessionId: session.id,
+      })
+    )
   }
 
   return (
     <div
-      onClick={() => navigate(`/branches/${branchId}/sessions/${session.id}`)}
+      onClick={() =>
+        navigate(
+          buildRoute(ROUTES.BRANCH_SESSION_DETAIL, {
+            id: branchId,
+            sessionId: session.id,
+          })
+        )
+      }
       className="group p-2 bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 cursor-pointer transition-all duration-300 hover:border-green-400 dark:hover:border-green-600 hover:shadow-lg hover:shadow-green-500/10"
     >
       <div className="flex items-center justify-between gap-4 mb-2">
@@ -105,7 +118,12 @@ export const ClosedSessionCard = ({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation()
-    navigate(`/branches/${branchId}/sessions/${session.id}/edit`)
+    navigate(
+      buildRoute(ROUTES.BRANCH_SESSION_EDIT, {
+        id: branchId,
+        sessionId: session.id,
+      })
+    )
   }
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -115,7 +133,14 @@ export const ClosedSessionCard = ({
 
   return (
     <div
-      onClick={() => navigate(`/branches/${branchId}/sessions/${session.id}`)}
+      onClick={() =>
+        navigate(
+          buildRoute(ROUTES.BRANCH_SESSION_DETAIL, {
+            id: branchId,
+            sessionId: session.id,
+          })
+        )
+      }
       className="group p-2 bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 cursor-pointer transition-all duration-300 hover:border-surface-300 dark:hover:border-surface-500"
     >
       <div className="flex items-center justify-between gap-4 mb-2">

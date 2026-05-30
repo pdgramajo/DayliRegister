@@ -13,6 +13,7 @@ import {
 } from '../../components/forms/SessionForm'
 import { Entities } from '../../types/entities'
 import { toast } from '../../components/ui'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 export const SessionEdit = () => {
   const { id: branchId, sessionId } = useParams<{
@@ -40,7 +41,7 @@ export const SessionEdit = () => {
       currentSession.status === Entities.CashSessionStatus.CLOSED
     ) {
       if (branchId) {
-        navigate(`/branches/${branchId}/sessions`)
+        navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
       }
     }
   }, [currentSession, branchId, navigate])
@@ -51,7 +52,7 @@ export const SessionEdit = () => {
       .unwrap()
       .then(() => {
         if (branchId) {
-          navigate(`/branches/${branchId}/sessions`)
+          navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
         }
       })
       .catch((error) => {
@@ -87,7 +88,9 @@ export const SessionEdit = () => {
               onSubmit={handleSubmit}
               isLoading={isLoading}
               cancelTo={
-                branchId ? `/branches/${branchId}/sessions` : '/branches'
+                branchId
+                  ? buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId })
+                  : ROUTES.BRANCHES
               }
               submitText="Guardar"
             />

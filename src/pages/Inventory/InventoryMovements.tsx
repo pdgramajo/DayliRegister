@@ -22,6 +22,7 @@ import {
   type InventoryCategory,
   type CashSession,
 } from '../../types/entities'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 interface CategorySummary {
   categoryId: string
@@ -183,7 +184,9 @@ export const InventoryMovements = () => {
         {/* Header */}
         <div className="shrink-0 px-4 pt-6 sm:px-6 lg:px-8">
           <button
-            onClick={() => navigate(`/branches/${branchId}/sessions`)}
+            onClick={() =>
+              navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
+            }
             className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors mb-4 block"
           >
             <ArrowLeft className="size-4 inline mr-1" />

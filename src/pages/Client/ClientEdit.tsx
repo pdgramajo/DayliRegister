@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import type { CreateClientDTO } from '../../types/dtos'
 import { ClientForm, toast } from '../../components/ui'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 export const ClientEdit = () => {
   const { id: branchId, clientId } = useParams<{
@@ -35,7 +36,7 @@ export const ClientEdit = () => {
     const { branchId: _, ...updateData } = data
     dispatch(updateClient({ id: clientId, data: updateData }))
       .unwrap()
-      .then(() => navigate(`/branches/${branchId}/clients`))
+      .then(() => navigate(buildRoute(ROUTES.BRANCH_CLIENTS, { id: branchId })))
       .catch((error) => {
         toast.error(error || 'Error al actualizar el cliente')
       })

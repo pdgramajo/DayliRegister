@@ -18,6 +18,7 @@ import type { RootState } from '../../store'
 import { Button, Modal, MoneyInput, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
 import { TABS, FILTERS, DELETE_TARGET_TYPES } from '../../constants/session'
+import { ROUTES, buildRoute } from '../../constants/routes'
 import { SessionHeader } from './SessionHeader'
 import { SummaryCards } from './SummaryCards'
 import { TabSwitch } from './TabSwitch'
@@ -133,11 +134,11 @@ export const SessionDetail = () => {
 
   const navigateToTransaction = (type: string) =>
     navigate(
-      `/branches/${branchId}/sessions/${sessionId}/transaction/new?type=${type}`
+      `${buildRoute(ROUTES.BRANCH_SESSION_TRANSACTION_NEW, { id: branchId, sessionId })}?type=${type}`
     )
   const navigateToInventory = (type: string) =>
     navigate(
-      `/branches/${branchId}/sessions/${sessionId}/inventory/new?type=${type}`
+      `${buildRoute(ROUTES.BRANCH_SESSION_INVENTORY_NEW, { id: branchId, sessionId })}?type=${type}`
     )
 
   if (sessionLoading || !currentSession) {
@@ -194,7 +195,9 @@ export const SessionDetail = () => {
         name={currentSession.name}
         isOpen={isOpen}
         onClose={handleCloseSession}
-        onBack={() => navigate(`/branches/${branchId}/sessions`)}
+        onBack={() =>
+          navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
+        }
       />
       <SummaryCards
         cashSales={cashSales}

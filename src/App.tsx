@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { ROUTES } from './constants/routes'
 
 const BranchList = lazy(() =>
   import('./pages/Branch/BranchList').then((m) => ({ default: m.BranchList }))
@@ -40,29 +41,6 @@ const InventoryMovementNew = lazy(() =>
     default: m.InventoryMovementNew,
   }))
 )
-
-const ROUTES = {
-  HOME: '/',
-  BRANCHES: '/branches',
-  BRANCH_NEW: '/branches/new',
-  BRANCH_EDIT: '/branches/:id',
-  BRANCH_SESSIONS: '/branches/:id/sessions',
-  BRANCH_SESSION_NEW: '/branches/:id/sessions/new',
-  BRANCH_SESSION_DETAIL: '/branches/:id/sessions/:sessionId',
-  BRANCH_SESSION_EDIT: '/branches/:id/sessions/:sessionId/edit',
-  BRANCH_SESSION_TRANSACTION_NEW:
-    '/branches/:id/sessions/:sessionId/transaction/new',
-  BRANCH_SESSION_INVENTORY_NEW:
-    '/branches/:id/sessions/:sessionId/inventory/new',
-  BRANCH_PRODUCTS: '/branches/:id/products',
-  BRANCH_PRODUCT_NEW: '/branches/:id/products/new',
-  BRANCH_PRODUCT_EDIT: '/branches/:id/products/:productId/edit',
-  BRANCH_CLIENTS: '/branches/:id/clients',
-  BRANCH_CLIENT_NEW: '/branches/:id/clients/new',
-  BRANCH_CLIENT_EDIT: '/branches/:id/clients/:clientId/edit',
-  BRANCH_REPORT: '/branches/:id/report',
-  BRANCH_INVENTORY: '/branches/:id/inventory',
-} as const
 
 const ProductList = lazy(() =>
   import('./pages/Product/ProductList').then((m) => ({

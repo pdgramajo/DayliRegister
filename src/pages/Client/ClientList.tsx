@@ -14,6 +14,7 @@ import { Button, toast } from '../../components/ui'
 import { Users, Search } from 'lucide-react'
 import { ClientCard } from './ClientCard'
 import { Entities, type DebtEntryType } from '../../types/entities'
+import { ROUTES, buildRoute } from '../../constants/routes'
 import { DebtEntryModal } from './DebtEntryModal'
 import { DeleteConfirmModal } from './DeleteConfirmModal'
 
@@ -129,7 +130,9 @@ export const ClientList = () => {
       <div className="max-w-2xl mx-auto w-full flex flex-col flex-1 min-h-0">
         <div className="px-4 pt-6 sm:px-6 lg:px-8 shrink-0">
           <button
-            onClick={() => navigate(`/branches/${branchId}/sessions`)}
+            onClick={() =>
+              navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
+            }
             className="text-sm text-content-400 hover:text-content-600 dark:hover:text-content-300 transition-colors mb-5 block"
           >
             ← Volver a {currentBranch.name}
@@ -145,7 +148,9 @@ export const ClientList = () => {
               </p>
             </div>
             <Button
-              onClick={() => navigate(`/branches/${branchId}/clients/new`)}
+              onClick={() =>
+                navigate(buildRoute(ROUTES.BRANCH_CLIENT_NEW, { id: branchId }))
+              }
             >
               + Nuevo
             </Button>
@@ -197,7 +202,11 @@ export const ClientList = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/branches/${branchId}/clients/new`)}
+                  onClick={() =>
+                    navigate(
+                      buildRoute(ROUTES.BRANCH_CLIENT_NEW, { id: branchId })
+                    )
+                  }
                 >
                   + Agregar cliente
                 </Button>
@@ -215,7 +224,12 @@ export const ClientList = () => {
                   }
                   onRegisterDebt={handleRegisterDebt}
                   onEdit={(id) =>
-                    navigate(`/branches/${branchId}/clients/${id}/edit`)
+                    navigate(
+                      buildRoute(ROUTES.BRANCH_CLIENT_EDIT, {
+                        id: branchId,
+                        clientId: id,
+                      })
+                    )
                   }
                   onDeleteClient={setDeleteClientId}
                   onDeleteEntry={(entryId, cId) => {

@@ -3,6 +3,7 @@ import { BranchService } from '../../services'
 import type { CreateBranchDTO } from '../../types/dtos'
 import { BranchForm } from '../../components/forms/BranchForm'
 import { toast } from '../../components/ui'
+import { ROUTES } from '../../constants/routes'
 
 export const BranchNew = () => {
   const navigate = useNavigate()
@@ -10,7 +11,7 @@ export const BranchNew = () => {
   const handleSubmit = async (data: CreateBranchDTO) => {
     try {
       await BranchService.createBranch(data)
-      navigate('/branches')
+      navigate(ROUTES.BRANCHES)
     } catch (error) {
       toast.error('Error al crear la sucursal')
     }

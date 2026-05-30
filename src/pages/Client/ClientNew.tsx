@@ -3,6 +3,7 @@ import { ClientService } from '../../services/ClientService'
 import { toast } from '../../components/ui'
 import { ClientForm } from '../../components/forms/ClientForm'
 import type { CreateClientDTO } from '../../types/dtos'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 export const ClientNew = () => {
   const { id: branchId } = useParams<{ id: string }>()
@@ -12,7 +13,7 @@ export const ClientNew = () => {
     if (!branchId) return
     try {
       await ClientService.createClient(data)
-      navigate(`/branches/${branchId}/clients`)
+      navigate(buildRoute(ROUTES.BRANCH_CLIENTS, { id: branchId }))
     } catch (error) {
       toast.error('Error al crear el cliente')
     }
@@ -34,7 +35,7 @@ export const ClientNew = () => {
           <ClientForm
             branchId={branchId!}
             onSubmit={handleSubmit}
-            cancelTo={`/branches/${branchId}/clients`}
+            cancelTo={buildRoute(ROUTES.BRANCH_CLIENTS, { id: branchId })}
           />
         </div>
       </div>

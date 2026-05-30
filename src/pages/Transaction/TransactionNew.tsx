@@ -14,6 +14,7 @@ import type { RootState } from '../../store'
 import { Entities } from '../../types/entities'
 import type { TransactionType, PaymentMethod } from '../../types/entities'
 import { formatMoney } from '../../lib/formatters'
+import { ROUTES, buildRoute } from '../../constants/routes'
 
 interface TransactionFormData {
   amount?: number
@@ -72,7 +73,9 @@ export const TransactionNew = () => {
         })
       ).unwrap()
 
-      navigate(`/branches/${branchId}/sessions/${sessionId}`)
+      navigate(
+        buildRoute(ROUTES.BRANCH_SESSION_DETAIL, { id: branchId, sessionId })
+      )
     } catch (error) {
       toast.error((error as string) || 'Error al crear la transacción')
     }
@@ -138,7 +141,12 @@ export const TransactionNew = () => {
           <div className="flex justify-between items-center mb-6 -mt-2">
             <button
               onClick={() =>
-                navigate(`/branches/${branchId}/sessions/${sessionId}`)
+                navigate(
+                  buildRoute(ROUTES.BRANCH_SESSION_DETAIL, {
+                    id: branchId,
+                    sessionId,
+                  })
+                )
               }
               className="text-sm text-content-600 dark:text-content-400 hover:text-content-900 dark:hover:text-content-100 transition-colors"
             >
