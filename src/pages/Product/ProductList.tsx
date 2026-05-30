@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   fetchProductsByBranch,
@@ -10,9 +10,15 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Button, Modal, toast } from '../../components/ui'
 import { ProductCard } from './ProductCard'
-import { Copy, Check, Package } from 'lucide-react'
+import { Copy, Check, Package, Download, Upload } from 'lucide-react'
 import { formatMoney } from '../../lib/formatters'
 import { ROUTES, buildRoute } from '../../constants/routes'
+import { ProductService } from '../../services/ProductService'
+import {
+  exportProductsToFile,
+  parseImportFile,
+  type ExportedProduct,
+} from '../../services/ExportImportService'
 
 export const ProductList = () => {
   const { id: branchId } = useParams<{ id: string }>()
@@ -27,6 +33,11 @@ export const ProductList = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [deleteProductId, setDeleteProductId] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [importProducts, setImportProducts] = useState<
+    ExportedProduct[] | null
+  >(null)
+  const [isImporting, setIsImporting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (branchId) {
@@ -73,6 +84,54 @@ export const ProductList = () => {
   const handleCopyAll = () => {
     copyToClipboard(products)
   }
+
+  const handleExport = useCallback(() => {
+    if (!currentBranch) return
+    exportProductsToFile(products, currentBranch.name)
+    toast.success('Productos exportados correctamente')
+  }, [products, currentBranch])
+
+  const handleImportClick = useCallback(() => {
+    fileInputRef.current?.click()
+  }, [])
+
+  const handleFileSelected = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+
+      try {
+        const parsed = await parseImportFile(file)
+        setImportProducts(parsed)
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : 'Error al leer el archivo'
+        )
+      }
+
+      // Reset input so the same file can be selected again
+      e.target.value = ''
+    },
+    []
+  )
+
+  const handleConfirmImport = useCallback(async () => {
+    if (!importProducts || !branchId) return
+
+    setIsImporting(true)
+    try {
+      await ProductService.bulkCreate(branchId, importProducts)
+      toast.success(
+        `${importProducts.length} producto${importProducts.length !== 1 ? 's' : ''} importado${importProducts.length !== 1 ? 's' : ''} correctamente`
+      )
+      setImportProducts(null)
+      dispatch(fetchProductsByBranch(branchId))
+    } catch (error) {
+      toast.error('Error al importar los productos')
+    } finally {
+      setIsImporting(false)
+    }
+  }, [importProducts, branchId, dispatch])
 
   const handleDeleteProduct = () => {
     if (!deleteProductId) return
@@ -134,30 +193,52 @@ export const ProductList = () => {
           </div>
 
           {products.length > 0 && (
-            <div className="flex gap-2 mb-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopyAll}
-                className="gap-1.5"
-              >
-                <Copy className="size-4" />
-                Copiar todo
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopySelected}
-                disabled={selectedIds.size === 0}
-                className="gap-1.5"
-              >
-                {copied ? (
-                  <Check className="size-4 text-green-500" />
-                ) : (
+            <div className="space-y-2 mb-4">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExport}
+                  className="gap-1.5 flex-1"
+                >
+                  <Download className="size-4" />
+                  Exportar
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleImportClick}
+                  className="gap-1.5 flex-1"
+                >
+                  <Upload className="size-4" />
+                  Importar
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyAll}
+                  className="gap-1.5"
+                >
                   <Copy className="size-4" />
-                )}
-                Copiar seleccionados ({selectedIds.size})
-              </Button>
+                  Copiar todo
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopySelected}
+                  disabled={selectedIds.size === 0}
+                  className="gap-1.5"
+                >
+                  {copied ? (
+                    <Check className="size-4 text-green-500" />
+                  ) : (
+                    <Copy className="size-4" />
+                  )}
+                  Copiar seleccionados ({selectedIds.size})
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -204,6 +285,14 @@ export const ProductList = () => {
           </div>
         )}
 
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          onChange={handleFileSelected}
+          className="hidden"
+        />
+
         <Modal
           open={!!deleteProductId}
           onClose={() => setDeleteProductId(null)}
@@ -218,6 +307,41 @@ export const ProductList = () => {
             </Button>
             <Button variant="destructive" onClick={handleDeleteProduct}>
               Eliminar
+            </Button>
+          </div>
+        </Modal>
+
+        <Modal
+          open={importProducts !== null}
+          onClose={() => !isImporting && setImportProducts(null)}
+          title="Importar productos"
+        >
+          <p className="text-sm text-content-500 mb-2">
+            Se van a importar{' '}
+            <strong className="text-content-900 dark:text-white">
+              {importProducts?.length ?? 0} producto
+              {(importProducts?.length ?? 0) !== 1 ? 's' : ''}
+            </strong>{' '}
+            a{' '}
+            <strong className="text-content-900 dark:text-white">
+              {currentBranch?.name}
+            </strong>
+            .
+          </p>
+          <p className="text-sm text-content-400 mb-6">
+            Los productos importados se agregarán a los existentes. Los IDs se
+            generarán automáticamente.
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setImportProducts(null)}
+              disabled={isImporting}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handleConfirmImport} disabled={isImporting}>
+              {isImporting ? 'Importando...' : 'Importar'}
             </Button>
           </div>
         </Modal>

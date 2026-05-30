@@ -1,6 +1,8 @@
 import { ProductRepository } from '../repositories/ProductRepository'
+import { db } from '../db'
 import type { Product } from '../types/entities'
 import type { CreateProductDTO, UpdateProductDTO } from '../types/dtos'
+import { getTimestamp } from '../lib/utils'
 
 export class ProductNotFoundError extends Error {
   constructor(id: string) {
@@ -50,5 +52,29 @@ export const ProductService = {
       throw new ProductNotFoundError(id)
     }
     await ProductRepository.delete(id)
+  },
+
+  async bulkCreate(
+    branchId: string,
+    products: Array<{
+      name: string
+      price: number
+      offerPrice?: number
+      category?: string
+    }>
+  ): Promise<Product[]> {
+    const now = getTimestamp()
+    const newProducts: Product[] = products.map((p) => ({
+      id: crypto.randomUUID(),
+      branchId,
+      name: p.name.trim(),
+      price: p.price,
+      offerPrice: p.offerPrice,
+      category: p.category,
+      createdAt: now,
+      updatedAt: now,
+    }))
+    await db.products.bulkAdd(newProducts)
+    return newProducts
   },
 }
