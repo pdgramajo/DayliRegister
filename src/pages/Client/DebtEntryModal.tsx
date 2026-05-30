@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { Entities, type DebtEntryType } from '../../types/entities'
 import { Modal, Button, MoneyInput } from '../../components/ui'
 
 interface DebtEntryModalProps {
   open: boolean
-  type: 'debt' | 'payment'
+  type: DebtEntryType
   onClose: () => void
   onConfirm: (amount: number, description: string) => void
 }
@@ -26,7 +27,11 @@ export const DebtEntryModal = ({
     <Modal
       open={open}
       onClose={onClose}
-      title={type === 'debt' ? 'Registrar deuda' : 'Registrar pago'}
+      title={
+        type === Entities.DebtEntryTypes.DEBT
+          ? 'Registrar deuda'
+          : 'Registrar pago'
+      }
     >
       <div className="space-y-4">
         <div className="space-y-2">
@@ -39,7 +44,7 @@ export const DebtEntryModal = ({
             onChange={(v) => setAmount(v)}
           />
         </div>
-        {type === 'debt' && (
+        {type === Entities.DebtEntryTypes.DEBT && (
           <div className="space-y-2">
             <label className="text-sm font-medium text-content-700 dark:text-content-300">
               Descripción <span className="text-content-400">(opcional)</span>
@@ -58,7 +63,9 @@ export const DebtEntryModal = ({
             Cancelar
           </Button>
           <Button onClick={handleConfirm}>
-            {type === 'debt' ? 'Agregar deuda' : 'Registrar pago'}
+            {type === Entities.DebtEntryTypes.DEBT
+              ? 'Agregar deuda'
+              : 'Registrar pago'}
           </Button>
         </div>
       </div>

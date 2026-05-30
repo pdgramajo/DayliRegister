@@ -2,7 +2,11 @@ import { useState } from 'react'
 import { Button, Badge } from '../../components/ui'
 import { openWhatsApp } from '../../lib/whatsapp'
 import { formatPhoneForDisplay, formatMoney } from '../../lib/formatters'
-import type { DebtEntry } from '../../types/entities'
+import {
+  Entities,
+  type DebtEntry,
+  type DebtEntryType,
+} from '../../types/entities'
 import type { ClientWithBalance } from '../../services/ClientService'
 import {
   MessageCircle,
@@ -19,7 +23,7 @@ import {
 const HISTORY_PAGE_SIZE = 5
 
 const EntryIcon = ({ type }: { type: 'debt' | 'payment' }) =>
-  type === 'debt' ? (
+  type === Entities.DebtEntryTypes.DEBT ? (
     <Circle className="size-2.5 fill-red-400 text-red-400 shrink-0" />
   ) : (
     <Circle className="size-2.5 fill-emerald-400 text-emerald-400 shrink-0" />
@@ -74,12 +78,13 @@ const HistoryPanel = ({
               </span>
               <span
                 className={`text-xs font-semibold tabular-nums ${
-                  entry.type === 'debt'
+                  entry.type === Entities.DebtEntryTypes.DEBT
                     ? 'text-red-500 dark:text-red-400'
                     : 'text-emerald-600 dark:text-emerald-400'
                 }`}
               >
-                {entry.type === 'debt' ? '+' : '−'}${formatMoney(entry.amount)}
+                {entry.type === Entities.DebtEntryTypes.DEBT ? '+' : '−'}$
+                {formatMoney(entry.amount)}
               </span>
               {entry.description && (
                 <span className="text-[11px] text-content-400 truncate flex-1 min-w-0 italic">
@@ -115,7 +120,7 @@ interface ClientCardProps {
   client: ClientWithBalance
   isExpanded: boolean
   onToggleExpand: (clientId: string) => void
-  onRegisterDebt: (clientId: string, type: 'debt' | 'payment') => void
+  onRegisterDebt: (clientId: string, type: DebtEntryType) => void
   onEdit: (clientId: string) => void
   onDeleteClient: (clientId: string) => void
   onDeleteEntry: (entryId: string, clientId: string) => void
@@ -205,7 +210,9 @@ export const ClientCard = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onRegisterDebt(client.id, 'debt')}
+            onClick={() =>
+              onRegisterDebt(client.id, Entities.DebtEntryTypes.DEBT)
+            }
             data-testid="add-debt-button"
             className="text-xs gap-1 h-8 flex-1"
           >
@@ -215,7 +222,9 @@ export const ClientCard = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onRegisterDebt(client.id, 'payment')}
+            onClick={() =>
+              onRegisterDebt(client.id, Entities.DebtEntryTypes.PAYMENT)
+            }
             className="text-xs gap-1 h-8 flex-1"
           >
             <Minus className="size-3.5" />

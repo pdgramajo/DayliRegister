@@ -16,10 +16,11 @@ import { InventoryCategoryService } from '../../services/InventoryCategoryServic
 import { SessionService } from '../../services/SessionService'
 import { getWeekRange } from '../../services/ReportService'
 import { formatDate } from '../../lib/formatters'
-import type {
-  InventoryMovement,
-  InventoryCategory,
-  CashSession,
+import {
+  Entities,
+  type InventoryMovement,
+  type InventoryCategory,
+  type CashSession,
 } from '../../types/entities'
 
 interface CategorySummary {
@@ -32,8 +33,8 @@ interface CategorySummary {
 
 const INVENTORY_TYPES = [
   { value: '', label: 'Todos' },
-  { value: 'in', label: 'Entradas' },
-  { value: 'out', label: 'Salidas' },
+  { value: Entities.InventoryMovementTypes.IN, label: 'Entradas' },
+  { value: Entities.InventoryMovementTypes.OUT, label: 'Salidas' },
 ] as const
 
 export const InventoryMovements = () => {
@@ -105,7 +106,7 @@ export const InventoryMovements = () => {
       totalOut: 0,
       net: 0,
     }
-    if (m.type === 'in') {
+    if (m.type === Entities.InventoryMovementTypes.IN) {
       existing.totalIn += m.quantity
       existing.net += m.quantity
     } else {
@@ -143,7 +144,7 @@ export const InventoryMovements = () => {
 
     for (const m of filteredMovements) {
       const catName = categoryMap.get(m.inventoryCategoryId) ?? 'Sin categoría'
-      const sign = m.type === 'in' ? '+' : '-'
+      const sign = m.type === Entities.InventoryMovementTypes.IN ? '+' : '-'
       const sessionName = sessionMap.get(m.sessionId) ?? 'Sesión'
       const date = new Date(m.createdAt).toLocaleDateString('es-AR', {
         day: '2-digit',
@@ -348,7 +349,7 @@ export const InventoryMovements = () => {
                 </p>
               ) : (
                 filteredMovements.map((m) => {
-                  const isIn = m.type === 'in'
+                  const isIn = m.type === Entities.InventoryMovementTypes.IN
                   const catName =
                     categoryMap.get(m.inventoryCategoryId) ?? 'Sin categoría'
                   const sessionName = sessionMap.get(m.sessionId) ?? 'Sesión'

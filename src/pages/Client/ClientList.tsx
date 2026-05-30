@@ -13,6 +13,7 @@ import type { RootState } from '../../store'
 import { Button, toast } from '../../components/ui'
 import { Users, Search } from 'lucide-react'
 import { ClientCard } from './ClientCard'
+import { Entities, type DebtEntryType } from '../../types/entities'
 import { DebtEntryModal } from './DebtEntryModal'
 import { DeleteConfirmModal } from './DeleteConfirmModal'
 
@@ -36,7 +37,7 @@ export const ClientList = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   const [debtModalClient, setDebtModalClient] = useState<string | null>(null)
-  const [debtModalType, setDebtModalType] = useState<'debt' | 'payment'>('debt')
+  const [debtModalType, setDebtModalType] = useState<DebtEntryType>('debt')
 
   useEffect(() => {
     if (branchId) {
@@ -64,7 +65,9 @@ export const ClientList = () => {
         .unwrap()
         .then(() => {
           toast.success(
-            debtModalType === 'debt' ? 'Deuda registrada' : 'Pago registrado'
+            debtModalType === Entities.DebtEntryTypes.DEBT
+              ? 'Deuda registrada'
+              : 'Pago registrado'
           )
           setDebtModalClient(null)
           dispatch(fetchClientsByBranch(branchId))
@@ -100,7 +103,7 @@ export const ClientList = () => {
       .catch((error) => toast.error(error || 'Error al eliminar'))
   }
 
-  const handleRegisterDebt = (clientId: string, type: 'debt' | 'payment') => {
+  const handleRegisterDebt = (clientId: string, type: DebtEntryType) => {
     setDebtModalClient(clientId)
     setDebtModalType(type)
   }

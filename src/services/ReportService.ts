@@ -3,6 +3,7 @@ import {
   InventoryMovementRepository,
 } from '../repositories'
 import { InventoryCategoryService } from './InventoryCategoryService'
+import { Entities } from '../types/entities'
 import type { ReportConfig } from '../pages/Report/useReportStorage'
 
 export interface DaySales {
@@ -109,7 +110,7 @@ export const getReportData = async (
   })
 
   // Sales by day
-  const sales = inRange.filter((t) => t.type === 'sale')
+  const sales = inRange.filter((t) => t.type === Entities.TransactionTypes.SALE)
   const salesByDayMap = new Map<
     string,
     { total: number; cash: number; transfer: number }
@@ -119,8 +120,9 @@ export const getReportData = async (
     const day = toISODate(parseISODate(s.createdAt))
     const entry = salesByDayMap.get(day) || { total: 0, cash: 0, transfer: 0 }
     entry.total += s.amount
-    if (s.paymentMethod === 'cash') entry.cash += s.amount
-    else if (s.paymentMethod === 'transfer') entry.transfer += s.amount
+    if (s.paymentMethod === Entities.PaymentMethods.CASH) entry.cash += s.amount
+    else if (s.paymentMethod === Entities.PaymentMethods.TRANSFER)
+      entry.transfer += s.amount
     // If no paymentMethod, count as cash for simplicity
     else entry.cash += s.amount
     salesByDayMap.set(day, entry)
@@ -152,17 +154,17 @@ export const getReportData = async (
 
   if (config.showExpenses) {
     totalExpenses = inRange
-      .filter((t) => t.type === 'expense')
+      .filter((t) => t.type === Entities.TransactionTypes.EXPENSE)
       .reduce((sum, t) => sum + t.amount, 0)
   }
   if (config.showWithdrawals) {
     totalWithdrawals = inRange
-      .filter((t) => t.type === 'withdrawal')
+      .filter((t) => t.type === Entities.TransactionTypes.WITHDRAWAL)
       .reduce((sum, t) => sum + t.amount, 0)
   }
   if (config.showIncome) {
     totalIncome = inRange
-      .filter((t) => t.type === 'income')
+      .filter((t) => t.type === Entities.TransactionTypes.INCOME)
       .reduce((sum, t) => sum + t.amount, 0)
   }
 
@@ -179,7 +181,7 @@ export const getReportData = async (
       return (
         mDate >= fromDate &&
         mDate <= toDate &&
-        m.type === 'in' &&
+        m.type === Entities.InventoryMovementTypes.IN &&
         config.selectedCategoryIds.includes(m.inventoryCategoryId)
       )
     })

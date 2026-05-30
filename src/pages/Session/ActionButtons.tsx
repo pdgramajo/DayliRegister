@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react'
 import { Button } from '../../components/ui'
+import { Entities } from '../../types/entities'
 import type { TabType } from './types'
 
 interface ActionButtonsProps {
@@ -20,7 +21,7 @@ export const ActionButtons = ({
         <Button
           variant="outline"
           className="h-8 gap-0"
-          onClick={() => onNavigate('sale')}
+          onClick={() => onNavigate(Entities.TransactionTypes.SALE)}
         >
           <Plus className="size-4 mr-1" />
           Venta
@@ -28,7 +29,7 @@ export const ActionButtons = ({
         <Button
           variant="outline"
           className="h-8 gap-0"
-          onClick={() => onNavigate('expense')}
+          onClick={() => onNavigate(Entities.TransactionTypes.EXPENSE)}
         >
           <Plus className="size-4 mr-1" />
           Gasto
@@ -36,7 +37,7 @@ export const ActionButtons = ({
         <Button
           variant="outline"
           className="h-8 gap-0"
-          onClick={() => onNavigate('withdrawal')}
+          onClick={() => onNavigate(Entities.TransactionTypes.WITHDRAWAL)}
         >
           <Plus className="size-4 mr-1" />
           Retiro
@@ -44,7 +45,7 @@ export const ActionButtons = ({
         <Button
           variant="outline"
           className="h-8 gap-0"
-          onClick={() => onNavigate('income')}
+          onClick={() => onNavigate(Entities.TransactionTypes.INCOME)}
         >
           <Plus className="size-4 mr-1" />
           Ingreso
@@ -57,7 +58,7 @@ export const ActionButtons = ({
       <Button
         variant="outline"
         className="h-8 flex-1"
-        onClick={() => onNavigate('in')}
+        onClick={() => onNavigate(Entities.InventoryMovementTypes.IN)}
       >
         <Plus className="size-4 mr-1" />
         Entrada
@@ -65,7 +66,7 @@ export const ActionButtons = ({
       <Button
         variant="outline"
         className="h-8 flex-1"
-        onClick={() => onNavigate('out')}
+        onClick={() => onNavigate(Entities.InventoryMovementTypes.OUT)}
       >
         <Plus className="size-4 mr-1" />
         Salida

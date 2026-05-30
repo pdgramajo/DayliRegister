@@ -1,6 +1,6 @@
 import { ClientRepository } from '../repositories/ClientRepository'
 import { DebtEntryRepository } from '../repositories/DebtEntryRepository'
-import type { Client, DebtEntry } from '../types/entities'
+import { Entities, type Client, type DebtEntry } from '../types/entities'
 import type {
   CreateClientDTO,
   UpdateClientDTO,
@@ -33,7 +33,9 @@ export const ClientService = {
       clients.map(async (client) => {
         const entries = await DebtEntryRepository.getByClient(client.id)
         const balance = entries.reduce((acc, e) => {
-          return e.type === 'debt' ? acc + e.amount : acc - e.amount
+          return e.type === Entities.DebtEntryTypes.DEBT
+            ? acc + e.amount
+            : acc - e.amount
         }, 0)
         return { ...client, balance, entries }
       })

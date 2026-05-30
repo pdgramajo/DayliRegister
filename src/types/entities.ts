@@ -157,9 +157,15 @@ export const Entities = {
     IN: 'in',
     OUT: 'out',
   },
+
+  DebtEntryTypes: {
+    DEBT: 'debt',
+    PAYMENT: 'payment',
+  },
 } as const satisfies {
   TransactionTypes: Record<string, TransactionType>
   PaymentMethods: Record<string, PaymentMethod>
   CashSessionStatus: Record<string, CashSessionStatus>
   InventoryMovementTypes: Record<string, InventoryMovementType>
+  DebtEntryTypes: Record<string, DebtEntryType>
 }
