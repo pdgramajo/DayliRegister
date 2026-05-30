@@ -1,4 +1,6 @@
-const STORAGE_PREFIX = 'quickValues_'
+import { STORAGE_NAMESPACE } from '../constants/storage'
+
+const STORAGE_PREFIX = `${STORAGE_NAMESPACE}quickValues_`
 
 const DEFAULTS: Record<string, unknown[]> = {
   sale: [100, 200, 500, 1000, 2000, 5000, 10000],

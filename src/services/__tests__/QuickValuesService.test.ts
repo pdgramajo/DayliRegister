@@ -28,7 +28,10 @@ describe('QuickValuesService', () => {
     })
 
     it('should return saved values when localStorage has data', () => {
-      localStorage.setItem('quickValues_sale', JSON.stringify([50, 100, 150]))
+      localStorage.setItem(
+        'DayliRegister_quickValues_sale',
+        JSON.stringify([50, 100, 150])
+      )
 
       const values = QuickValuesService.load('sale')
       expect(values).toEqual([50, 100, 150])
@@ -40,14 +43,14 @@ describe('QuickValuesService', () => {
     })
 
     it('should fallback to defaults when stored JSON is invalid', () => {
-      localStorage.setItem('quickValues_sale', 'not-json')
+      localStorage.setItem('DayliRegister_quickValues_sale', 'not-json')
 
       const values = QuickValuesService.load('sale')
       expect(values).toEqual([100, 200, 500, 1000, 2000, 5000, 10000])
     })
 
     it('should fallback to defaults when stored value is not an array', () => {
-      localStorage.setItem('quickValues_sale', '{"key": "value"}')
+      localStorage.setItem('DayliRegister_quickValues_sale', '{"key": "value"}')
 
       const values = QuickValuesService.load('sale')
       expect(values).toEqual([100, 200, 500, 1000, 2000, 5000, 10000])
@@ -58,7 +61,7 @@ describe('QuickValuesService', () => {
     it('should persist values to localStorage', () => {
       QuickValuesService.save('sale', [1, 2, 3])
 
-      const stored = localStorage.getItem('quickValues_sale')
+      const stored = localStorage.getItem('DayliRegister_quickValues_sale')
       expect(JSON.parse(stored!)).toEqual([1, 2, 3])
     })
 
@@ -66,7 +69,7 @@ describe('QuickValuesService', () => {
       QuickValuesService.save('sale', [1, 2, 3])
       QuickValuesService.save('sale', [4, 5, 6])
 
-      const stored = localStorage.getItem('quickValues_sale')
+      const stored = localStorage.getItem('DayliRegister_quickValues_sale')
       expect(JSON.parse(stored!)).toEqual([4, 5, 6])
     })
   })

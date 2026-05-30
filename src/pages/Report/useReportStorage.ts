@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { STORAGE_NAMESPACE } from '../../constants/storage'
 
 export interface ReportConfig {
   phone: string
@@ -22,7 +23,7 @@ const DEFAULTS: ReportConfig = {
   showBalance: false,
 }
 
-const STORAGE_PREFIX = 'reportConfig_'
+const STORAGE_PREFIX = `${STORAGE_NAMESPACE}reportConfig_`
 
 const loadConfig = (branchId: string): ReportConfig => {
   try {

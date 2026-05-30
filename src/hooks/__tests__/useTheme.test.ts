@@ -42,7 +42,10 @@ describe('useTheme', () => {
 
     expect(result.current.theme).toBe('dark')
     expect(result.current.isDark).toBe(true)
-    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('theme', 'dark')
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+      'DayliRegister_theme',
+      'dark'
+    )
   })
 
   it('deberia cambiar de dark a light al llamar toggleTheme', () => {
@@ -54,7 +57,10 @@ describe('useTheme', () => {
 
     expect(result.current.theme).toBe('light')
     expect(result.current.isDark).toBe(false)
-    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('theme', 'light')
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+      'DayliRegister_theme',
+      'light'
+    )
   })
 
   it('deberia agregar clase dark al html cuando es dark', () => {

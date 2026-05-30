@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
+import { STORAGE_NAMESPACE } from '../constants/storage'
 
 type Theme = 'light' | 'dark'
 
-const THEME_KEY = 'theme'
+const THEME_KEY = `${STORAGE_NAMESPACE}theme`
 
 const getInitialTheme = (): Theme => {
   if (typeof window === 'undefined') return 'light'

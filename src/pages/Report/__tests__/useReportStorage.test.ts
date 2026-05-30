@@ -25,13 +25,15 @@ describe('useReportStorage', () => {
       result.current.updateConfig({ phone: '+5491123456789' })
     })
     expect(result.current.config.phone).toBe('+5491123456789')
-    const stored = JSON.parse(localStorage.getItem('reportConfig_branch-1')!)
+    const stored = JSON.parse(
+      localStorage.getItem('DayliRegister_reportConfig_branch-1')!
+    )
     expect(stored.phone).toBe('+5491123456789')
   })
 
   it('should load stored config on init', () => {
     localStorage.setItem(
-      'reportConfig_branch-1',
+      'DayliRegister_reportConfig_branch-1',
       JSON.stringify({ phone: '+5491112345678', showBalance: true })
     )
     const { result } = renderHook(() => useReportStorage('branch-1'))
@@ -70,7 +72,7 @@ describe('useReportStorage', () => {
   })
 
   it('should handle invalid stored JSON gracefully', () => {
-    localStorage.setItem('reportConfig_branch-1', 'invalid-json')
+    localStorage.setItem('DayliRegister_reportConfig_branch-1', 'invalid-json')
     const { result } = renderHook(() => useReportStorage('branch-1'))
     expect(result.current.config.phone).toBe('')
     expect(result.current.config.showPaymentBreakdown).toBe(true)
