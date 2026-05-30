@@ -1,11 +1,12 @@
 import { InventoryMovementRepository } from '../repositories/InventoryMovementRepository'
 import type { InventoryMovement } from '../types/entities'
 import type { CreateInventoryMovementDTO } from '../types/dtos'
+import { ERROR_NAMES } from '../constants/errors'
 
 export class InventoryMovementNotFoundError extends Error {
   constructor(id: string) {
     super(`Inventory movement with id "${id}" not found`)
-    this.name = 'InventoryMovementNotFoundError'
+    this.name = ERROR_NAMES.INVENTORY_MOVEMENT_NOT_FOUND
   }
 }
 

@@ -6,18 +6,19 @@ import type {
   UpdateClientDTO,
   CreateDebtEntryDTO,
 } from '../types/dtos'
+import { ERROR_NAMES } from '../constants/errors'
 
 export class ClientNotFoundError extends Error {
   constructor(id: string) {
     super(`Client with id "${id}" not found`)
-    this.name = 'ClientNotFoundError'
+    this.name = ERROR_NAMES.CLIENT_NOT_FOUND
   }
 }
 
 export class DebtEntryNotFoundError extends Error {
   constructor(id: string) {
     super(`Debt entry with id "${id}" not found`)
-    this.name = 'DebtEntryNotFoundError'
+    this.name = ERROR_NAMES.DEBT_ENTRY_NOT_FOUND
   }
 }
 

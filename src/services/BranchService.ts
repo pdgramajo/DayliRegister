@@ -6,11 +6,12 @@ import {
 } from '../repositories'
 import type { Branch } from '../types/entities'
 import type { CreateBranchDTO, UpdateBranchDTO } from '../types/dtos'
+import { ERROR_NAMES } from '../constants/errors'
 
 export class BranchNotFoundError extends Error {
   constructor(id: string) {
     super(`Branch with id "${id}" not found`)
-    this.name = 'BranchNotFoundError'
+    this.name = ERROR_NAMES.BRANCH_NOT_FOUND
   }
 }
 

@@ -1,11 +1,12 @@
 import { TransactionRepository } from '../repositories/TransactionRepository'
 import type { Transaction } from '../types/entities'
 import type { CreateTransactionDTO } from '../types/dtos'
+import { ERROR_NAMES } from '../constants/errors'
 
 export class TransactionNotFoundError extends Error {
   constructor(id: string) {
     super(`Transaction with id "${id}" not found`)
-    this.name = 'TransactionNotFoundError'
+    this.name = ERROR_NAMES.TRANSACTION_NOT_FOUND
   }
 }
 

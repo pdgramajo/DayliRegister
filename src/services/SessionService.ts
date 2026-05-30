@@ -6,25 +6,26 @@ import {
 import type { CashSession } from '../types/entities'
 import type { CreateSessionDTO, UpdateSessionDTO } from '../types/dtos'
 import { Entities } from '../types/entities'
+import { ERROR_NAMES } from '../constants/errors'
 
 export class SessionNotFoundError extends Error {
   constructor(id: string) {
     super(`Session with id "${id}" not found`)
-    this.name = 'SessionNotFoundError'
+    this.name = ERROR_NAMES.SESSION_NOT_FOUND
   }
 }
 
 export class SessionAlreadyOpenError extends Error {
   constructor(branchId: string) {
     super(`There is already an open session for branch "${branchId}"`)
-    this.name = 'SessionAlreadyOpenError'
+    this.name = ERROR_NAMES.SESSION_ALREADY_OPEN
   }
 }
 
 export class SessionClosedError extends Error {
   constructor(id: string) {
     super(`Session "${id}" is already closed`)
-    this.name = 'SessionClosedError'
+    this.name = ERROR_NAMES.SESSION_CLOSED
   }
 }
 

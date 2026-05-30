@@ -1,14 +1,17 @@
+import { Entities } from '../types/entities'
 import { STORAGE_NAMESPACE } from '../constants/storage'
 
 const STORAGE_PREFIX = `${STORAGE_NAMESPACE}quickValues_`
 
 const DEFAULTS: Record<string, unknown[]> = {
-  sale: [100, 200, 500, 1000, 2000, 5000, 10000],
-  expense: [100, 200, 500, 1000, 2000, 5000, 10000],
-  withdrawal: [100, 200, 500, 1000, 2000, 5000, 10000],
-  income: [100, 200, 500, 1000, 2000, 5000, 10000],
-  inventory_in: [1, 2, 5, 10, 20, 50],
-  inventory_out: [1, 2, 5, 10, 20, 50],
+  [Entities.TransactionTypes.SALE]: [100, 200, 500, 1000, 2000, 5000, 10000],
+  [Entities.TransactionTypes.EXPENSE]: [100, 200, 500, 1000, 2000, 5000, 10000],
+  [Entities.TransactionTypes.WITHDRAWAL]: [
+    100, 200, 500, 1000, 2000, 5000, 10000,
+  ],
+  [Entities.TransactionTypes.INCOME]: [100, 200, 500, 1000, 2000, 5000, 10000],
+  [`inventory_${Entities.InventoryMovementTypes.IN}`]: [1, 2, 5, 10, 20, 50],
+  [`inventory_${Entities.InventoryMovementTypes.OUT}`]: [1, 2, 5, 10, 20, 50],
   inventory_notes: ['media res', 'yunta', 'gancho', 'cuarto'],
 }
 
