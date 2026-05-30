@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { Button } from '../../components/ui'
 import { Entities } from '../../types/entities'
+import { TABS } from '../../constants/session'
 import type { TabType } from './types'
 
 interface ActionButtonsProps {
@@ -15,7 +16,7 @@ export const ActionButtons = ({
   onNavigate,
 }: ActionButtonsProps) => {
   if (!isOpen) return null
-  if (type === 'movements') {
+  if (type === TABS.MOVEMENTS) {
     return (
       <div className="grid grid-cols-4 gap-1 mb-2">
         <Button

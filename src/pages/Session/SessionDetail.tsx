@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Button, Modal, MoneyInput, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
+import { TABS, FILTERS, DELETE_TARGET_TYPES } from '../../constants/session'
 import { SessionHeader } from './SessionHeader'
 import { SummaryCards } from './SummaryCards'
 import { TabSwitch } from './TabSwitch'
@@ -34,17 +35,18 @@ export const SessionDetail = () => {
   const dispatch = useAppDispatch()
   const location = useLocation()
   const initialTab =
-    new URLSearchParams(location.search).get('tab') === 'inventory'
-      ? 'inventory'
-      : 'movements'
+    new URLSearchParams(location.search).get('tab') === TABS.INVENTORY
+      ? TABS.INVENTORY
+      : TABS.MOVEMENTS
   const [activeTab, setActiveTab] = useState<TabType>(initialTab)
-  const [transactionFilter, setTransactionFilter] =
-    useState<TransactionFilter>('all')
+  const [transactionFilter, setTransactionFilter] = useState<TransactionFilter>(
+    FILTERS.ALL
+  )
   const [showCloseModal, setShowCloseModal] = useState(false)
   const [closingBalance, setClosingBalance] = useState<number | undefined>()
   const [closeError, setCloseError] = useState<string | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<{
-    type: 'transaction' | 'inventory'
+    type: (typeof DELETE_TARGET_TYPES)[keyof typeof DELETE_TARGET_TYPES]
     id: string
   } | null>(null)
 
@@ -97,16 +99,16 @@ export const SessionDetail = () => {
   }
 
   const handleDeleteTransaction = (id: string) => {
-    setDeleteTarget({ type: 'transaction', id })
+    setDeleteTarget({ type: DELETE_TARGET_TYPES.TRANSACTION, id })
   }
 
   const handleDeleteInventoryMovement = (id: string) => {
-    setDeleteTarget({ type: 'inventory', id })
+    setDeleteTarget({ type: DELETE_TARGET_TYPES.INVENTORY, id })
   }
 
   const confirmDelete = () => {
     if (!deleteTarget) return
-    if (deleteTarget.type === 'transaction') {
+    if (deleteTarget.type === DELETE_TARGET_TYPES.TRANSACTION) {
       dispatch(deleteTransaction(deleteTarget.id))
         .unwrap()
         .then(() => {
@@ -182,7 +184,7 @@ export const SessionDetail = () => {
     totalWithdrawals
 
   const handleNavigate = (path: string) => {
-    if (activeTab === 'movements') navigateToTransaction(path)
+    if (activeTab === TABS.MOVEMENTS) navigateToTransaction(path)
     else navigateToInventory(path)
   }
 
@@ -211,7 +213,7 @@ export const SessionDetail = () => {
         isOpen={isOpen}
         onNavigate={handleNavigate}
       />
-      {activeTab === 'movements' ? (
+      {activeTab === TABS.MOVEMENTS ? (
         <TransactionList
           transactions={transactions}
           isLoading={transactionsLoading}
@@ -265,13 +267,13 @@ export const SessionDetail = () => {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         title={
-          deleteTarget?.type === 'transaction'
+          deleteTarget?.type === DELETE_TARGET_TYPES.TRANSACTION
             ? 'Eliminar transacción'
             : 'Eliminar movimiento'
         }
       >
         <p className="text-sm text-content-500 mb-6">
-          {deleteTarget?.type === 'transaction'
+          {deleteTarget?.type === DELETE_TARGET_TYPES.TRANSACTION
             ? '¿Eliminar esta transacción?'
             : '¿Eliminar este movimiento de inventario?'}
         </p>

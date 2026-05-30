@@ -1,2 +1,4 @@
-export type TabType = 'movements' | 'inventory'
-export type TransactionFilter = 'all' | 'cash' | 'transfer' | 'expenses'
+import { TABS, FILTERS } from '../../constants/session'
+
+export type TabType = (typeof TABS)[keyof typeof TABS]
+export type TransactionFilter = (typeof FILTERS)[keyof typeof FILTERS]

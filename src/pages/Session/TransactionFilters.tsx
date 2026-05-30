@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Entities } from '../../types/entities'
 import type { Transaction } from '../../types/entities'
+import { FILTERS } from '../../constants/session'
 import type { TransactionFilter } from './types'
 
 interface TransactionFiltersProps {
@@ -16,19 +17,19 @@ export const TransactionFilters = ({
 }: TransactionFiltersProps) => {
   const counts = useMemo(
     () => ({
-      all: transactions.length,
-      cash: transactions.filter(
+      [FILTERS.ALL]: transactions.length,
+      [FILTERS.CASH]: transactions.filter(
         (t) =>
           (t.type === Entities.TransactionTypes.SALE &&
             t.paymentMethod === Entities.PaymentMethods.CASH) ||
           t.type === Entities.TransactionTypes.INCOME
       ).length,
-      transfer: transactions.filter(
+      [FILTERS.TRANSFER]: transactions.filter(
         (t) =>
           t.type === Entities.TransactionTypes.SALE &&
           t.paymentMethod === Entities.PaymentMethods.TRANSFER
       ).length,
-      expenses: transactions.filter(
+      [FILTERS.EXPENSES]: transactions.filter(
         (t) =>
           t.type === Entities.TransactionTypes.EXPENSE ||
           t.type === Entities.TransactionTypes.WITHDRAWAL
@@ -38,15 +39,17 @@ export const TransactionFilters = ({
   )
 
   const labels: Record<TransactionFilter, string> = {
-    all: `Todos (${counts.all})`,
-    cash: `Efectivo (${counts.cash})`,
-    transfer: `Transf (${counts.transfer})`,
-    expenses: `Gastos (${counts.expenses})`,
+    [FILTERS.ALL]: `Todos (${counts[FILTERS.ALL]})`,
+    [FILTERS.CASH]: `Efectivo (${counts[FILTERS.CASH]})`,
+    [FILTERS.TRANSFER]: `Transf (${counts[FILTERS.TRANSFER]})`,
+    [FILTERS.EXPENSES]: `Gastos (${counts[FILTERS.EXPENSES]})`,
   }
 
   return (
     <div className="flex justify-between gap-2 mb-2">
-      {(['all', 'cash', 'transfer', 'expenses'] as const).map((f) => (
+      {(
+        [FILTERS.ALL, FILTERS.CASH, FILTERS.TRANSFER, FILTERS.EXPENSES] as const
+      ).map((f) => (
         <button
           key={f}
           onClick={() => onChange(f)}

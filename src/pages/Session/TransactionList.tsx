@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { X } from 'lucide-react'
 import { Entities, type Transaction } from '../../types/entities'
 import { formatDate, formatMoney } from '../../lib/formatters'
+import { FILTERS } from '../../constants/session'
 import { TransactionFilters } from './TransactionFilters'
 import type { TransactionFilter } from './types'
 
@@ -111,21 +112,21 @@ export const TransactionList = ({
   onDelete,
 }: TransactionListProps) => {
   const filtered = useMemo(() => {
-    if (filter === 'all') return transactions
-    if (filter === 'cash')
+    if (filter === FILTERS.ALL) return transactions
+    if (filter === FILTERS.CASH)
       return transactions.filter(
         (t) =>
           (t.type === Entities.TransactionTypes.SALE &&
             t.paymentMethod === Entities.PaymentMethods.CASH) ||
           t.type === Entities.TransactionTypes.INCOME
       )
-    if (filter === 'transfer')
+    if (filter === FILTERS.TRANSFER)
       return transactions.filter(
         (t) =>
           t.type === Entities.TransactionTypes.SALE &&
           t.paymentMethod === Entities.PaymentMethods.TRANSFER
       )
-    if (filter === 'expenses')
+    if (filter === FILTERS.EXPENSES)
       return transactions.filter(
         (t) =>
           t.type === Entities.TransactionTypes.EXPENSE ||

@@ -1,3 +1,4 @@
+import { TABS } from '../../constants/session'
 import type { TabType } from './types'
 
 interface TabSwitchProps {
@@ -36,14 +37,14 @@ export const TabSwitch = ({
 }: TabSwitchProps) => (
   <div className="flex bg-surface-100 dark:bg-surface-800 p-1 rounded-lg mb-2">
     <TabButton
-      active={activeTab === 'movements'}
-      onClick={() => onChange('movements')}
+      active={activeTab === TABS.MOVEMENTS}
+      onClick={() => onChange(TABS.MOVEMENTS)}
     >
       Movimientos ({transactionCount})
     </TabButton>
     <TabButton
-      active={activeTab === 'inventory'}
-      onClick={() => onChange('inventory')}
+      active={activeTab === TABS.INVENTORY}
+      onClick={() => onChange(TABS.INVENTORY)}
     >
       Inventario ({inventoryCount})
     </TabButton>
