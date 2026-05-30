@@ -58,6 +58,7 @@ describe('BranchList', () => {
     vi.spyOn(BranchService, 'getAllBranches').mockRejectedValue(
       new Error('fail')
     )
+    vi.spyOn(console, 'error').mockImplementation(() => {})
 
     renderWithStore({
       branches: {
@@ -237,6 +238,7 @@ describe('BranchList', () => {
     vi.spyOn(BranchService, 'getAllBranches').mockRejectedValue(
       new Error('fail')
     )
+    vi.spyOn(console, 'error').mockImplementation(() => {})
 
     renderWithStore({
       branches: {

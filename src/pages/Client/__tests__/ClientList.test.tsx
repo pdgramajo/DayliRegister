@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
@@ -100,6 +100,7 @@ describe('ClientList', () => {
     const { container } = await renderWithProviders({ isLoading: true }, {})
 
     expect(container.querySelector('.animate-spin')).toBeInTheDocument()
+    await act(async () => {})
   })
 
   it('should show loading when currentBranch is null', async () => {
@@ -107,6 +108,7 @@ describe('ClientList', () => {
     const { container } = await renderWithProviders({}, { currentBranch: null })
 
     expect(container.querySelector('.animate-spin')).toBeInTheDocument()
+    await act(async () => {})
   })
 
   it('should render clients list', async () => {

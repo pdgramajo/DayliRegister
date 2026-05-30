@@ -137,8 +137,10 @@ export const InventoryMovementNew = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState('')
 
   useEffect(() => {
-    dispatch(fetchInventoryCategories())
-  }, [dispatch])
+    if (inventoryCategories.length === 0) {
+      dispatch(fetchInventoryCategories())
+    }
+  }, [dispatch, inventoryCategories.length])
 
   const handleCreateCategory = async () => {
     if (!newCategoryName.trim()) return

@@ -10,7 +10,12 @@ describe('ExportImportService', () => {
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
     appendChildSpy = vi
       .spyOn(document.body, 'appendChild')
-      .mockImplementation((el) => el)
+      .mockImplementation((el) => {
+        if (el instanceof HTMLAnchorElement) {
+          vi.spyOn(el, 'click').mockImplementation(() => {})
+        }
+        return el
+      })
     vi.spyOn(document.body, 'removeChild').mockImplementation((el) => el)
   })
 

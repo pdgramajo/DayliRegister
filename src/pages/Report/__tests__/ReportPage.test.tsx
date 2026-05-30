@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { MemoryRouter } from 'react-router-dom'
@@ -98,7 +98,7 @@ const createStore = (overrides = {}) =>
 
 const renderWithValidStore = async () => {
   const { ReportPage } = await import('../ReportPage')
-  return render(
+  const result = render(
     <Provider
       store={createStore({
         currentBranch: mockBranch,
@@ -109,6 +109,8 @@ const renderWithValidStore = async () => {
       </MemoryRouter>
     </Provider>
   )
+  await act(async () => {})
+  return result
 }
 
 // --- Tests ---
@@ -131,6 +133,7 @@ describe('ReportPage', () => {
       )
 
       expect(document.querySelector('.animate-spin')).toBeInTheDocument()
+      await act(async () => {})
     })
   })
 
@@ -317,6 +320,7 @@ describe('ReportPage', () => {
 
     it('should show error toast on generation failure', async () => {
       mockGetReportData.mockRejectedValue(new Error('DB error'))
+      vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const { toast } = await import('../../../components/ui')
       const errorSpy = vi.spyOn(toast, 'error').mockImplementation(() => {})

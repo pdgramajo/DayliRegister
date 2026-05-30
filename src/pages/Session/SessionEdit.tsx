@@ -27,7 +27,7 @@ export const SessionEdit = () => {
   )
 
   useEffect(() => {
-    if (sessionId) {
+    if (sessionId && !currentSession) {
       dispatch(fetchSessionById(sessionId))
     }
     return () => {

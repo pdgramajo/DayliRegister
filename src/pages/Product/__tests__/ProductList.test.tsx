@@ -69,7 +69,7 @@ describe('ProductList', () => {
     mockParams.mockReturnValue({ id: 'branch-1' })
   })
 
-  it('should show loading spinner', () => {
+  it('should show loading spinner', async () => {
     vi.spyOn(BranchService, 'getBranchById').mockResolvedValue(mockBranch)
     vi.spyOn(ProductService, 'getProductsByBranch').mockResolvedValue([])
 
@@ -96,7 +96,9 @@ describe('ProductList', () => {
       </MemoryRouter>
     )
 
-    expect(container.querySelector('.animate-spin')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(container.querySelector('.animate-spin')).toBeInTheDocument()
+    })
   })
 
   it('should show empty state when no products', async () => {

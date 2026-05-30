@@ -23,7 +23,7 @@ export const ProductEdit = () => {
   )
 
   useEffect(() => {
-    if (productId) {
+    if (productId && !currentProduct) {
       dispatch(fetchProductById(productId))
     }
     return () => {

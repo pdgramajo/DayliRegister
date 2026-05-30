@@ -305,6 +305,8 @@ describe('InventoryMovementNew', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText('Guardar')).toBeDisabled()
+    await waitFor(() => {
+      expect(screen.getByText('Guardar')).toBeDisabled()
+    })
   })
 })

@@ -291,6 +291,7 @@ describe('InventoryMovements', () => {
     vi.spyOn(InventoryMovementService, 'getByBranchId').mockRejectedValue(
       new Error('Network error')
     )
+    vi.spyOn(console, 'error').mockImplementation(() => {})
 
     const { toast } = await import('../../../components/ui')
     const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => {})

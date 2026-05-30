@@ -20,7 +20,7 @@ export const BranchEdit = () => {
   )
 
   useEffect(() => {
-    if (id) {
+    if (id && !currentBranch) {
       dispatch(fetchBranchById(id))
     }
     return () => {

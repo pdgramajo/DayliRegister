@@ -23,7 +23,7 @@ export const ClientEdit = () => {
   )
 
   useEffect(() => {
-    if (clientId) {
+    if (clientId && !currentClient) {
       dispatch(fetchClientById(clientId))
     }
     return () => {
