@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
@@ -104,7 +104,7 @@ describe('SessionNew', () => {
   })
 
   it('should show loading when branchId is missing', async () => {
-    mockParams.mockReturnValue({ id: undefined })
+    mockParams.mockReturnValue({ id: undefined as unknown as string })
 
     const { SessionNew } = await import('../SessionNew')
     render(

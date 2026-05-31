@@ -27,7 +27,7 @@ const createTestStore = (preloadedState = {}) =>
     preloadedState,
   })
 
-const renderWithStore = (preloadedState) =>
+const renderWithStore = (preloadedState: Record<string, unknown>) =>
   render(
     <MemoryRouter>
       <Provider store={createTestStore(preloadedState)}>

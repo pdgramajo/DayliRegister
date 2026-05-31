@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { BranchRepository } from '../BranchRepository'
 import { db } from '../../db'
-import type { Branch } from '../../types/entities'
 
 describe('BranchRepository', () => {
   beforeEach(async () => {

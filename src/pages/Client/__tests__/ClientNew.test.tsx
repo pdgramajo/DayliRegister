@@ -15,12 +15,12 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
-vi.spyOn(ClientService, 'createClient')
+const createClientSpy = vi.spyOn(ClientService, 'createClient')
 
 describe('ClientNew', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
-    ClientService.createClient.mockClear()
+    createClientSpy.mockClear()
   })
 
   it('should render the title and form', async () => {
@@ -36,7 +36,7 @@ describe('ClientNew', () => {
   })
 
   it('should call createClient and navigate on submit', async () => {
-    ClientService.createClient.mockResolvedValue({
+    createClientSpy.mockResolvedValue({
       id: 'new-id',
       name: 'Cliente Nuevo',
     } as any)
@@ -53,13 +53,13 @@ describe('ClientNew', () => {
     await user.click(screen.getByText('Crear'))
 
     await waitFor(() => {
-      expect(ClientService.createClient).toHaveBeenCalled()
+      expect(createClientSpy).toHaveBeenCalled()
     })
     expect(mockNavigate).toHaveBeenCalledWith('/branches/branch-1/clients')
   })
 
   it('should not navigate when createClient fails', async () => {
-    ClientService.createClient.mockRejectedValue(new Error('DB error'))
+    createClientSpy.mockRejectedValue(new Error('DB error'))
     const user = userEvent.setup()
     const { ClientNew } = await import('../ClientNew')
 

@@ -43,6 +43,7 @@ const mockBranch: import('../../../types/entities').Branch = {
   name: 'Test Branch',
   address: '',
   phone: '',
+  isActive: true,
   createdAt: '',
   updatedAt: '',
 }

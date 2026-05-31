@@ -165,13 +165,8 @@ describe('InventoryMovements', () => {
     const entradasBtn = screen.getByText('Entradas')
     fireEvent.click(entradasBtn)
 
-    await waitFor(() => {
-      // Only 'in' type should be visible in movement list
-      const minusTwoEls = screen.queryAllByText('-2')
-      // -2 might still appear in summary if the summary computation
-      // actually -2 is filtered out since filteredMovements only has 'in'
-      // so it should not appear anywhere
-    })
+    // Wait for UI update before checking absence of '-2'
+    await vi.waitFor(() => {})
 
     // Verify each movement: +5 and +3 should appear, -2 should not
     await waitFor(() => {

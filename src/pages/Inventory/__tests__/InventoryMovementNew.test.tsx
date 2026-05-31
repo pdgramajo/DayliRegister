@@ -22,9 +22,9 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
-const mockCategories = [
-  { id: 'cat-1', name: 'Bebidas' },
-  { id: 'cat-2', name: 'Comidas' },
+const mockCategories: import('../../../types/entities').InventoryCategory[] = [
+  { id: 'cat-1', name: 'Bebidas', createdAt: '', updatedAt: '' },
+  { id: 'cat-2', name: 'Comidas', createdAt: '', updatedAt: '' },
 ]
 
 const createStore = (preloadedState = {}) =>
@@ -137,6 +137,8 @@ describe('InventoryMovementNew', () => {
     vi.spyOn(InventoryCategoryService, 'createCategory').mockResolvedValue({
       id: 'cat-3',
       name: 'Postres',
+      createdAt: '',
+      updatedAt: '',
     })
     const user = userEvent.setup()
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
@@ -290,10 +290,12 @@ describe('ClientList', () => {
           {
             id: 'entry-1',
             clientId: 'client-1',
+            branchId: 'branch-1',
             type: 'debt',
             amount: 500,
             description: 'test',
-            date: '2024-01-15T00:00:00Z',
+            createdAt: '2024-01-15T00:00:00Z',
+            updatedAt: '2024-01-15T00:00:00Z',
           },
         ],
       },

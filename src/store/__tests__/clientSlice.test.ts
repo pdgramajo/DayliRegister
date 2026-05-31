@@ -97,7 +97,7 @@ describe('clientSlice', () => {
     it('should set loading to true when pending', () => {
       const store = createTestStore()
 
-      store.dispatch(fetchClientsByBranch.pending('branch-1', undefined))
+      store.dispatch(fetchClientsByBranch.pending('test-request', 'branch-1'))
 
       const state = store.getState().clients
       expect(state.isLoading).toBe(true)
@@ -144,7 +144,7 @@ describe('clientSlice', () => {
     it('should set loading when pending', () => {
       const store = createTestStore()
 
-      store.dispatch(fetchClientById.pending('client-1', undefined))
+      store.dispatch(fetchClientById.pending('test-request', 'client-1'))
 
       expect(store.getState().clients.isLoading).toBe(true)
     })
@@ -208,7 +208,7 @@ describe('clientSlice', () => {
         createClient.rejected(
           null,
           'rejected',
-          undefined,
+          { branchId: 'branch-1', name: 'Test', phone: '+543881234567' },
           'Error al crear el cliente'
         )
       )

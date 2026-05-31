@@ -213,6 +213,7 @@ describe('SessionService', () => {
       await db.transactions.add({
         id: crypto.randomUUID(),
         sessionId: session.id,
+        branchId,
         type: 'sale' as const,
         amount: 500,
         paymentMethod: 'cash' as const,

@@ -215,7 +215,7 @@ describe('SessionEdit', () => {
   it('should show loading fallback when no session and not loading', async () => {
     mockParams.mockReturnValue({
       id: 'branch-1',
-      sessionId: undefined,
+      sessionId: undefined as unknown as string,
     })
 
     const { SessionEdit } = await import('../SessionEdit')

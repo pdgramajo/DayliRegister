@@ -3,10 +3,13 @@ import { exportProductsToFile, parseImportFile } from '../ExportImportService'
 
 describe('ExportImportService', () => {
   let appendChildSpy: ReturnType<typeof vi.spyOn>
+  let createObjectURLSpy: ReturnType<typeof vi.spyOn>
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url')
+    createObjectURLSpy = vi
+      .spyOn(URL, 'createObjectURL')
+      .mockReturnValue('blob:mock-url')
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
     appendChildSpy = vi
       .spyOn(document.body, 'appendChild')
@@ -33,8 +36,8 @@ describe('ExportImportService', () => {
 
       exportProductsToFile(products, 'Sucursal Centro')
 
-      expect(URL.createObjectURL).toHaveBeenCalledTimes(1)
-      const blobArg = URL.createObjectURL.mock.calls[0][0] as Blob
+      expect(createObjectURLSpy).toHaveBeenCalledTimes(1)
+      const blobArg = createObjectURLSpy.mock.calls[0][0] as Blob
       expect(blobArg).toBeInstanceOf(Blob)
       expect(blobArg.type).toBe('application/json')
 
@@ -82,7 +85,7 @@ describe('ExportImportService', () => {
 
       exportProductsToFile(products, 'Test')
 
-      const blobArg = URL.createObjectURL.mock.calls[0][0] as Blob
+      const blobArg = createObjectURLSpy.mock.calls[0][0] as Blob
       return blobArg.text().then((text) => {
         const content = JSON.parse(text)
         expect(content.products[0]).toEqual({ name: 'Simple', price: 100 })

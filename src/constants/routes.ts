@@ -21,7 +21,7 @@ export const ROUTES = {
   BRANCH_INVENTORY: '/branches/:id/inventory',
 } as const
 
-type RouteParams = Record<string, string>
+type RouteParams = Record<string, string | undefined>
 
 /**
  * Reemplaza los parámetros `:param` en un patrón de ruta con valores reales.
@@ -33,7 +33,9 @@ type RouteParams = Record<string, string>
 export const buildRoute = (pattern: string, params: RouteParams): string => {
   let path = pattern
   for (const [key, value] of Object.entries(params)) {
-    path = path.replace(`:${key}`, encodeURIComponent(value))
+    if (value !== undefined) {
+      path = path.replace(`:${key}`, encodeURIComponent(value))
+    }
   }
   return path
 }

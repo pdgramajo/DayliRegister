@@ -76,7 +76,7 @@ describe('branchSlice', () => {
     it('should set loading to true when pending', () => {
       const store = createTestStore()
 
-      store.dispatch(fetchBranches.pending(undefined))
+      store.dispatch(fetchBranches.pending('test-request'))
 
       const state = store.getState().branches
       expect(state.isLoading).toBe(true)
@@ -124,7 +124,12 @@ describe('branchSlice', () => {
       const store = createTestStore()
 
       store.dispatch(
-        createBranch.rejected(null, 'rejected', undefined, 'Error al crear')
+        createBranch.rejected(
+          null,
+          'rejected',
+          { name: 'Test', isActive: true },
+          'Error al crear'
+        )
       )
 
       const state = store.getState().branches

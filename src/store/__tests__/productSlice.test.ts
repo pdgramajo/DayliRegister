@@ -78,7 +78,7 @@ describe('productSlice', () => {
     it('should set loading to true when pending', () => {
       const store = createTestStore()
 
-      store.dispatch(fetchProductsByBranch.pending('branch-1'))
+      store.dispatch(fetchProductsByBranch.pending('test-request', 'branch-1'))
 
       const state = store.getState().products
       expect(state.isLoading).toBe(true)

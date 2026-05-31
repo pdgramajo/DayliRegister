@@ -12,7 +12,7 @@ describe('InventoryCategoryService', () => {
 
   describe('getAllCategories', () => {
     it('should return all categories', async () => {
-      const id = await db.inventoryCategories.add({
+      await db.inventoryCategories.add({
         id: crypto.randomUUID(),
         name: 'Categoria 1',
         createdAt: new Date().toISOString(),

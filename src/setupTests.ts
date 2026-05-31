@@ -1,7 +1,8 @@
 import '@testing-library/jest-dom'
 import 'fake-indexeddb/auto'
+import { vi } from 'vitest'
 
-Object.defineProperty(global, 'crypto', {
+Object.defineProperty(globalThis, 'crypto', {
   value: {
     randomUUID: () =>
       Math.random().toString(36).substring(2) + Date.now().toString(36),
