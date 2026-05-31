@@ -93,12 +93,17 @@ describe('ExportImportService', () => {
     })
 
     it('should sanitize branch name in filename', () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-05-30T12:00:00Z'))
+
       exportProductsToFile([{ name: 'X', price: 1 }], 'Sucursal #1 (Centro)!')
 
       const anchor = appendChildSpy.mock.calls[0][0] as HTMLAnchorElement
       expect(anchor.download).toBe(
         'productos_Sucursal_1_Centro__2026-05-30.json'
       )
+
+      vi.useRealTimers()
     })
   })
 
