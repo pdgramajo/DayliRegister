@@ -1,9 +1,6 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  type PayloadAction,
-} from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { SessionService } from '../services'
+import { createLoggedAsyncThunk } from '../lib/createLoggedAsyncThunk'
 import type { CashSession } from '../types/entities'
 import type { CreateSessionDTO, UpdateSessionDTO } from '../types/dtos'
 
@@ -21,86 +18,53 @@ const initialState: SessionState = {
   error: null,
 }
 
-export const fetchSessionsByBranch = createAsyncThunk(
+export const fetchSessionsByBranch = createLoggedAsyncThunk(
   'sessions/fetchByBranch',
-  async (branchId: string, { rejectWithValue }) => {
-    try {
-      return await SessionService.getSessionsByBranch(branchId)
-    } catch (error) {
-      console.error('Error fetching sessions:', error)
-      return rejectWithValue('Error al cargar las sesiones')
-    }
-  }
+  async (branchId: string) => {
+    return await SessionService.getSessionsByBranch(branchId)
+  },
+  'Error al cargar las sesiones'
 )
 
-export const fetchSessionById = createAsyncThunk(
+export const fetchSessionById = createLoggedAsyncThunk(
   'sessions/fetchById',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      return await SessionService.getSessionById(id)
-    } catch (error) {
-      return rejectWithValue('Error al cargar la sesión')
-    }
-  }
+  async (id: string) => {
+    return await SessionService.getSessionById(id)
+  },
+  'Error al cargar la sesión'
 )
 
-export const createSession = createAsyncThunk(
+export const createSession = createLoggedAsyncThunk(
   'sessions/create',
-  async (data: CreateSessionDTO, { rejectWithValue }) => {
-    try {
-      return await SessionService.createSession(data)
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Error al crear la sesión'
-      return rejectWithValue(message)
-    }
-  }
+  async (data: CreateSessionDTO) => {
+    return await SessionService.createSession(data)
+  },
+  'Error al crear la sesión'
 )
 
-export const updateSession = createAsyncThunk(
+export const updateSession = createLoggedAsyncThunk(
   'sessions/update',
-  async (
-    { id, data }: { id: string; data: UpdateSessionDTO },
-    { rejectWithValue }
-  ) => {
-    try {
-      return await SessionService.updateSession(id, data)
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Error al actualizar la sesión'
-      return rejectWithValue(message)
-    }
-  }
+  async ({ id, data }: { id: string; data: UpdateSessionDTO }) => {
+    return await SessionService.updateSession(id, data)
+  },
+  'Error al actualizar la sesión'
 )
 
-export const closeSession = createAsyncThunk(
+export const closeSession = createLoggedAsyncThunk(
   'sessions/close',
-  async (
-    { id, closingBalance }: { id: string; closingBalance?: number },
-    { rejectWithValue }
-  ) => {
-    try {
-      return await SessionService.closeSession(id, closingBalance)
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Error al cerrar la sesión'
-      return rejectWithValue(message)
-    }
-  }
+  async ({ id, closingBalance }: { id: string; closingBalance?: number }) => {
+    return await SessionService.closeSession(id, closingBalance)
+  },
+  'Error al cerrar la sesión'
 )
 
-export const deleteSession = createAsyncThunk(
+export const deleteSession = createLoggedAsyncThunk(
   'sessions/delete',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await SessionService.deleteSession(id)
-      return id
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Error al eliminar la sesión'
-      return rejectWithValue(message)
-    }
-  }
+  async (id: string) => {
+    await SessionService.deleteSession(id)
+    return id
+  },
+  'Error al eliminar la sesión'
 )
 
 const sessionSlice = createSlice({

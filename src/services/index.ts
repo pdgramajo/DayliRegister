@@ -11,3 +11,4 @@ export {
   ClientNotFoundError,
   DebtEntryNotFoundError,
 } from './ClientService'
+export { LoggerService } from './LoggerService'

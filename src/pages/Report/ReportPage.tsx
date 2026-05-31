@@ -4,6 +4,7 @@ import { fetchBranchById, clearCurrentBranch } from '../../store/branchSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Button, Input, toast } from '../../components/ui'
+import { LoggerService } from '../../services/LoggerService'
 import { ROUTES, buildRoute } from '../../constants/routes'
 import { openWhatsApp } from '../../lib/whatsapp'
 import {
@@ -122,6 +123,11 @@ export const ReportPage = () => {
     } catch (error) {
       toast.error('Error al generar el reporte')
       console.error(error)
+      LoggerService.error(
+        'Error al generar el reporte',
+        'ReportPage.handleGenerate',
+        error
+      )
     } finally {
       setIsGenerating(false)
     }

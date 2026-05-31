@@ -246,7 +246,9 @@ describe('InventoryMovementNew', () => {
     await user.click(screen.getByText('Guardar'))
 
     await waitFor(() => {
-      expect(toastSpy).toHaveBeenCalledWith('Server error')
+      expect(toastSpy).toHaveBeenCalledWith(
+        'Error al crear movimiento de inventario'
+      )
     })
   })
 

@@ -11,6 +11,7 @@ import type {
   InventoryCategory,
   InventoryMovement,
   Product,
+  LogEntry,
 } from '../types/entities'
 
 export type {
@@ -25,6 +26,7 @@ export type {
   InventoryCategory,
   InventoryMovement,
   Product,
+  LogEntry,
 }
 
 /* =========================================================
@@ -48,10 +50,12 @@ export class DayliRegisterDB extends Dexie {
 
   debtEntries!: EntityTable<DebtEntry, 'id'>
 
+  logs!: EntityTable<LogEntry, 'id'>
+
   constructor() {
     super('dayliRegisterDB')
 
-    this.version(2).stores({
+    this.version(3).stores({
       branches: 'id, name, isActive, createdAt, updatedAt, deletedAt',
 
       cashSessions:
@@ -71,6 +75,8 @@ export class DayliRegisterDB extends Dexie {
 
       debtEntries:
         'id, clientId, branchId, type, amount, createdAt, updatedAt, deletedAt',
+
+      logs: 'id, level, context, createdAt',
     })
   }
 }

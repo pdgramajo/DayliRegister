@@ -224,7 +224,7 @@ describe('TransactionNew', () => {
     await user.click(screen.getByText('Guardar'))
 
     await waitFor(() => {
-      expect(toastSpy).toHaveBeenCalledWith('Error creating')
+      expect(toastSpy).toHaveBeenCalledWith('Error al crear transacción')
     })
   })
 

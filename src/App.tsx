@@ -82,6 +82,11 @@ const InventoryMovements = lazy(() =>
     default: m.InventoryMovements,
   }))
 )
+const SettingsPage = lazy(() =>
+  import('./pages/Settings/SettingsPage').then((m) => ({
+    default: m.SettingsPage,
+  }))
+)
 
 const Loading = () => (
   <div
@@ -129,6 +134,7 @@ const App = () => {
             path={ROUTES.BRANCH_INVENTORY}
             element={<InventoryMovements />}
           />
+          <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </Suspense>

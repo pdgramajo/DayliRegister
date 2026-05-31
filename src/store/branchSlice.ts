@@ -1,9 +1,6 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  type PayloadAction,
-} from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { BranchService } from '../services'
+import { createLoggedAsyncThunk } from '../lib/createLoggedAsyncThunk'
 import type { Branch } from '../types/entities'
 import type { CreateBranchDTO, UpdateBranchDTO } from '../types/dtos'
 
@@ -21,65 +18,46 @@ const initialState: BranchState = {
   error: null,
 }
 
-export const fetchBranches = createAsyncThunk(
+export const fetchBranches = createLoggedAsyncThunk(
   'branches/fetchAll',
-  async (_, { rejectWithValue }) => {
-    try {
-      const branches = await BranchService.getAllBranches()
-      return branches
-    } catch (error) {
-      console.error('Error fetching branches:', error)
-      return rejectWithValue('Error al cargar las sucursales')
-    }
-  }
+  async () => {
+    const branches = await BranchService.getAllBranches()
+    return branches
+  },
+  'Error al cargar las sucursales'
 )
 
-export const fetchBranchById = createAsyncThunk(
+export const fetchBranchById = createLoggedAsyncThunk(
   'branches/fetchById',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      return await BranchService.getBranchById(id)
-    } catch (error) {
-      return rejectWithValue('Error al cargar la sucursal')
-    }
-  }
+  async (id: string) => {
+    return await BranchService.getBranchById(id)
+  },
+  'Error al cargar la sucursal'
 )
 
-export const createBranch = createAsyncThunk(
+export const createBranch = createLoggedAsyncThunk(
   'branches/create',
-  async (data: CreateBranchDTO, { rejectWithValue }) => {
-    try {
-      return await BranchService.createBranch(data)
-    } catch (error) {
-      return rejectWithValue('Error al crear la sucursal')
-    }
-  }
+  async (data: CreateBranchDTO) => {
+    return await BranchService.createBranch(data)
+  },
+  'Error al crear la sucursal'
 )
 
-export const updateBranch = createAsyncThunk(
+export const updateBranch = createLoggedAsyncThunk(
   'branches/update',
-  async (
-    { id, data }: { id: string; data: UpdateBranchDTO },
-    { rejectWithValue }
-  ) => {
-    try {
-      return await BranchService.updateBranch(id, data)
-    } catch (error) {
-      return rejectWithValue('Error al actualizar la sucursal')
-    }
-  }
+  async ({ id, data }: { id: string; data: UpdateBranchDTO }) => {
+    return await BranchService.updateBranch(id, data)
+  },
+  'Error al actualizar la sucursal'
 )
 
-export const deleteBranch = createAsyncThunk(
+export const deleteBranch = createLoggedAsyncThunk(
   'branches/delete',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await BranchService.deleteBranch(id)
-      return id
-    } catch (error) {
-      return rejectWithValue('Error al eliminar la sucursal')
-    }
-  }
+  async (id: string) => {
+    await BranchService.deleteBranch(id)
+    return id
+  },
+  'Error al eliminar la sucursal'
 )
 
 const branchSlice = createSlice({

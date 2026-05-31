@@ -1,8 +1,5 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  type PayloadAction,
-} from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { createLoggedAsyncThunk } from '../lib/createLoggedAsyncThunk'
 import { ClientService } from '../services/ClientService'
 import type { Client } from '../types/entities'
 import type {
@@ -26,90 +23,63 @@ const initialState: ClientState = {
   error: null,
 }
 
-export const fetchClientsByBranch = createAsyncThunk(
+export const fetchClientsByBranch = createLoggedAsyncThunk(
   'clients/fetchByBranch',
-  async (branchId: string, { rejectWithValue }) => {
-    try {
-      return await ClientService.getClientsByBranch(branchId)
-    } catch (error) {
-      return rejectWithValue('Error al cargar los clientes')
-    }
-  }
+  async (branchId: string) => {
+    return await ClientService.getClientsByBranch(branchId)
+  },
+  'Error al cargar los clientes'
 )
 
-export const fetchClientById = createAsyncThunk(
+export const fetchClientById = createLoggedAsyncThunk(
   'clients/fetchById',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      return await ClientService.getClientById(id)
-    } catch (error) {
-      return rejectWithValue('Error al cargar el cliente')
-    }
-  }
+  async (id: string) => {
+    return await ClientService.getClientById(id)
+  },
+  'Error al cargar el cliente'
 )
 
-export const createClient = createAsyncThunk(
+export const createClient = createLoggedAsyncThunk(
   'clients/create',
-  async (data: CreateClientDTO, { rejectWithValue }) => {
-    try {
-      return await ClientService.createClient(data)
-    } catch (error) {
-      return rejectWithValue('Error al crear el cliente')
-    }
-  }
+  async (data: CreateClientDTO) => {
+    return await ClientService.createClient(data)
+  },
+  'Error al crear el cliente'
 )
 
-export const updateClient = createAsyncThunk(
+export const updateClient = createLoggedAsyncThunk(
   'clients/update',
-  async (
-    { id, data }: { id: string; data: UpdateClientDTO },
-    { rejectWithValue }
-  ) => {
-    try {
-      return await ClientService.updateClient(id, data)
-    } catch (error) {
-      return rejectWithValue('Error al actualizar el cliente')
-    }
-  }
+  async ({ id, data }: { id: string; data: UpdateClientDTO }) => {
+    return await ClientService.updateClient(id, data)
+  },
+  'Error al actualizar el cliente'
 )
 
-export const deleteClient = createAsyncThunk(
+export const deleteClient = createLoggedAsyncThunk(
   'clients/delete',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await ClientService.deleteClient(id)
-      return id
-    } catch (error) {
-      return rejectWithValue('Error al eliminar el cliente')
-    }
-  }
+  async (id: string) => {
+    await ClientService.deleteClient(id)
+    return id
+  },
+  'Error al eliminar el cliente'
 )
 
-export const addDebtEntry = createAsyncThunk(
+export const addDebtEntry = createLoggedAsyncThunk(
   'clients/addDebtEntry',
-  async (data: CreateDebtEntryDTO, { rejectWithValue }) => {
-    try {
-      await ClientService.addDebtEntry(data)
-      return data.clientId
-    } catch (error) {
-      return rejectWithValue('Error al registrar')
-    }
-  }
+  async (data: CreateDebtEntryDTO) => {
+    await ClientService.addDebtEntry(data)
+    return data.clientId
+  },
+  'Error al registrar'
 )
 
-export const deleteDebtEntry = createAsyncThunk(
+export const deleteDebtEntry = createLoggedAsyncThunk(
   'clients/deleteDebtEntry',
-  async (
-    { entryId, clientId }: { entryId: string; clientId: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      await ClientService.deleteDebtEntry(entryId)
-      return { entryId, clientId }
-    } catch (error) {
-      return rejectWithValue('Error al eliminar')
-    }
-  }
+  async ({ entryId, clientId }: { entryId: string; clientId: string }) => {
+    await ClientService.deleteDebtEntry(entryId)
+    return { entryId, clientId }
+  },
+  'Error al eliminar'
 )
 
 const clientSlice = createSlice({

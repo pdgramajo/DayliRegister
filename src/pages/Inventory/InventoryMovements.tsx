@@ -10,6 +10,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Button, toast } from '../../components/ui'
+import { LoggerService } from '../../services/LoggerService'
 import { DatePickerCard } from '../Report/DatePickerCard'
 import { InventoryMovementService } from '../../services/InventoryMovementService'
 import { InventoryCategoryService } from '../../services/InventoryCategoryService'
@@ -71,6 +72,11 @@ export const InventoryMovements = () => {
     } catch (error) {
       toast.error('Error al cargar movimientos')
       console.error(error)
+      LoggerService.error(
+        'Error al cargar movimientos',
+        'InventoryMovements.loadData',
+        error
+      )
     } finally {
       setIsLoading(false)
     }

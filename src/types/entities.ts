@@ -132,8 +132,31 @@ export interface DebtEntry extends BaseEntity {
 }
 
 /* =========================================================
+ * LOGS
+ * ========================================================= */
+
+/** Nivel de log */
+export type LogLevel = 'info' | 'warn' | 'error' | 'debug'
+
+/** Entrada de log para depuración y monitoreo */
+export interface LogEntry extends BaseEntity {
+  level: LogLevel
+  message: string
+  stack?: string
+  context?: string
+  url?: string
+}
+
+/* =========================================================
  * EXPORTS
  * ========================================================= */
+
+export const LogLevels = {
+  INFO: 'info',
+  WARN: 'warn',
+  ERROR: 'error',
+  DEBUG: 'debug',
+} as const satisfies Record<string, LogLevel>
 
 export const Entities = {
   TransactionTypes: {

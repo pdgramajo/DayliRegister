@@ -1,8 +1,5 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  type PayloadAction,
-} from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { createLoggedAsyncThunk } from '../lib/createLoggedAsyncThunk'
 import { TransactionService } from '../services/TransactionService'
 import { InventoryMovementService } from '../services/InventoryMovementService'
 import { InventoryCategoryService } from '../services/InventoryCategoryService'
@@ -32,105 +29,62 @@ const initialState: TransactionState = {
   error: null,
 }
 
-export const fetchTransactionsBySession = createAsyncThunk(
+export const fetchTransactionsBySession = createLoggedAsyncThunk(
   'transactions/fetchBySession',
-  async (sessionId: string, { rejectWithValue }) => {
-    try {
-      return await TransactionService.getTransactionsBySession(sessionId)
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Error al cargar transacciones'
-      return rejectWithValue(message)
-    }
-  }
+  async (sessionId: string) => {
+    return await TransactionService.getTransactionsBySession(sessionId)
+  },
+  'Error al cargar transacciones'
 )
 
-export const fetchInventoryMovementsBySession = createAsyncThunk(
+export const fetchInventoryMovementsBySession = createLoggedAsyncThunk(
   'transactions/fetchInventoryMovements',
-  async (sessionId: string, { rejectWithValue }) => {
-    try {
-      return await InventoryMovementService.getMovementsBySession(sessionId)
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Error al cargar movimientos de inventario'
-      return rejectWithValue(message)
-    }
-  }
+  async (sessionId: string) => {
+    return await InventoryMovementService.getMovementsBySession(sessionId)
+  },
+  'Error al cargar movimientos de inventario'
 )
 
-export const createTransaction = createAsyncThunk(
+export const createTransaction = createLoggedAsyncThunk(
   'transactions/create',
-  async (data: CreateTransactionDTO, { rejectWithValue }) => {
-    try {
-      return await TransactionService.createTransaction(data)
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Error al crear transacción'
-      return rejectWithValue(message)
-    }
-  }
+  async (data: CreateTransactionDTO) => {
+    return await TransactionService.createTransaction(data)
+  },
+  'Error al crear transacción'
 )
 
-export const deleteTransaction = createAsyncThunk(
+export const deleteTransaction = createLoggedAsyncThunk(
   'transactions/delete',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await TransactionService.deleteTransaction(id)
-      return id
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Error al eliminar transacción'
-      return rejectWithValue(message)
-    }
-  }
+  async (id: string) => {
+    await TransactionService.deleteTransaction(id)
+    return id
+  },
+  'Error al eliminar transacción'
 )
 
-export const createInventoryMovement = createAsyncThunk(
+export const createInventoryMovement = createLoggedAsyncThunk(
   'transactions/createInventoryMovement',
-  async (data: CreateInventoryMovementDTO, { rejectWithValue }) => {
-    try {
-      return await InventoryMovementService.createMovement(data)
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Error al crear movimiento de inventario'
-      return rejectWithValue(message)
-    }
-  }
+  async (data: CreateInventoryMovementDTO) => {
+    return await InventoryMovementService.createMovement(data)
+  },
+  'Error al crear movimiento de inventario'
 )
 
-export const deleteInventoryMovement = createAsyncThunk(
+export const deleteInventoryMovement = createLoggedAsyncThunk(
   'transactions/deleteInventoryMovement',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await InventoryMovementService.deleteMovement(id)
-      return id
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Error al eliminar movimiento de inventario'
-      return rejectWithValue(message)
-    }
-  }
+  async (id: string) => {
+    await InventoryMovementService.deleteMovement(id)
+    return id
+  },
+  'Error al eliminar movimiento de inventario'
 )
 
-export const fetchInventoryCategories = createAsyncThunk(
+export const fetchInventoryCategories = createLoggedAsyncThunk(
   'transactions/fetchInventoryCategories',
-  async (_, { rejectWithValue }) => {
-    try {
-      return await InventoryCategoryService.getAllCategories()
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Error al cargar categorías de inventario'
-      return rejectWithValue(message)
-    }
-  }
+  async () => {
+    return await InventoryCategoryService.getAllCategories()
+  },
+  'Error al cargar categorías de inventario'
 )
 
 const transactionSlice = createSlice({

@@ -1,8 +1,5 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  type PayloadAction,
-} from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { createLoggedAsyncThunk } from '../lib/createLoggedAsyncThunk'
 import { ProductService } from '../services/ProductService'
 import type { Product } from '../types/entities'
 import type { CreateProductDTO, UpdateProductDTO } from '../types/dtos'
@@ -21,63 +18,45 @@ const initialState: ProductState = {
   error: null,
 }
 
-export const fetchProductsByBranch = createAsyncThunk(
+export const fetchProductsByBranch = createLoggedAsyncThunk(
   'products/fetchByBranch',
-  async (branchId: string, { rejectWithValue }) => {
-    try {
-      return await ProductService.getProductsByBranch(branchId)
-    } catch (error) {
-      return rejectWithValue('Error al cargar los productos')
-    }
-  }
+  async (branchId: string) => {
+    return await ProductService.getProductsByBranch(branchId)
+  },
+  'Error al cargar los productos'
 )
 
-export const fetchProductById = createAsyncThunk(
+export const fetchProductById = createLoggedAsyncThunk(
   'products/fetchById',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      return await ProductService.getProductById(id)
-    } catch (error) {
-      return rejectWithValue('Error al cargar el producto')
-    }
-  }
+  async (id: string) => {
+    return await ProductService.getProductById(id)
+  },
+  'Error al cargar el producto'
 )
 
-export const createProduct = createAsyncThunk(
+export const createProduct = createLoggedAsyncThunk(
   'products/create',
-  async (data: CreateProductDTO, { rejectWithValue }) => {
-    try {
-      return await ProductService.createProduct(data)
-    } catch (error) {
-      return rejectWithValue('Error al crear el producto')
-    }
-  }
+  async (data: CreateProductDTO) => {
+    return await ProductService.createProduct(data)
+  },
+  'Error al crear el producto'
 )
 
-export const updateProduct = createAsyncThunk(
+export const updateProduct = createLoggedAsyncThunk(
   'products/update',
-  async (
-    { id, data }: { id: string; data: UpdateProductDTO },
-    { rejectWithValue }
-  ) => {
-    try {
-      return await ProductService.updateProduct(id, data)
-    } catch (error) {
-      return rejectWithValue('Error al actualizar el producto')
-    }
-  }
+  async ({ id, data }: { id: string; data: UpdateProductDTO }) => {
+    return await ProductService.updateProduct(id, data)
+  },
+  'Error al actualizar el producto'
 )
 
-export const deleteProduct = createAsyncThunk(
+export const deleteProduct = createLoggedAsyncThunk(
   'products/delete',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      await ProductService.deleteProduct(id)
-      return id
-    } catch (error) {
-      return rejectWithValue('Error al eliminar el producto')
-    }
-  }
+  async (id: string) => {
+    await ProductService.deleteProduct(id)
+    return id
+  },
+  'Error al eliminar el producto'
 )
 
 const productSlice = createSlice({

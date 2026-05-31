@@ -1,4 +1,5 @@
 import { Component, type ReactNode, type ErrorInfo } from 'react'
+import { LoggerService } from '../services/LoggerService'
 
 interface Props {
   children: ReactNode
@@ -22,6 +23,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo)
+    LoggerService.error(
+      `ErrorBoundary: ${error.message}`,
+      'ErrorBoundary.componentDidCatch',
+      error
+    )
   }
 
   render() {

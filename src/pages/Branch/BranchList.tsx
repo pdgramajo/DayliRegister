@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import {
   Plus,
   MapPin,
@@ -14,9 +14,11 @@ import type { RootState } from '../../store'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import { useTheme } from '../../hooks/useTheme'
 import { Button, Modal, toast } from '../../components/ui'
+import { ROUTES } from '../../constants/routes'
 import { BranchCard } from './BranchCard'
 
 export const BranchList = () => {
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { toggleTheme, isDark } = useTheme()
   const { branches, isLoading, error } = useAppSelector(
@@ -89,6 +91,7 @@ export const BranchList = () => {
             </Button>
             <Button
               variant="outline"
+              onClick={() => navigate(ROUTES.SETTINGS)}
               className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
               <Settings className="size-5 text-amber-500 dark:text-amber-400" />
