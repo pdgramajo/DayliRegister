@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ROUTES } from './constants/routes'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 const BranchList = lazy(() =>
   import('./pages/Branch/BranchList').then((m) => ({ default: m.BranchList }))
@@ -102,42 +103,50 @@ const Loading = () => (
 const App = () => {
   return (
     <div className="min-h-screen bg-surface-50 dark:bg-surface-900 transition-colors">
-      <Suspense fallback={<Loading />}>
-        <Routes>
-          <Route path={ROUTES.HOME} element={<BranchList />} />
-          <Route path={ROUTES.BRANCHES} element={<BranchList />} />
-          <Route path={ROUTES.BRANCH_NEW} element={<BranchNew />} />
-          <Route path={ROUTES.BRANCH_EDIT} element={<BranchEdit />} />
-          <Route path={ROUTES.BRANCH_SESSIONS} element={<BranchSessions />} />
-          <Route path={ROUTES.BRANCH_SESSION_NEW} element={<SessionNew />} />
-          <Route
-            path={ROUTES.BRANCH_SESSION_DETAIL}
-            element={<SessionDetail />}
-          />
-          <Route path={ROUTES.BRANCH_SESSION_EDIT} element={<SessionEdit />} />
-          <Route
-            path={ROUTES.BRANCH_SESSION_TRANSACTION_NEW}
-            element={<TransactionNew />}
-          />
-          <Route
-            path={ROUTES.BRANCH_SESSION_INVENTORY_NEW}
-            element={<InventoryMovementNew />}
-          />
-          <Route path={ROUTES.BRANCH_PRODUCTS} element={<ProductList />} />
-          <Route path={ROUTES.BRANCH_PRODUCT_NEW} element={<ProductNew />} />
-          <Route path={ROUTES.BRANCH_PRODUCT_EDIT} element={<ProductEdit />} />
-          <Route path={ROUTES.BRANCH_CLIENTS} element={<ClientList />} />
-          <Route path={ROUTES.BRANCH_CLIENT_NEW} element={<ClientNew />} />
-          <Route path={ROUTES.BRANCH_CLIENT_EDIT} element={<ClientEdit />} />
-          <Route path={ROUTES.BRANCH_REPORT} element={<ReportPage />} />
-          <Route
-            path={ROUTES.BRANCH_INVENTORY}
-            element={<InventoryMovements />}
-          />
-          <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
-          <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
-        </Routes>
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route path={ROUTES.HOME} element={<BranchList />} />
+            <Route path={ROUTES.BRANCHES} element={<BranchList />} />
+            <Route path={ROUTES.BRANCH_NEW} element={<BranchNew />} />
+            <Route path={ROUTES.BRANCH_EDIT} element={<BranchEdit />} />
+            <Route path={ROUTES.BRANCH_SESSIONS} element={<BranchSessions />} />
+            <Route path={ROUTES.BRANCH_SESSION_NEW} element={<SessionNew />} />
+            <Route
+              path={ROUTES.BRANCH_SESSION_DETAIL}
+              element={<SessionDetail />}
+            />
+            <Route
+              path={ROUTES.BRANCH_SESSION_EDIT}
+              element={<SessionEdit />}
+            />
+            <Route
+              path={ROUTES.BRANCH_SESSION_TRANSACTION_NEW}
+              element={<TransactionNew />}
+            />
+            <Route
+              path={ROUTES.BRANCH_SESSION_INVENTORY_NEW}
+              element={<InventoryMovementNew />}
+            />
+            <Route path={ROUTES.BRANCH_PRODUCTS} element={<ProductList />} />
+            <Route path={ROUTES.BRANCH_PRODUCT_NEW} element={<ProductNew />} />
+            <Route
+              path={ROUTES.BRANCH_PRODUCT_EDIT}
+              element={<ProductEdit />}
+            />
+            <Route path={ROUTES.BRANCH_CLIENTS} element={<ClientList />} />
+            <Route path={ROUTES.BRANCH_CLIENT_NEW} element={<ClientNew />} />
+            <Route path={ROUTES.BRANCH_CLIENT_EDIT} element={<ClientEdit />} />
+            <Route path={ROUTES.BRANCH_REPORT} element={<ReportPage />} />
+            <Route
+              path={ROUTES.BRANCH_INVENTORY}
+              element={<InventoryMovements />}
+            />
+            <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+            <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
     </div>
   )
 }
