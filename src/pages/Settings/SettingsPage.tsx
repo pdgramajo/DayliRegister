@@ -15,7 +15,10 @@ import {
   ChevronDown,
   ChevronRight,
   ClipboardList,
+  Download,
 } from 'lucide-react'
+
+import { useInstallPWA } from '../../hooks/useInstallPWA'
 
 type FilterLevel = LogLevel | 'all'
 
@@ -118,6 +121,7 @@ export const SettingsPage = () => {
   }
 
   const errorCount = logs.filter((l) => l.level === 'error').length
+  const { isSupported, isInstalled, install } = useInstallPWA()
 
   return (
     <div className="h-screen flex flex-col bg-surface-50 dark:bg-surface-900">
@@ -142,6 +146,49 @@ export const SettingsPage = () => {
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto min-h-0 px-4 pb-8 sm:px-6 lg:px-8 space-y-6">
+          {/* Install PWA section */}
+          {isSupported && (
+            <section className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+              <div className="px-4 py-3 border-b border-surface-100 dark:border-surface-700/50 flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-content-700 dark:text-content-300">
+                  Aplicación
+                </h2>
+                {isInstalled ? (
+                  <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full font-medium">
+                    Instalada
+                  </span>
+                ) : (
+                  <span className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full font-medium">
+                    Instalar
+                  </span>
+                )}
+              </div>
+              <div className="p-4">
+                <p className="text-sm text-content-600 dark:text-content-400 mb-4">
+                  Instalá DayliRegister en tu dispositivo para acceder sin
+                  conexión a internet y tener un acceso más rápido desde tu
+                  pantalla de inicio.
+                </p>
+                {isInstalled ? (
+                  <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                    <span className="size-2 rounded-full bg-green-500" />
+                    Ya está instalada en tu dispositivo
+                  </div>
+                ) : (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={install}
+                    className="gap-2"
+                  >
+                    <Download className="size-4" />
+                    Instalar aplicación
+                  </Button>
+                )}
+              </div>
+            </section>
+          )}
+
           {/* Log viewer section */}
           <section className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden">
             <div className="px-4 py-3 border-b border-surface-100 dark:border-surface-700/50 flex items-center justify-between">
