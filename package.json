@@ -1,7 +1,8 @@
 {
-  "name": "opencode",
+  "name": "dayliregister",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "POS y gestión de efectivo para pequeños negocios",
   "type": "module",
   "scripts": {
     "dev": "vite",
