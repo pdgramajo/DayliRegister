@@ -525,4 +525,139 @@ describe('ProductList', () => {
       '/branches/branch-1/products/prod-1/edit'
     )
   })
+
+  it('should filter products by name', async () => {
+    vi.spyOn(BranchService, 'getBranchById').mockResolvedValue(mockBranch)
+    vi.spyOn(ProductService, 'getProductsByBranch').mockResolvedValue(
+      mockProducts
+    )
+    const user = userEvent.setup()
+
+    render(
+      <MemoryRouter initialEntries={['/branches/branch-1/products']}>
+        <Provider
+          store={createStore({
+            products: {
+              products: mockProducts,
+              currentProduct: null,
+              isLoading: false,
+              error: null,
+            },
+            branches: {
+              branches: [],
+              currentBranch: mockBranch,
+              isLoading: false,
+              error: null,
+            },
+          })}
+        >
+          <ProductList />
+        </Provider>
+      </MemoryRouter>
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText('Café')).toBeInTheDocument()
+    })
+
+    const searchInput = screen.getByPlaceholderText('Buscar productos...')
+    await user.type(searchInput, 'media')
+
+    await waitFor(() => {
+      expect(screen.queryByText('Café')).not.toBeInTheDocument()
+    })
+    expect(screen.getByText('Medialuna')).toBeInTheDocument()
+    expect(screen.getByText('1 de 2 productos')).toBeInTheDocument()
+  })
+
+  it('should filter products by category', async () => {
+    vi.spyOn(BranchService, 'getBranchById').mockResolvedValue(mockBranch)
+    vi.spyOn(ProductService, 'getProductsByBranch').mockResolvedValue(
+      mockProducts
+    )
+    const user = userEvent.setup()
+
+    render(
+      <MemoryRouter initialEntries={['/branches/branch-1/products']}>
+        <Provider
+          store={createStore({
+            products: {
+              products: mockProducts,
+              currentProduct: null,
+              isLoading: false,
+              error: null,
+            },
+            branches: {
+              branches: [],
+              currentBranch: mockBranch,
+              isLoading: false,
+              error: null,
+            },
+          })}
+        >
+          <ProductList />
+        </Provider>
+      </MemoryRouter>
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText('Café')).toBeInTheDocument()
+    })
+
+    const searchInput = screen.getByPlaceholderText('Buscar productos...')
+    await user.type(searchInput, 'bebidas')
+
+    await waitFor(() => {
+      expect(screen.getByText('Café')).toBeInTheDocument()
+    })
+    expect(screen.queryByText('Medialuna')).not.toBeInTheDocument()
+    expect(screen.getByText('1 de 2 productos')).toBeInTheDocument()
+  })
+
+  it('should show no results message when search has no matches', async () => {
+    vi.spyOn(BranchService, 'getBranchById').mockResolvedValue(mockBranch)
+    vi.spyOn(ProductService, 'getProductsByBranch').mockResolvedValue(
+      mockProducts
+    )
+    const user = userEvent.setup()
+
+    render(
+      <MemoryRouter initialEntries={['/branches/branch-1/products']}>
+        <Provider
+          store={createStore({
+            products: {
+              products: mockProducts,
+              currentProduct: null,
+              isLoading: false,
+              error: null,
+            },
+            branches: {
+              branches: [],
+              currentBranch: mockBranch,
+              isLoading: false,
+              error: null,
+            },
+          })}
+        >
+          <ProductList />
+        </Provider>
+      </MemoryRouter>
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText('Café')).toBeInTheDocument()
+    })
+
+    const searchInput = screen.getByPlaceholderText('Buscar productos...')
+    await user.type(searchInput, 'zzzz')
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('No se encontraron productos')
+      ).toBeInTheDocument()
+    })
+    expect(
+      screen.getByText('Probá con otro término de búsqueda')
+    ).toBeInTheDocument()
+  })
 })

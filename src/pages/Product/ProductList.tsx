@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   fetchProductsByBranch,
@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Button, Modal, toast } from '../../components/ui'
 import { ProductCard } from './ProductCard'
-import { Copy, Check, Package, Download, Upload } from 'lucide-react'
+import { Copy, Check, Package, Download, Upload, Search } from 'lucide-react'
 import { formatMoney } from '../../lib/formatters'
 import { ROUTES, buildRoute } from '../../constants/routes'
 import { ProductService } from '../../services/ProductService'
@@ -37,7 +37,18 @@ export const ProductList = () => {
     ExportedProduct[] | null
   >(null)
   const [isImporting, setIsImporting] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const filteredProducts = useMemo(() => {
+    if (!searchQuery.trim()) return products
+    const q = searchQuery.toLowerCase().trim()
+    return products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        (p.category && p.category.toLowerCase().includes(q))
+    )
+  }, [products, searchQuery])
 
   useEffect(() => {
     if (branchId) {
@@ -177,7 +188,9 @@ export const ProductList = () => {
                   Productos
                 </h1>
                 <p className="mt-1 text-sm text-content-500 dark:text-content-400">
-                  {products.length} producto{products.length !== 1 ? 's' : ''}
+                  {searchQuery.trim()
+                    ? `${filteredProducts.length} de ${products.length} producto${products.length !== 1 ? 's' : ''}`
+                    : `${products.length} producto${products.length !== 1 ? 's' : ''}`}
                 </p>
               </div>
               <Button
@@ -239,6 +252,17 @@ export const ProductList = () => {
                   Copiar seleccionados ({selectedIds.size})
                 </Button>
               </div>
+              {/* Search input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-content-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar productos..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-surface-200 bg-white text-sm placeholder-content-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:border-surface-700 dark:bg-surface-800 dark:text-content-100 dark:placeholder:text-content-500 dark:focus-visible:ring-offset-surface-900"
+                />
+              </div>
             </div>
           )}
         </div>
@@ -263,9 +287,19 @@ export const ProductList = () => {
               + Agregar producto
             </Button>
           </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8 sm:px-6 lg:px-8 text-center">
+            <Search className="size-12 text-content-300 dark:text-content-600 mb-4" />
+            <p className="text-content-500 dark:text-content-400 mb-2">
+              No se encontraron productos
+            </p>
+            <p className="text-sm text-content-400 dark:text-content-500 mb-6">
+              Probá con otro término de búsqueda
+            </p>
+          </div>
         ) : (
           <div className="flex-1 overflow-y-auto min-h-0 space-y-2 px-4 pb-8 sm:px-6 lg:px-8">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
