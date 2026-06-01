@@ -42,7 +42,7 @@ createRoot(rootElement).render(
   <StrictMode>
     <ErrorBoundary>
       <Provider store={store}>
-        <BrowserRouter>
+        <BrowserRouter basename="/DayliRegister">
           <ToastProvider />
           <App />
         </BrowserRouter>
