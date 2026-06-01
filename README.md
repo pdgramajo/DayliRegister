@@ -5,12 +5,12 @@
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
 [![CI/CD](https://github.com/pdgramajo/DayliRegister/actions/workflows/ci.yml/badge.svg)](https://github.com/pdgramajo/DayliRegister/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://pdgramajo.github.io/DayliRegister/)
+<a href="https://pdgramajo.github.io/DayliRegister/" target="_blank"><img src="https://img.shields.io/badge/demo-online-brightgreen" alt="Demo"></a>
 
 **POS y gestión de efectivo para pequeños negocios**
 
 [Documentación](./docs/README.md) •
-[App](https://pdgramajo.github.io/DayliRegister/) •
+<a href="https://pdgramajo.github.io/DayliRegister/" target="_blank">App</a> •
 [Reportar Bug](https://github.com/pdgramajo/DayliRegister/issues) •
 [Solicitar Feature](https://github.com/pdgramajo/DayliRegister/issues)
 
