@@ -2,34 +2,48 @@
 
 DayliRegister es un sistema de gestión de negocios multisede diseñado para emprendedores y pequeños comercios que necesitan controlar múltiples sucursales desde una sola aplicación.
 
-## Índice de Guías
+## Guías de uso
 
 ### Primeros Pasos
 
-- [Inicio Rápido](./getting-started.md) - Configuración inicial y primeros pasos
-- [Tema Claro/Oscuro](./theme.md) - Personalizar la interfaz
+- [Inicio Rápido](./getting-started.md) — Configuración inicial y primeros pasos
+- [Tema Claro/Oscuro](./theme.md) — Personalizar la interfaz
 
-### Funcionalidades
+### Módulos
 
-- [Gestión de Sucursales](./branches.md) - Crear, editar y eliminar sucursales
+| Guía | Descripción |
+|------|-------------|
+| [Sucursales](./branches.md) | Crear, editar y eliminar sucursales |
+| [Sesiones de Caja](./sessions.md) | Abrir y cerrar caja diaria |
+| [Transacciones](./transactions.md) | Ventas, gastos, retiros e ingresos |
+| [Inventario](./inventory.md) | Categorías y movimientos de stock |
+| [Productos](./products.md) | Catálogo, precios y exportación |
+| [Clientes y Deudas](./clients.md) | Registro de clientes y control de deudas |
+| [Reportes](./reports.md) | Reportes semanales y balance |
 
 ### Roadmap
 
-- [Próximas Funcionalidades](./roadmap.md) - Features en desarrollo
+- [Próximas Funcionalidades](./roadmap.md) — Features en desarrollo
 
 ---
 
-## Estructura de la Aplicación
+## Estado de los módulos
 
-DayliRegister se organiza en módulos que permiten gestionar diferentes aspectos de tu negocio:
-
-| Módulo           | Descripción                | Estado          |
-| ---------------- | -------------------------- | --------------- |
-| Sucursales       | Gestión de puntos de venta | ✅ Disponible   |
-| Sesiones de Caja | Control de caja diaria     | 🔜 Próximamente |
-| Transacciones    | Ventas, gastos, retiros    | 🔜 Próximamente |
-| Inventario       | Control de stock           | 🔜 Próximamente |
-| Productos        | Catálogo de productos      | 🔜 Próximamente |
+| Módulo | Estado |
+|--------|--------|
+| Sucursales | ✅ Disponible |
+| Sesiones de Caja | ✅ Disponible |
+| Transacciones (ventas, gastos, retiros, ingresos) | ✅ Disponible |
+| Inventario (categorías y movimientos) | ✅ Disponible |
+| Productos (catálogo, precios, ofertas) | ✅ Disponible |
+| Clientes y Deudas | ✅ Disponible |
+| Reportes Semanales | ✅ Disponible |
+| Export/Import de productos (JSON) | ✅ Disponible |
+| PWA (instalación offline) | ✅ Disponible |
+| Tema Claro/Oscuro | ✅ Disponible |
+| Exportación a Excel/CSV/PDF | 🔜 Próximamente |
+| Asignación de empleados por sucursal | 🔜 Próximamente |
+| Inventario independiente por ubicación | 🔜 Próximamente |
 
 ---
 
@@ -37,9 +51,7 @@ DayliRegister se organiza en módulos que permiten gestionar diferentes aspectos
 
 - Navegador web moderno (Chrome, Firefox, Safari, Edge)
 - Dispositivo móvil o escritorio
-- No requiere instalación - funciona en el navegador
-
----
+- No requiere instalación — funciona en el navegador
 
 ## Soporte
 

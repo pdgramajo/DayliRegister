@@ -4,89 +4,60 @@ Esta página muestra las funcionalidades planeadas y en desarrollo para DayliReg
 
 ## Funcionalidades Disponibles
 
-Las siguientes funciones ya están implementadas y listas para usar:
-
-| Módulo             | Estado        | Descripción                     |
-| ------------------ | ------------- | ------------------------------- |
-| Sucursales         | ✅ Disponible | CRUD completo de sucursales     |
-| Tema Claro/Oscuro  | ✅ Disponible | Personalización de interfaz     |
-| Persistencia Local | ✅ Disponible | Datos guardados en el navegador |
+| Módulo | Estado | Descripción |
+|--------|--------|-------------|
+| Sucursales | ✅ Disponible | CRUD completo de sucursales |
+| Sesiones de Caja | ✅ Disponible | Apertura, cierre y control de efectivo |
+| Transacciones | ✅ Disponible | Ventas, gastos, retiros e ingresos |
+| Inventario | ✅ Disponible | Categorías y movimientos de stock |
+| Productos | ✅ Disponible | Catálogo, precios y exportación JSON |
+| Clientes y Deudas | ✅ Disponible | Registro, cargos, pagos e historial |
+| Reportes Semanales | ✅ Disponible | Reporte con desglose y balance |
+| Export/Import Productos | ✅ Disponible | Exportación e importación JSON |
+| Tema Claro/Oscuro | ✅ Disponible | Personalización de interfaz |
+| Persistencia Local | ✅ Disponible | Datos guardados en IndexedDB |
+| PWA | ✅ Disponible | Instalación como app, offline |
 
 ## Próximas Funcionalidades
 
-### Fase 1: Gestión de Caja
+### Exportación de Reportes
 
-#### Sesiones de Caja
+- Exportar reportes a Excel/CSV
+- Generar reportes en PDF
+- Compartir reportes con formato mejorado
 
-- Abrir y cerrar sesiones de caja por sucursal
-- Control de efectivo inicial y final
-  -Historial de sesiones por fecha
-- Estados: abierta | cerrada
+### Mejoras en Gestión
 
-#### Transacciones
+- Asignación de empleados por sucursal
+- Inventario independiente por ubicación
+- Zonas o regiones para mejor organización
 
-- **Ventas**: Registro de ventas con métodos de pago
-- **Gastos**: Control de gastos del negocio
-- **Retiros**: Dinero retirado de la caja
-- **Ingresos**: Dinero adicionales recebos
+### Integraciones
 
-**Métodos de pago soportados:**
-
-- Efectivo
-- Transferencia
-
-### Fase 2: Inventario
-
-#### Categorías de Inventario
-
-- Crear categorías para organizar productos
-- Editar y eliminar categorías
-- Asignar categorías a productos
-
-#### Movimientos de Inventario
-
-- Entradas de inventario
-- Salidas de inventario
-- Registro de cantidad y descripción
-- Historial de movimientos por sucursal
-
-### Fase 3: Productos
-
-#### Gestión de Productos
-
-- Crear catálogo de productos por sucursal
-- Precio regular y precio oferta
-- Asignación de categorías
-- Histórico de precios
-
-### Fase 4: Reportes
-
-#### Reportes por Sucursal
-
-- Resumen de ventas diarias
-- Gastos por período
-- Movimiento de inventario
-- Comparación entre sucursales
-
-#### Exportación
-
-- Exportar datos a Excel/CSV
-- Generar reportes PDF
+- Sincronización entre dispositivos
+- Respaldo en la nube
+- Notificaciones y alertas
 
 ## Timeline Estimado
 
 ```
 2026
-├── Q2 (Abr-Jun)
+├── Q2 (Abr-Jun) ✅ Completado
 │   ├── Sesiones de Caja
-│   └── Transacciones (ventas, gastos, retiros)
-├── Q3 (Jul-Sep)
+│   ├── Transacciones (ventas, gastos, retiros)
 │   ├── Inventario
 │   └── Productos
-└── Q4 (Oct-Dec)
-    ├── Reportes
-    └── Exportación
+├── Q3 (Jul-Sep) 🔜 En desarrollo
+│   ├── Clientes y Deudas
+│   ├── Reportes
+│   └── Exportación de reportes
+└── Q4 (Oct-Dic) 🔜 Planificado
+    ├── Sincronización entre dispositivos
+    ├── Empleados por sucursal
+    └── Mejoras de integración
 ```
+
+> Nota: Las fechas son estimadas y pueden variar según prioridades y feedback de usuarios.
 
 ## Solicitar Funcionalidades
 
