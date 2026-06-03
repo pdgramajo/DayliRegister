@@ -27,23 +27,27 @@ export const BackupPage = () => {
     setExporting(true)
     try {
       const { blob, filename } = await BackupRestoreService.exportFullBackup()
+      const file = new File([blob], filename, { type: 'application/json' })
 
       // Intentar Web Share API primero (Android/iOS)
-      const file = new File([blob], filename, { type: 'application/json' })
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'DayliRegister Backup',
-        })
-        toast.success('Backup compartido correctamente')
-      } else {
-        // Fallback: descarga tradicional
-        BackupRestoreService.downloadAsFile(blob, filename)
-        toast.success('Backup descargado correctamente')
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'DayliRegister Backup',
+          })
+          toast.success('Backup compartido correctamente')
+          return
+        } catch {
+          // Fallback: si share falla por cualquier motivo (permisos,
+          // no compatible, etc.) → descarga tradicional
+        }
       }
+
+      // Descarga tradicional (fallback si Web Share no está disponible o falló)
+      BackupRestoreService.downloadAsFile(blob, filename)
+      toast.success('Backup descargado correctamente')
     } catch (error) {
-      // AbortError = usuario canceló el compartir → no mostrar error
-      if (error instanceof DOMException && error.name === 'AbortError') return
       toast.error(
         error instanceof Error ? error.message : 'Error al generar el backup'
       )

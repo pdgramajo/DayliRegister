@@ -5,7 +5,7 @@ export const ToastProvider = () => (
   <HotToaster
     position="top-center"
     toastOptions={{
-      duration: 1500,
+      duration: 1000,
       style: {
         borderRadius: '6px',
         padding: '8px 14px',
