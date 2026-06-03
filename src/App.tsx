@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ROUTES } from './constants/routes'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -88,6 +88,11 @@ const SettingsPage = lazy(() =>
     default: m.SettingsPage,
   }))
 )
+const BackupPage = lazy(() =>
+  import('./pages/Backup/BackupPage').then((m) => ({
+    default: m.BackupPage,
+  }))
+)
 
 const Loading = () => (
   <div
@@ -101,6 +106,18 @@ const Loading = () => (
 )
 
 const App = () => {
+  useEffect(() => {
+    if (navigator.storage?.persist) {
+      navigator.storage.persist().then((granted) => {
+        if (granted) {
+          console.log(
+            'Storage persistente concedido — los datos no se borrarán automáticamente'
+          )
+        }
+      })
+    }
+  }, [])
+
   return (
     <div className="min-h-screen bg-surface-50 dark:bg-surface-900 transition-colors">
       <ErrorBoundary>
@@ -142,6 +159,7 @@ const App = () => {
               path={ROUTES.BRANCH_INVENTORY}
               element={<InventoryMovements />}
             />
+            <Route path={ROUTES.BACKUP} element={<BackupPage />} />
             <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
             <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
           </Routes>

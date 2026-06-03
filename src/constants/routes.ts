@@ -19,6 +19,7 @@ export const ROUTES = {
   BRANCH_CLIENT_EDIT: '/branches/:id/clients/:clientId/edit',
   BRANCH_REPORT: '/branches/:id/report',
   BRANCH_INVENTORY: '/branches/:id/inventory',
+  BACKUP: '/backup',
   SETTINGS: '/settings',
 } as const
 

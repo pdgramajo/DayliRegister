@@ -1,4 +1,5 @@
 import { Toaster as HotToaster, toast as hotToast } from 'react-hot-toast'
+import type { Renderable, Toast } from 'react-hot-toast'
 
 export const ToastProvider = () => (
   <HotToaster
@@ -42,4 +43,22 @@ export const toast = {
   error: (message: string) => {
     hotToast.error(message)
   },
+  /**
+   * Muestra un toast con contenido JSX personalizado.
+   * Útil para notificaciones con botones de acción.
+   */
+  custom: (
+    render: (t: Toast) => Renderable,
+    options?: { duration?: number }
+  ) => {
+    return hotToast(render, options)
+  },
+  /**
+   * Descarta un toast por su id.
+   */
+  dismiss: (toastId?: string) => {
+    hotToast.dismiss(toastId)
+  },
 }
+
+export type ToastId = string

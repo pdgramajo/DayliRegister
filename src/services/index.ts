@@ -12,3 +12,4 @@ export {
   DebtEntryNotFoundError,
 } from './ClientService'
 export { LoggerService } from './LoggerService'
+export { BackupRestoreService } from './BackupRestoreService'
