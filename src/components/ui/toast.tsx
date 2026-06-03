@@ -36,12 +36,14 @@ export const ToastProvider = () => (
   />
 )
 
+const DEFAULT_DURATION = 1000
+
 export const toast = {
-  success: (message: string) => {
-    hotToast.success(message)
+  success: (message: string, duration: number = DEFAULT_DURATION) => {
+    hotToast.success(message, { duration })
   },
-  error: (message: string) => {
-    hotToast.error(message)
+  error: (message: string, duration: number = DEFAULT_DURATION) => {
+    hotToast.error(message, { duration })
   },
   /**
    * Muestra un toast con contenido JSX personalizado.
@@ -51,7 +53,10 @@ export const toast = {
     render: (t: Toast) => Renderable,
     options?: { duration?: number }
   ) => {
-    return hotToast(render, options)
+    return hotToast(render, {
+      duration: options?.duration ?? DEFAULT_DURATION,
+      ...options,
+    })
   },
   /**
    * Descarta un toast por su id.
