@@ -159,6 +159,7 @@ describe('generateReportText', () => {
     const text = generateReportText(baseData, {
       phone: '',
       selectedCategoryIds: [],
+      selectedNotes: [],
       showPaymentBreakdown: false,
       showExpenses: false,
       showWithdrawals: false,
@@ -176,6 +177,7 @@ describe('generateReportText', () => {
     const text = generateReportText(baseData, {
       phone: '',
       selectedCategoryIds: [],
+      selectedNotes: [],
       showPaymentBreakdown: true,
       showExpenses: false,
       showWithdrawals: false,
@@ -191,6 +193,7 @@ describe('generateReportText', () => {
     const text = generateReportText(baseData, {
       phone: '',
       selectedCategoryIds: [],
+      selectedNotes: [],
       showPaymentBreakdown: false,
       showExpenses: false,
       showWithdrawals: false,
@@ -206,6 +209,7 @@ describe('generateReportText', () => {
     const text = generateReportText(baseData, {
       phone: '',
       selectedCategoryIds: [],
+      selectedNotes: [],
       showPaymentBreakdown: false,
       showExpenses: false,
       showWithdrawals: false,
@@ -232,6 +236,7 @@ describe('generateReportText', () => {
     const text = generateReportText(data, {
       phone: '',
       selectedCategoryIds: ['cat-1', 'cat-2'],
+      selectedNotes: [],
       showPaymentBreakdown: false,
       showExpenses: true,
       showWithdrawals: true,
@@ -245,17 +250,84 @@ describe('generateReportText', () => {
     expect(text).toContain('300')
     expect(text).toContain('Ingresos')
     expect(text).toContain('200')
-    expect(text).toContain('Medias res recibidas')
+    expect(text).toContain('Movimientos de inventario')
     expect(text).toContain('novillo: 5')
     expect(text).toContain('cerdo: 3')
     expect(text).toContain('Balance')
     expect(text).toContain('2.400')
   })
 
+  it('should render hierarchical notes breakdown when movements have notesBreakdown', () => {
+    const data: ReportData = {
+      ...baseData,
+      movements: [
+        {
+          categoryId: 'cat-1',
+          categoryName: 'novillo',
+          quantity: 5,
+          notesBreakdown: [
+            { notes: 'media res A', quantity: 2 },
+            { notes: 'media res B', quantity: 3 },
+          ],
+        },
+        {
+          categoryId: 'cat-2',
+          categoryName: 'cerdo',
+          quantity: 1,
+          notesBreakdown: [{ notes: 'media res C', quantity: 1 }],
+        },
+      ],
+    }
+    const text = generateReportText(data, {
+      phone: '',
+      selectedCategoryIds: ['cat-1', 'cat-2'],
+      selectedNotes: ['media res A', 'media res B', 'media res C'],
+      showPaymentBreakdown: false,
+      showExpenses: false,
+      showWithdrawals: false,
+      showIncome: false,
+      showMovements: true,
+      showBalance: false,
+    })
+    expect(text).toContain('Movimientos de inventario')
+    expect(text).toContain('novillo:')
+    expect(text).toContain('  media res A: 2')
+    expect(text).toContain('  media res B: 3')
+    expect(text).toContain('cerdo:')
+    expect(text).toContain('  media res C: 1')
+  })
+
+  it('should render flat format when movements have no notesBreakdown', () => {
+    const data: ReportData = {
+      ...baseData,
+      movements: [
+        {
+          categoryId: 'cat-1',
+          categoryName: 'novillo',
+          quantity: 5,
+        },
+      ],
+    }
+    const text = generateReportText(data, {
+      phone: '',
+      selectedCategoryIds: ['cat-1'],
+      selectedNotes: [],
+      showPaymentBreakdown: false,
+      showExpenses: false,
+      showWithdrawals: false,
+      showIncome: false,
+      showMovements: true,
+      showBalance: false,
+    })
+    expect(text).toContain('Movimientos de inventario')
+    expect(text).toContain('novillo: 5')
+  })
+
   it('should format dates as DD/MM in the header', () => {
     const text = generateReportText(baseData, {
       phone: '',
       selectedCategoryIds: [],
+      selectedNotes: [],
       showPaymentBreakdown: false,
       showExpenses: false,
       showWithdrawals: false,
@@ -311,6 +383,7 @@ describe('getReportData', () => {
       {
         phone: '',
         selectedCategoryIds: [],
+        selectedNotes: [],
         showPaymentBreakdown: false,
         showExpenses: false,
         showWithdrawals: false,
@@ -338,6 +411,7 @@ describe('getReportData', () => {
       {
         phone: '',
         selectedCategoryIds: [],
+        selectedNotes: [],
         showPaymentBreakdown: false,
         showExpenses: false,
         showWithdrawals: false,
@@ -425,6 +499,7 @@ describe('getReportData', () => {
       {
         phone: '',
         selectedCategoryIds: ['cat-1'],
+        selectedNotes: [],
         showPaymentBreakdown: false,
         showExpenses: true,
         showWithdrawals: true,
@@ -443,6 +518,146 @@ describe('getReportData', () => {
     expect(data.movements![0].categoryName).toBe('novillo')
     expect(data.movements![0].quantity).toBe(5)
     expect(data.balance).toBe(4600) // 5000 - 300 - 200 + 100
+  })
+
+  it('should filter movements by selectedNotes', async () => {
+    const { getReportData } = await import('../ReportService')
+    const { db } = await import('../../db')
+
+    await db.inventoryCategories.add({
+      id: 'cat-1',
+      name: 'novillo',
+      createdAt: '2026-05-01T00:00:00.000Z',
+      updatedAt: '2026-05-01T00:00:00.000Z',
+    })
+
+    await db.inventoryMovements.bulkAdd([
+      {
+        id: crypto.randomUUID(),
+        sessionId: 'session-1',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-1',
+        type: 'in' as const,
+        quantity: 2,
+        notes: 'media res A',
+        createdAt: '2026-05-27T10:00:00.000Z',
+        updatedAt: '2026-05-27T10:00:00.000Z',
+      },
+      {
+        id: crypto.randomUUID(),
+        sessionId: 'session-1',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-1',
+        type: 'in' as const,
+        quantity: 3,
+        notes: 'media res B',
+        createdAt: '2026-05-27T11:00:00.000Z',
+        updatedAt: '2026-05-27T11:00:00.000Z',
+      },
+      {
+        id: crypto.randomUUID(),
+        sessionId: 'session-1',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-1',
+        type: 'in' as const,
+        quantity: 1,
+        notes: '   ', // whitespace-only, should be excluded
+        createdAt: '2026-05-27T12:00:00.000Z',
+        updatedAt: '2026-05-27T12:00:00.000Z',
+      },
+    ])
+
+    // Filter by 'media res A' only
+    const data = await getReportData(
+      'branch-1',
+      'Test Branch',
+      '2026-05-25',
+      '2026-05-31',
+      {
+        phone: '',
+        selectedCategoryIds: ['cat-1'],
+        selectedNotes: ['media res A'],
+        showPaymentBreakdown: false,
+        showExpenses: false,
+        showWithdrawals: false,
+        showIncome: false,
+        showMovements: true,
+        showBalance: false,
+      }
+    )
+
+    expect(data.movements).toBeDefined()
+    expect(data.movements).toHaveLength(1)
+    expect(data.movements![0].categoryName).toBe('novillo')
+    expect(data.movements![0].quantity).toBe(2)
+    expect(data.movements![0].notesBreakdown).toBeDefined()
+    expect(data.movements![0].notesBreakdown).toHaveLength(1)
+    expect(data.movements![0].notesBreakdown![0]).toEqual({
+      notes: 'media res A',
+      quantity: 2,
+    })
+  })
+
+  it('should include all movements when selectedNotes is empty', async () => {
+    const { getReportData } = await import('../ReportService')
+    const { db } = await import('../../db')
+
+    await db.inventoryCategories.add({
+      id: 'cat-1',
+      name: 'novillo',
+      createdAt: '2026-05-01T00:00:00.000Z',
+      updatedAt: '2026-05-01T00:00:00.000Z',
+    })
+
+    await db.inventoryMovements.bulkAdd([
+      {
+        id: crypto.randomUUID(),
+        sessionId: 'session-1',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-1',
+        type: 'in' as const,
+        quantity: 2,
+        notes: 'media res A',
+        createdAt: '2026-05-27T10:00:00.000Z',
+        updatedAt: '2026-05-27T10:00:00.000Z',
+      },
+      {
+        id: crypto.randomUUID(),
+        sessionId: 'session-1',
+        branchId: 'branch-1',
+        inventoryCategoryId: 'cat-1',
+        type: 'in' as const,
+        quantity: 3,
+        notes: 'media res B',
+        createdAt: '2026-05-27T11:00:00.000Z',
+        updatedAt: '2026-05-27T11:00:00.000Z',
+      },
+    ])
+
+    // No notes filter → flat grouping, all movements included
+    const data = await getReportData(
+      'branch-1',
+      'Test Branch',
+      '2026-05-25',
+      '2026-05-31',
+      {
+        phone: '',
+        selectedCategoryIds: ['cat-1'],
+        selectedNotes: [],
+        showPaymentBreakdown: false,
+        showExpenses: false,
+        showWithdrawals: false,
+        showIncome: false,
+        showMovements: true,
+        showBalance: false,
+      }
+    )
+
+    expect(data.movements).toBeDefined()
+    expect(data.movements).toHaveLength(1)
+    expect(data.movements![0].categoryName).toBe('novillo')
+    expect(data.movements![0].quantity).toBe(5)
+    expect(data.movements![0].notesBreakdown).toBeUndefined()
   })
 
   it('should filter out transactions outside date range', async () => {
@@ -468,6 +683,7 @@ describe('getReportData', () => {
       {
         phone: '',
         selectedCategoryIds: [],
+        selectedNotes: [],
         showPaymentBreakdown: false,
         showExpenses: false,
         showWithdrawals: false,

@@ -204,7 +204,11 @@ describe('ReportPage', () => {
         await screen.findByText('Ingresos', {}, { timeout: 5000 })
       ).toBeInTheDocument()
       expect(
-        await screen.findByText('Medias res recibidas', {}, { timeout: 5000 })
+        await screen.findByText(
+          'Movimientos de inventario',
+          {},
+          { timeout: 5000 }
+        )
       ).toBeInTheDocument()
       expect(
         await screen.findByText('Balance', {}, { timeout: 5000 })

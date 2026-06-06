@@ -38,6 +38,20 @@ export const InventoryMovementRepository = {
     return db.inventoryMovements.get(id)
   },
 
+  async getDistinctNotesByBranchId(branchId: string): Promise<string[]> {
+    const movements = await db.inventoryMovements
+      .where('branchId')
+      .equals(branchId)
+      .and((m) => !m.deletedAt && !!m.notes && m.notes.trim().length > 0)
+      .toArray()
+
+    const notesSet = new Set<string>()
+    for (const m of movements) {
+      notesSet.add(m.notes!.trim())
+    }
+    return Array.from(notesSet).sort()
+  },
+
   async create(data: CreateInventoryMovementDTO): Promise<string> {
     const now = getTimestamp()
     return db.inventoryMovements.add({

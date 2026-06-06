@@ -4,6 +4,7 @@ import { STORAGE_NAMESPACE } from '../../constants/storage'
 export interface ReportConfig {
   phone: string
   selectedCategoryIds: string[]
+  selectedNotes: string[]
   showPaymentBreakdown: boolean
   showExpenses: boolean
   showWithdrawals: boolean
@@ -15,6 +16,7 @@ export interface ReportConfig {
 const DEFAULTS: ReportConfig = {
   phone: '',
   selectedCategoryIds: [],
+  selectedNotes: [],
   showPaymentBreakdown: true,
   showExpenses: false,
   showWithdrawals: false,

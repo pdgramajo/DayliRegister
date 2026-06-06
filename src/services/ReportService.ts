@@ -15,10 +15,16 @@ export interface DaySales {
   transfer: number
 }
 
+export interface NoteMovement {
+  notes: string
+  quantity: number
+}
+
 export interface CategoryMovement {
   categoryId: string
   categoryName: string
   quantity: number
+  notesBreakdown?: NoteMovement[]
 }
 
 export interface ReportData {
@@ -178,27 +184,73 @@ export const getReportData = async (
 
     const inRangeMovements = allMovements.filter((m) => {
       const mDate = parseISODate(m.createdAt)
-      return (
-        mDate >= fromDate &&
-        mDate <= toDate &&
-        m.type === Entities.InventoryMovementTypes.IN &&
-        config.selectedCategoryIds.includes(m.inventoryCategoryId)
-      )
+      if (!(mDate >= fromDate && mDate <= toDate)) return false
+      if (m.type !== Entities.InventoryMovementTypes.IN) return false
+      if (!config.selectedCategoryIds.includes(m.inventoryCategoryId))
+        return false
+      // Apply notes filter only if at least one note is selected
+      if (config.selectedNotes.length > 0) {
+        if (!m.notes) return false
+        if (!config.selectedNotes.includes(m.notes.trim())) return false
+      }
+      return true
     })
 
-    const movementMap = new Map<string, number>()
-    for (const m of inRangeMovements) {
-      const current = movementMap.get(m.inventoryCategoryId) ?? 0
-      movementMap.set(m.inventoryCategoryId, current + m.quantity)
-    }
+    if (config.selectedNotes.length > 0) {
+      // Hierarchical grouping: category → notes breakdown
+      const catNoteMap = new Map<string, Map<string, number>>()
+      for (const m of inRangeMovements) {
+        const noteKey = m.notes?.trim() ?? ''
+        if (!catNoteMap.has(m.inventoryCategoryId)) {
+          catNoteMap.set(m.inventoryCategoryId, new Map())
+        }
+        const noteMap = catNoteMap.get(m.inventoryCategoryId)!
+        const current = noteMap.get(noteKey) ?? 0
+        noteMap.set(noteKey, current + m.quantity)
+      }
 
-    movements = config.selectedCategoryIds
-      .map((catId) => ({
-        categoryId: catId,
-        categoryName: categoryMap.get(catId) ?? 'Sin categoría',
-        quantity: movementMap.get(catId) ?? 0,
-      }))
-      .filter((m) => m.quantity > 0 || true) // show even if 0
+      movements = config.selectedCategoryIds
+        .map((catId) => {
+          const noteMap = catNoteMap.get(catId)
+          if (!noteMap) {
+            return {
+              categoryId: catId,
+              categoryName: categoryMap.get(catId) ?? 'Sin categoría',
+              quantity: 0,
+              notesBreakdown: [] as NoteMovement[],
+            }
+          }
+          const breakdown: NoteMovement[] = []
+          let totalQty = 0
+          for (const [notes, qty] of noteMap) {
+            breakdown.push({ notes, quantity: qty })
+            totalQty += qty
+          }
+          breakdown.sort((a, b) => a.notes.localeCompare(b.notes))
+          return {
+            categoryId: catId,
+            categoryName: categoryMap.get(catId) ?? 'Sin categoría',
+            quantity: totalQty,
+            notesBreakdown: breakdown,
+          }
+        })
+        .filter((m) => m.quantity > 0 || true)
+    } else {
+      // Flat grouping by category only (original behavior)
+      const movementMap = new Map<string, number>()
+      for (const m of inRangeMovements) {
+        const current = movementMap.get(m.inventoryCategoryId) ?? 0
+        movementMap.set(m.inventoryCategoryId, current + m.quantity)
+      }
+
+      movements = config.selectedCategoryIds
+        .map((catId) => ({
+          categoryId: catId,
+          categoryName: categoryMap.get(catId) ?? 'Sin categoría',
+          quantity: movementMap.get(catId) ?? 0,
+        }))
+        .filter((m) => m.quantity > 0 || true)
+    }
   }
 
   // Balance
@@ -276,9 +328,18 @@ export const generateReportText = (
 
   // Inventory movements
   if (config.showMovements && data.movements) {
-    lines.push('Medias res recibidas')
+    lines.push('Movimientos de inventario')
     for (const m of data.movements) {
-      lines.push(`${m.categoryName}: ${m.quantity}`)
+      if (m.notesBreakdown && m.notesBreakdown.length > 0) {
+        // Hierarchical: category header then indented notes
+        lines.push(`${m.categoryName}:`)
+        for (const n of m.notesBreakdown) {
+          lines.push(`  ${n.notes}: ${n.quantity}`)
+        }
+      } else {
+        // Flat: category with total quantity
+        lines.push(`${m.categoryName}: ${m.quantity}`)
+      }
     }
     lines.push('-'.repeat(30))
   }
