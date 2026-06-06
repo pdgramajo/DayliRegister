@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
-import { Mic } from 'lucide-react'
+import { Mic, Loader2 } from 'lucide-react'
 import {
   fetchSessionById,
   closeSession,
@@ -26,6 +26,7 @@ import { TabSwitch } from './TabSwitch'
 import { ActionButtons } from './ActionButtons'
 import { TransactionList } from './TransactionList'
 import { InventoryList } from './InventoryList'
+import { useVoiceRecognition } from '../../hooks/useVoiceRecognition'
 import type { TabType, TransactionFilter } from './types'
 
 export const SessionDetail = () => {
@@ -142,6 +143,16 @@ export const SessionDetail = () => {
       `${buildRoute(ROUTES.BRANCH_SESSION_INVENTORY_NEW, { id: branchId, sessionId })}?type=${type}`
     )
 
+  const {
+    status: voiceStatus,
+    start: startVoice,
+    stop: stopVoice,
+  } = useVoiceRecognition({
+    branchId: branchId!,
+    sessionId: sessionId!,
+    categories: inventoryCategories,
+  })
+
   if (sessionLoading || !currentSession) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -239,11 +250,24 @@ export const SessionDetail = () => {
       {/* FAB - Ingreso por voz */}
       {isOpen && (
         <button
-          onClick={() => {}}
-          className="fixed bottom-6 right-4 sm:right-6 z-40 flex items-center justify-center size-14 rounded-full bg-brand-600 text-white shadow-lg hover:bg-brand-700 hover:shadow-xl active:scale-95 transition-all duration-200"
-          aria-label="Ingreso por voz"
+          onClick={voiceStatus === 'recording' ? stopVoice : startVoice}
+          disabled={voiceStatus === 'processing'}
+          className={`fixed bottom-6 right-4 sm:right-6 z-40 flex items-center justify-center size-14 rounded-full shadow-lg transition-all duration-200 ${
+            voiceStatus === 'recording'
+              ? 'bg-red-500 text-white animate-pulse shadow-xl'
+              : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed'
+          }`}
+          aria-label={
+            voiceStatus === 'recording'
+              ? 'Detener grabación'
+              : 'Ingreso por voz'
+          }
         >
-          <Mic className="size-6" />
+          {voiceStatus === 'processing' ? (
+            <Loader2 className="size-6 animate-spin" />
+          ) : (
+            <Mic className="size-6" />
+          )}
         </button>
       )}
 
