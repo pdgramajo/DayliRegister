@@ -102,99 +102,101 @@ export const BranchSessions = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pt-4">
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={() => navigate(ROUTES.BRANCHES)}
-            className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors"
-          >
-            ← Volver
-          </button>
-          <span className="text-sm font-medium text-content-600 dark:text-content-400">
-            {currentBranch.name}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-          <Button
-            variant="outline"
-            onClick={() =>
-              navigate(buildRoute(ROUTES.BRANCH_INVENTORY, { id: branchId }))
-            }
-            className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
-          >
-            <ClipboardList className="size-5 text-emerald-500 dark:text-emerald-400" />
-            <span className="text-xs">Recepciones</span>
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() =>
-              navigate(buildRoute(ROUTES.BRANCH_REPORT, { id: branchId }))
-            }
-            className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
-          >
-            <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
-            <span className="text-xs">Reportes</span>
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() =>
-              navigate(buildRoute(ROUTES.BRANCH_PRODUCTS, { id: branchId }))
-            }
-            className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
-          >
-            <Package className="size-5 text-emerald-500 dark:text-emerald-400" />
-            <span className="text-xs">Productos</span>
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() =>
-              navigate(buildRoute(ROUTES.BRANCH_CLIENTS, { id: branchId }))
-            }
-            className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
-          >
-            <Users className="size-5 text-sky-500 dark:text-sky-400" />
-            <span className="text-xs">Clientes</span>
-          </Button>
-        </div>
-
-        <Button
-          onClick={() =>
-            navigate(buildRoute(ROUTES.BRANCH_SESSION_NEW, { id: branchId }))
-          }
-          className="w-full"
-        >
-          + Nueva sesión
-        </Button>
-      </div>
-
-      {openSessions.length > 0 && (
-        <div className="mb-8">
-          <h2 className="flex items-center justify-center gap-3 text-xs font-medium text-green-600 uppercase tracking-wider mb-3">
-            <span className="h-px flex-1 bg-green-500/40" />
-            ABIERTAS
-            <span className="h-px flex-1 bg-green-500/40" />
-          </h2>
-          <div className="space-y-3">
-            {openSessions.map((session) => (
-              <OpenSessionCard
-                key={session.id}
-                session={session}
-                branchId={branchId!}
-                onClose={handleCloseSession}
-              />
-            ))}
+    <div className="max-w-2xl mx-auto px-4 pt-4 flex flex-col h-dvh">
+      <div className="shrink-0">
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => navigate(ROUTES.BRANCHES)}
+              className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors"
+            >
+              ← Volver
+            </button>
+            <span className="text-sm font-medium text-content-600 dark:text-content-400">
+              {currentBranch.name}
+            </span>
           </div>
-        </div>
-      )}
 
-      <div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+            <Button
+              variant="outline"
+              onClick={() =>
+                navigate(buildRoute(ROUTES.BRANCH_INVENTORY, { id: branchId }))
+              }
+              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+            >
+              <ClipboardList className="size-5 text-emerald-500 dark:text-emerald-400" />
+              <span className="text-xs">Recepciones</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                navigate(buildRoute(ROUTES.BRANCH_REPORT, { id: branchId }))
+              }
+              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+            >
+              <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
+              <span className="text-xs">Reportes</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                navigate(buildRoute(ROUTES.BRANCH_PRODUCTS, { id: branchId }))
+              }
+              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+            >
+              <Package className="size-5 text-emerald-500 dark:text-emerald-400" />
+              <span className="text-xs">Productos</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                navigate(buildRoute(ROUTES.BRANCH_CLIENTS, { id: branchId }))
+              }
+              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+            >
+              <Users className="size-5 text-sky-500 dark:text-sky-400" />
+              <span className="text-xs">Clientes</span>
+            </Button>
+          </div>
+
+          <Button
+            onClick={() =>
+              navigate(buildRoute(ROUTES.BRANCH_SESSION_NEW, { id: branchId }))
+            }
+            className="w-full"
+          >
+            + Nueva sesión
+          </Button>
+        </div>
+
+        {openSessions.length > 0 && (
+          <div className="mb-8">
+            <h2 className="flex items-center justify-center gap-3 text-xs font-medium text-green-600 uppercase tracking-wider mb-3">
+              <span className="h-px flex-1 bg-green-500/40" />
+              ABIERTAS
+              <span className="h-px flex-1 bg-green-500/40" />
+            </h2>
+            <div className="space-y-3">
+              {openSessions.map((session) => (
+                <OpenSessionCard
+                  key={session.id}
+                  session={session}
+                  branchId={branchId!}
+                  onClose={handleCloseSession}
+                />
+              ))}
+            </div>
+          </div>
+        )}
         <h2 className="flex items-center justify-center gap-3 text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
           <span className="h-px flex-1 bg-gray-500/40" />
           HISTORIAL ({closedSessions.length})
           <span className="h-px flex-1 bg-gray-500/40" />
         </h2>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-y-auto pb-4">
         {closedSessions.length === 0 ? (
           <p className="text-content-500 py-8 text-center">
             No hay sesiones cerradas
