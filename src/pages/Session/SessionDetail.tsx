@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
+import { Mic } from 'lucide-react'
 import {
   fetchSessionById,
   closeSession,
@@ -190,7 +191,7 @@ export const SessionDetail = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pt-4">
+    <div className="max-w-2xl mx-auto px-4 pt-4 pb-20">
       <SessionHeader
         name={currentSession.name}
         isOpen={isOpen}
@@ -233,6 +234,17 @@ export const SessionDetail = () => {
           isOpen={isOpen}
           onDelete={handleDeleteInventoryMovement}
         />
+      )}
+
+      {/* FAB - Ingreso por voz */}
+      {isOpen && (
+        <button
+          onClick={() => {}}
+          className="fixed bottom-6 right-4 sm:right-6 z-40 flex items-center justify-center size-14 rounded-full bg-brand-600 text-white shadow-lg hover:bg-brand-700 hover:shadow-xl active:scale-95 transition-all duration-200"
+          aria-label="Ingreso por voz"
+        >
+          <Mic className="size-6" />
+        </button>
       )}
 
       <Modal
