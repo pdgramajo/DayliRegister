@@ -116,6 +116,7 @@ export const ClientList = () => {
         ? c.name.toLowerCase().includes(searchQuery.toLowerCase())
         : true
     )
+    .sort((a, b) => b.balance - a.balance)
 
   if (isLoading || !currentBranch) {
     return (
