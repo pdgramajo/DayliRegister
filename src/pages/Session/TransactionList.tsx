@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { Entities, type Transaction } from '../../types/entities'
 import { formatDate, formatMoney } from '../../lib/formatters'
@@ -8,14 +8,12 @@ import type { TransactionFilter } from './types'
 
 interface TransactionItemProps {
   transaction: Transaction
-  isOpen: boolean
-  onDelete: (id: string) => void
+  deleteButton?: ReactNode
 }
 
 const TransactionItem = ({
   transaction,
-  isOpen,
-  onDelete,
+  deleteButton,
 }: TransactionItemProps) => {
   const getLabel = (type: string) => {
     const labels: Record<string, string> = {
@@ -81,14 +79,7 @@ const TransactionItem = ({
           {isPositive ? '+' : '-'}
           {formatMoney(transaction.amount)}
         </span>
-        {isOpen && (
-          <button
-            onClick={() => onDelete(transaction.id)}
-            className="p-1 text-content-400 hover:text-red-600"
-          >
-            <X className="size-4" />
-          </button>
-        )}
+        {deleteButton}
       </div>
     </div>
   )
@@ -156,8 +147,16 @@ export const TransactionList = ({
             <TransactionItem
               key={t.id}
               transaction={t}
-              isOpen={isOpen}
-              onDelete={onDelete}
+              deleteButton={
+                isOpen ? (
+                  <button
+                    onClick={() => onDelete(t.id)}
+                    className="p-1 text-content-400 hover:text-red-600"
+                  >
+                    <X className="size-4" />
+                  </button>
+                ) : undefined
+              }
             />
           ))
         )}

@@ -197,22 +197,20 @@ export const BranchList = () => {
         </div>
       </div>
 
-      <Modal
-        open={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        title="Eliminar sucursal"
-      >
-        <p className="text-sm text-content-500 mb-6">
-          ¿Estás seguro de que quieres eliminar "{deleteTarget?.name}"?
-        </p>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-            Cancelar
-          </Button>
-          <Button variant="destructive" onClick={confirmDelete}>
-            Eliminar
-          </Button>
-        </div>
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)}>
+        <Modal.Content title="Eliminar sucursal">
+          <p className="text-sm text-content-500 mb-6">
+            ¿Estás seguro de que quieres eliminar "{deleteTarget?.name}"?
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Eliminar
+            </Button>
+          </div>
+        </Modal.Content>
       </Modal>
     </div>
   )

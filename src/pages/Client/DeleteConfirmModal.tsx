@@ -16,16 +16,18 @@ export const DeleteConfirmModal = ({
   onConfirm,
 }: DeleteConfirmModalProps) => {
   return (
-    <Modal open={open} onClose={onClose} title={title}>
-      <p className="text-sm text-content-500 mb-6">{message}</p>
-      <div className="flex justify-end gap-2">
-        <Button variant="outline" onClick={onClose}>
-          Cancelar
-        </Button>
-        <Button variant="destructive" onClick={onConfirm}>
-          Eliminar
-        </Button>
-      </div>
+    <Modal open={open} onClose={onClose}>
+      <Modal.Content title={title}>
+        <p className="text-sm text-content-500 mb-6">{message}</p>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button variant="destructive" onClick={onConfirm}>
+            Eliminar
+          </Button>
+        </div>
+      </Modal.Content>
     </Modal>
   )
 }

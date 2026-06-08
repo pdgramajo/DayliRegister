@@ -266,94 +266,95 @@ export const BackupPage = () => {
           setShowConfirmModal(false)
           setConfirmText('')
         }}
-        title="Restaurar datos"
       >
-        {restoreSummary && (
-          <div className="space-y-4">
-            <div className="flex items-start gap-3 p-3 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30">
-              <span className="text-red-600 dark:text-red-400 text-lg leading-none mt-0.5">
-                ⚠️
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-red-800 dark:text-red-300 mb-1">
-                  ¿Estás seguro?
-                </p>
-                <p className="text-xs text-red-700 dark:text-red-400 leading-relaxed">
-                  Esta acción{' '}
-                  <strong>reemplazará todos los datos actuales</strong> de la
-                  aplicación por los del backup. No se puede deshacer.
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-xs font-semibold text-content-500 dark:text-content-400 uppercase tracking-wide mb-2">
-                Resumen del backup
-              </p>
-              <p className="text-xs text-content-400 dark:text-content-500 mb-3">
-                Backup del: {formatDate(restoreSummary.exportedAt)}
-              </p>
-              <div className="bg-surface-50 dark:bg-surface-700/30 rounded-xl p-3 space-y-1">
-                {restoreSummary.tables.map((table) => (
-                  <div
-                    key={table.name}
-                    className="flex justify-between text-sm"
-                  >
-                    <span className="text-content-600 dark:text-content-400">
-                      {table.name}
-                    </span>
-                    <span className="font-medium text-content-800 dark:text-content-200">
-                      {table.count.toLocaleString('es-AR')}
-                    </span>
-                  </div>
-                ))}
-                <div className="border-t border-surface-200 dark:border-surface-600 pt-1 mt-1 flex justify-between text-sm font-semibold">
-                  <span className="text-content-700 dark:text-content-300">
-                    Total
-                  </span>
-                  <span className="text-content-900 dark:text-white">
-                    {restoreSummary.totalRecords.toLocaleString('es-AR')}
-                  </span>
+        <Modal.Content title="Restaurar datos">
+          {restoreSummary && (
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30">
+                <span className="text-red-600 dark:text-red-400 text-lg leading-none mt-0.5">
+                  ⚠️
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-red-800 dark:text-red-300 mb-1">
+                    ¿Estás seguro?
+                  </p>
+                  <p className="text-xs text-red-700 dark:text-red-400 leading-relaxed">
+                    Esta acción{' '}
+                    <strong>reemplazará todos los datos actuales</strong> de la
+                    aplicación por los del backup. No se puede deshacer.
+                  </p>
                 </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm text-content-600 dark:text-content-400 mb-2">
-                Escribí <strong>RESTAURAR</strong> para confirmar:
-              </label>
-              <input
-                type="text"
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-                placeholder="RESTAURAR"
-                className="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-sm text-content-900 dark:text-white placeholder:text-content-400 focus:outline-none focus:ring-2 focus:ring-red-500/40"
-              />
-            </div>
+              <div>
+                <p className="text-xs font-semibold text-content-500 dark:text-content-400 uppercase tracking-wide mb-2">
+                  Resumen del backup
+                </p>
+                <p className="text-xs text-content-400 dark:text-content-500 mb-3">
+                  Backup del: {formatDate(restoreSummary.exportedAt)}
+                </p>
+                <div className="bg-surface-50 dark:bg-surface-700/30 rounded-xl p-3 space-y-1">
+                  {restoreSummary.tables.map((table) => (
+                    <div
+                      key={table.name}
+                      className="flex justify-between text-sm"
+                    >
+                      <span className="text-content-600 dark:text-content-400">
+                        {table.name}
+                      </span>
+                      <span className="font-medium text-content-800 dark:text-content-200">
+                        {table.count.toLocaleString('es-AR')}
+                      </span>
+                    </div>
+                  ))}
+                  <div className="border-t border-surface-200 dark:border-surface-600 pt-1 mt-1 flex justify-between text-sm font-semibold">
+                    <span className="text-content-700 dark:text-content-300">
+                      Total
+                    </span>
+                    <span className="text-content-900 dark:text-white">
+                      {restoreSummary.totalRecords.toLocaleString('es-AR')}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowConfirmModal(false)
-                  setConfirmText('')
-                }}
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleRestore}
-                loading={restoring}
-                disabled={confirmText !== 'RESTAURAR'}
-                className="gap-2"
-              >
-                <Upload className="size-4" />
-                {restoring ? 'Restaurando...' : 'Restaurar datos'}
-              </Button>
+              <div>
+                <label className="block text-sm text-content-600 dark:text-content-400 mb-2">
+                  Escribí <strong>RESTAURAR</strong> para confirmar:
+                </label>
+                <input
+                  type="text"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder="RESTAURAR"
+                  className="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-sm text-content-900 dark:text-white placeholder:text-content-400 focus:outline-none focus:ring-2 focus:ring-red-500/40"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowConfirmModal(false)
+                    setConfirmText('')
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleRestore}
+                  loading={restoring}
+                  disabled={confirmText !== 'RESTAURAR'}
+                  className="gap-2"
+                >
+                  <Upload className="size-4" />
+                  {restoring ? 'Restaurando...' : 'Restaurar datos'}
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </Modal.Content>
       </Modal>
     </div>
   )

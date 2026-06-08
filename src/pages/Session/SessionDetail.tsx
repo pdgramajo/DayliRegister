@@ -20,10 +20,10 @@ import { Button, Modal, MoneyInput, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
 import { TABS, FILTERS, DELETE_TARGET_TYPES } from '../../constants/session'
 import { ROUTES, buildRoute } from '../../constants/routes'
-import { SessionHeader } from './SessionHeader'
+import { SessionHeaderOpen, SessionHeaderClosed } from './SessionHeader'
 import { SummaryCards } from './SummaryCards'
 import { TabSwitch } from './TabSwitch'
-import { ActionButtons } from './ActionButtons'
+import { MovementActionButtons, InventoryActionButtons } from './ActionButtons'
 import { TransactionList } from './TransactionList'
 import { InventoryList } from './InventoryList'
 import { useVoiceRecognition } from '../../hooks/useVoiceRecognition'
@@ -196,21 +196,24 @@ export const SessionDetail = () => {
     totalExpenses -
     totalWithdrawals
 
-  const handleNavigate = (path: string) => {
-    if (activeTab === TABS.MOVEMENTS) navigateToTransaction(path)
-    else navigateToInventory(path)
-  }
-
   return (
     <div className="max-w-2xl mx-auto px-4 pt-4 pb-20">
-      <SessionHeader
-        name={currentSession.name}
-        isOpen={isOpen}
-        onClose={handleCloseSession}
-        onBack={() =>
-          navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
-        }
-      />
+      {isOpen ? (
+        <SessionHeaderOpen
+          name={currentSession.name}
+          onClose={handleCloseSession}
+          onBack={() =>
+            navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
+          }
+        />
+      ) : (
+        <SessionHeaderClosed
+          name={currentSession.name}
+          onBack={() =>
+            navigate(buildRoute(ROUTES.BRANCH_SESSIONS, { id: branchId }))
+          }
+        />
+      )}
       <SummaryCards
         cashSales={cashSales}
         transferSales={transferSales}
@@ -223,11 +226,12 @@ export const SessionDetail = () => {
         transactionCount={transactions.length}
         inventoryCount={inventoryMovements.length}
       />
-      <ActionButtons
-        type={activeTab}
-        isOpen={isOpen}
-        onNavigate={handleNavigate}
-      />
+      {isOpen && activeTab === TABS.MOVEMENTS && (
+        <MovementActionButtons onNavigate={navigateToTransaction} />
+      )}
+      {isOpen && activeTab === TABS.INVENTORY && (
+        <InventoryActionButtons onNavigate={navigateToInventory} />
+      )}
       {activeTab === TABS.MOVEMENTS ? (
         <TransactionList
           transactions={transactions}
@@ -271,59 +275,59 @@ export const SessionDetail = () => {
         </button>
       )}
 
-      <Modal
-        open={showCloseModal}
-        onClose={() => setShowCloseModal(false)}
-        title="Cerrar sesión"
-      >
-        <p className="text-sm text-content-500 mb-4">{currentSession?.name}</p>
-        <div className="space-y-2 mb-4">
-          <span className="text-sm font-medium text-content-700 dark:text-content-300">
-            Balance de cierre
-          </span>
-          <MoneyInput
-            id="closingBalance"
-            autoComplete="off"
-            value={closingBalance}
-            onChange={(v) => {
-              setClosingBalance(v)
-              setCloseError(null)
-            }}
-          />
-          {closeError && <p className="text-sm text-red-500">{closeError}</p>}
-        </div>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setShowCloseModal(false)}>
-            Cancelar
-          </Button>
-          <Button variant="destructive" onClick={confirmCloseSession}>
-            Cerrar sesión
-          </Button>
-        </div>
+      <Modal open={showCloseModal} onClose={() => setShowCloseModal(false)}>
+        <Modal.Content title="Cerrar sesión">
+          <p className="text-sm text-content-500 mb-4">
+            {currentSession?.name}
+          </p>
+          <div className="space-y-2 mb-4">
+            <span className="text-sm font-medium text-content-700 dark:text-content-300">
+              Balance de cierre
+            </span>
+            <MoneyInput
+              id="closingBalance"
+              autoComplete="off"
+              value={closingBalance}
+              onChange={(v) => {
+                setClosingBalance(v)
+                setCloseError(null)
+              }}
+            />
+            {closeError && <p className="text-sm text-red-500">{closeError}</p>}
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setShowCloseModal(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmCloseSession}>
+              Cerrar sesión
+            </Button>
+          </div>
+        </Modal.Content>
       </Modal>
 
-      <Modal
-        open={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        title={
-          deleteTarget?.type === DELETE_TARGET_TYPES.TRANSACTION
-            ? 'Eliminar transacción'
-            : 'Eliminar movimiento'
-        }
-      >
-        <p className="text-sm text-content-500 mb-6">
-          {deleteTarget?.type === DELETE_TARGET_TYPES.TRANSACTION
-            ? '¿Eliminar esta transacción?'
-            : '¿Eliminar este movimiento de inventario?'}
-        </p>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-            Cancelar
-          </Button>
-          <Button variant="destructive" onClick={confirmDelete}>
-            Eliminar
-          </Button>
-        </div>
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)}>
+        <Modal.Content
+          title={
+            deleteTarget?.type === DELETE_TARGET_TYPES.TRANSACTION
+              ? 'Eliminar transacción'
+              : 'Eliminar movimiento'
+          }
+        >
+          <p className="text-sm text-content-500 mb-6">
+            {deleteTarget?.type === DELETE_TARGET_TYPES.TRANSACTION
+              ? '¿Eliminar esta transacción?'
+              : '¿Eliminar este movimiento de inventario?'}
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Eliminar
+            </Button>
+          </div>
+        </Modal.Content>
       </Modal>
     </div>
   )

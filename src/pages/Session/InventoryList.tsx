@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { X, ArrowDownLeft, ArrowUpLeft } from 'lucide-react'
 import { Entities, type InventoryMovement } from '../../types/entities'
 import { formatDate } from '../../lib/formatters'
@@ -5,15 +6,13 @@ import { formatDate } from '../../lib/formatters'
 interface InventoryItemProps {
   movement: InventoryMovement
   categories: { id: string; name: string }[]
-  isOpen: boolean
-  onDelete: (id: string) => void
+  deleteButton?: ReactNode
 }
 
 const InventoryItem = ({
   movement,
   categories,
-  isOpen,
-  onDelete,
+  deleteButton,
 }: InventoryItemProps) => {
   const isIn = movement.type === Entities.InventoryMovementTypes.IN
   const category = categories.find((c) => c.id === movement.inventoryCategoryId)
@@ -47,14 +46,7 @@ const InventoryItem = ({
           {isIn ? '+' : '-'}
           {movement.quantity}
         </span>
-        {isOpen && (
-          <button
-            onClick={() => onDelete(movement.id)}
-            className="p-1 text-content-400 hover:text-red-600"
-          >
-            <X className="size-4" />
-          </button>
-        )}
+        {deleteButton}
       </div>
     </div>
   )
@@ -90,8 +82,16 @@ export const InventoryList = ({
           key={m.id}
           movement={m}
           categories={categories}
-          isOpen={isOpen}
-          onDelete={onDelete}
+          deleteButton={
+            isOpen ? (
+              <button
+                onClick={() => onDelete(m.id)}
+                className="p-1 text-content-400 hover:text-red-600"
+              >
+                <X className="size-4" />
+              </button>
+            ) : undefined
+          }
         />
       ))
     )}

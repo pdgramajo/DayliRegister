@@ -330,54 +330,59 @@ export const ProductList = () => {
         <Modal
           open={!!deleteProductId}
           onClose={() => setDeleteProductId(null)}
-          title="Eliminar producto"
         >
-          <p className="text-sm text-content-500 mb-6">
-            ¿Estás seguro de eliminar este producto?
-          </p>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setDeleteProductId(null)}>
-              Cancelar
-            </Button>
-            <Button variant="destructive" onClick={handleDeleteProduct}>
-              Eliminar
-            </Button>
-          </div>
+          <Modal.Content title="Eliminar producto">
+            <p className="text-sm text-content-500 mb-6">
+              ¿Estás seguro de eliminar este producto?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteProductId(null)}
+              >
+                Cancelar
+              </Button>
+              <Button variant="destructive" onClick={handleDeleteProduct}>
+                Eliminar
+              </Button>
+            </div>
+          </Modal.Content>
         </Modal>
 
         <Modal
           open={importProducts !== null}
           onClose={() => !isImporting && setImportProducts(null)}
-          title="Importar productos"
         >
-          <p className="text-sm text-content-500 mb-2">
-            Se van a importar{' '}
-            <strong className="text-content-900 dark:text-white">
-              {importProducts?.length ?? 0} producto
-              {(importProducts?.length ?? 0) !== 1 ? 's' : ''}
-            </strong>{' '}
-            a{' '}
-            <strong className="text-content-900 dark:text-white">
-              {currentBranch?.name}
-            </strong>
-            .
-          </p>
-          <p className="text-sm text-content-400 mb-6">
-            Los productos importados se agregarán a los existentes. Los IDs se
-            generarán automáticamente.
-          </p>
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setImportProducts(null)}
-              disabled={isImporting}
-            >
-              Cancelar
-            </Button>
-            <Button onClick={handleConfirmImport} disabled={isImporting}>
-              {isImporting ? 'Importando...' : 'Importar'}
-            </Button>
-          </div>
+          <Modal.Content title="Importar productos">
+            <p className="text-sm text-content-500 mb-2">
+              Se van a importar{' '}
+              <strong className="text-content-900 dark:text-white">
+                {importProducts?.length ?? 0} producto
+                {(importProducts?.length ?? 0) !== 1 ? 's' : ''}
+              </strong>{' '}
+              a{' '}
+              <strong className="text-content-900 dark:text-white">
+                {currentBranch?.name}
+              </strong>
+              .
+            </p>
+            <p className="text-sm text-content-400 mb-6">
+              Los productos importados se agregarán a los existentes. Los IDs se
+              generarán automáticamente.
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setImportProducts(null)}
+                disabled={isImporting}
+              >
+                Cancelar
+              </Button>
+              <Button onClick={handleConfirmImport} disabled={isImporting}>
+                {isImporting ? 'Importando...' : 'Importar'}
+              </Button>
+            </div>
+          </Modal.Content>
         </Modal>
       </div>
     </div>

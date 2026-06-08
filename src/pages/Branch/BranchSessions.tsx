@@ -218,52 +218,51 @@ export const BranchSessions = () => {
       <Modal
         open={!!closingSessionId}
         onClose={() => setClosingSessionId(null)}
-        title="Cerrar sesión"
       >
-        <p className="text-sm text-content-500 mb-4">
-          {sessions.find((s) => s.id === closingSessionId)?.name}
-        </p>
-        <div className="space-y-2 mb-4">
-          <span className="text-sm font-medium text-content-700 dark:text-content-300">
-            Balance de cierre
-          </span>
-          <MoneyInput
-            id="closingBalance"
-            autoComplete="off"
-            value={closingBalance}
-            onChange={(v) => {
-              setClosingBalance(v)
-              setCloseError(null)
-            }}
-          />
-          {closeError && <p className="text-sm text-red-500">{closeError}</p>}
-        </div>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setClosingSessionId(null)}>
-            Cancelar
-          </Button>
-          <Button variant="destructive" onClick={confirmCloseSession}>
-            Cerrar sesión
-          </Button>
-        </div>
+        <Modal.Content title="Cerrar sesión">
+          <p className="text-sm text-content-500 mb-4">
+            {sessions.find((s) => s.id === closingSessionId)?.name}
+          </p>
+          <div className="space-y-2 mb-4">
+            <span className="text-sm font-medium text-content-700 dark:text-content-300">
+              Balance de cierre
+            </span>
+            <MoneyInput
+              id="closingBalance"
+              autoComplete="off"
+              value={closingBalance}
+              onChange={(v) => {
+                setClosingBalance(v)
+                setCloseError(null)
+              }}
+            />
+            {closeError && <p className="text-sm text-red-500">{closeError}</p>}
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setClosingSessionId(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmCloseSession}>
+              Cerrar sesión
+            </Button>
+          </div>
+        </Modal.Content>
       </Modal>
 
-      <Modal
-        open={!!deleteSessionId}
-        onClose={() => setDeleteSessionId(null)}
-        title="Eliminar sesión"
-      >
-        <p className="text-sm text-content-500 mb-6">
-          ¿Estás seguro de eliminar esta sesión?
-        </p>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setDeleteSessionId(null)}>
-            Cancelar
-          </Button>
-          <Button variant="destructive" onClick={confirmDeleteSession}>
-            Eliminar
-          </Button>
-        </div>
+      <Modal open={!!deleteSessionId} onClose={() => setDeleteSessionId(null)}>
+        <Modal.Content title="Eliminar sesión">
+          <p className="text-sm text-content-500 mb-6">
+            ¿Estás seguro de eliminar esta sesión?
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setDeleteSessionId(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteSession}>
+              Eliminar
+            </Button>
+          </div>
+        </Modal.Content>
       </Modal>
     </div>
   )

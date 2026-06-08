@@ -6,7 +6,7 @@ describe('Modal', () => {
   it('should not render when closed', () => {
     render(
       <Modal open={false} onClose={vi.fn()}>
-        contenido
+        <Modal.Content>contenido</Modal.Content>
       </Modal>
     )
     expect(screen.queryByText('contenido')).toBeNull()
@@ -15,7 +15,7 @@ describe('Modal', () => {
   it('should render when open', () => {
     render(
       <Modal open={true} onClose={vi.fn()}>
-        contenido
+        <Modal.Content>contenido</Modal.Content>
       </Modal>
     )
     expect(screen.getByText('contenido')).toBeDefined()
@@ -23,8 +23,8 @@ describe('Modal', () => {
 
   it('should show the title', () => {
     render(
-      <Modal open={true} onClose={vi.fn()} title="Título">
-        contenido
+      <Modal open={true} onClose={vi.fn()}>
+        <Modal.Content title="Título">contenido</Modal.Content>
       </Modal>
     )
     expect(screen.getByText('Título')).toBeDefined()
@@ -34,7 +34,7 @@ describe('Modal', () => {
     const onClose = vi.fn()
     render(
       <Modal open={true} onClose={onClose}>
-        contenido
+        <Modal.Content>contenido</Modal.Content>
       </Modal>
     )
     fireEvent.click(screen.getByText('contenido'))
@@ -44,11 +44,11 @@ describe('Modal', () => {
   it('should call onClose when clicking the close button', () => {
     const onClose = vi.fn()
     render(
-      <Modal open={true} onClose={onClose} title="Título">
-        contenido
+      <Modal open={true} onClose={onClose}>
+        <Modal.Content title="Título">contenido</Modal.Content>
       </Modal>
     )
-    const closeButton = screen.getByRole('button')
+    const closeButton = screen.getByRole('button', { name: /cerrar/i })
     fireEvent.click(closeButton)
     expect(onClose).toHaveBeenCalledTimes(1)
   })
@@ -57,7 +57,7 @@ describe('Modal', () => {
     const onClose = vi.fn()
     render(
       <Modal open={true} onClose={onClose}>
-        contenido
+        <Modal.Content>contenido</Modal.Content>
       </Modal>
     )
     fireEvent.keyDown(document, { key: 'Escape' })
@@ -68,7 +68,7 @@ describe('Modal', () => {
     const onClose = vi.fn()
     render(
       <Modal open={true} onClose={onClose}>
-        contenido
+        <Modal.Content>contenido</Modal.Content>
       </Modal>
     )
     fireEvent.keyDown(document, { key: 'Enter' })
@@ -78,8 +78,10 @@ describe('Modal', () => {
   it('should render children', () => {
     render(
       <Modal open={true} onClose={vi.fn()}>
-        <span>child1</span>
-        <span>child2</span>
+        <Modal.Content>
+          <span>child1</span>
+          <span>child2</span>
+        </Modal.Content>
       </Modal>
     )
     expect(screen.getByText('child1')).toBeDefined()
