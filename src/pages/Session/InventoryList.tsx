@@ -67,7 +67,7 @@ export const InventoryList = ({
   isOpen,
   onDelete,
 }: InventoryListProps) => (
-  <div className="space-y-2 max-h-[calc(100vh-400px)] overflow-y-auto">
+  <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pb-4">
     {isLoading ? (
       <div className="flex justify-center py-8">
         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />

@@ -197,7 +197,7 @@ export const SessionDetail = () => {
     totalWithdrawals
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pt-4 pb-20">
+    <div className="flex flex-col h-dvh max-w-2xl mx-auto px-4 pt-4">
       {isOpen ? (
         <SessionHeaderOpen
           name={currentSession.name}
@@ -232,24 +232,26 @@ export const SessionDetail = () => {
       {isOpen && activeTab === TABS.INVENTORY && (
         <InventoryActionButtons onNavigate={navigateToInventory} />
       )}
-      {activeTab === TABS.MOVEMENTS ? (
-        <TransactionList
-          transactions={transactions}
-          isLoading={transactionsLoading}
-          filter={transactionFilter}
-          isOpen={isOpen}
-          onFilterChange={setTransactionFilter}
-          onDelete={handleDeleteTransaction}
-        />
-      ) : (
-        <InventoryList
-          movements={inventoryMovements}
-          categories={inventoryCategories}
-          isLoading={transactionsLoading}
-          isOpen={isOpen}
-          onDelete={handleDeleteInventoryMovement}
-        />
-      )}
+      <div className="flex-1 min-h-0 flex flex-col">
+        {activeTab === TABS.MOVEMENTS ? (
+          <TransactionList
+            transactions={transactions}
+            isLoading={transactionsLoading}
+            filter={transactionFilter}
+            isOpen={isOpen}
+            onFilterChange={setTransactionFilter}
+            onDelete={handleDeleteTransaction}
+          />
+        ) : (
+          <InventoryList
+            movements={inventoryMovements}
+            categories={inventoryCategories}
+            isLoading={transactionsLoading}
+            isOpen={isOpen}
+            onDelete={handleDeleteInventoryMovement}
+          />
+        )}
+      </div>
 
       {/* FAB - Ingreso por voz */}
       {isOpen && (
