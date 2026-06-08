@@ -292,4 +292,162 @@ describe('parseVoiceInput', () => {
   it('returns null for gibberish', () => {
     expect(parseVoiceInput('abcdef 123 xyz', dummyCategories)).toBeNull()
   })
+
+  // ── Spanish number words ────────────────────────────────────
+
+  describe('spanish number words', () => {
+    it('parses "efectivo 15 mil" as 15000', () => {
+      const result = parseVoiceInput('efectivo 15 mil', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 15000,
+      })
+    })
+
+    it('parses "efectivo quince mil" as 15000', () => {
+      const result = parseVoiceInput('efectivo quince mil', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 15000,
+      })
+    })
+
+    it('parses "efectivo mil" as 1000', () => {
+      const result = parseVoiceInput('efectivo mil', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 1000,
+      })
+    })
+
+    it('parses "transferencia mil quinientos" as 1500', () => {
+      const result = parseVoiceInput(
+        'transferencia mil quinientos',
+        dummyCategories
+      )
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'transfer',
+        amount: 1500,
+      })
+    })
+
+    it('parses "venta dos mil efectivo" as cash 2000', () => {
+      const result = parseVoiceInput('venta dos mil efectivo', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 2000,
+      })
+    })
+
+    it('parses "venta quince mil transferencia" as transfer 15000', () => {
+      const result = parseVoiceInput(
+        'venta quince mil transferencia',
+        dummyCategories
+      )
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'transfer',
+        amount: 15000,
+      })
+    })
+
+    it('parses "gasto 15 mil desayuno" as expense 15000 with description', () => {
+      const result = parseVoiceInput('gasto 15 mil desayuno', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'expense',
+        amount: 15000,
+        description: 'desayuno',
+      })
+    })
+
+    it('parses "gasto dos mil quinientos desayuno" as 2500', () => {
+      const result = parseVoiceInput(
+        'gasto dos mil quinientos desayuno',
+        dummyCategories
+      )
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'expense',
+        amount: 2500,
+        description: 'desayuno',
+      })
+    })
+
+    it('parses "gasto mil" as 1000 without description', () => {
+      const result = parseVoiceInput('gasto mil', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'expense',
+        amount: 1000,
+      })
+    })
+
+    it('parses "retiro mil quinientos juan" as 1500', () => {
+      const result = parseVoiceInput(
+        'retiro mil quinientos juan',
+        dummyCategories
+      )
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'withdrawal',
+        amount: 1500,
+        description: 'juan',
+      })
+    })
+
+    it('parses "ingreso tres mil alquiler" as 3000', () => {
+      const result = parseVoiceInput(
+        'ingreso tres mil alquiler',
+        dummyCategories
+      )
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'income',
+        amount: 3000,
+        description: 'alquiler',
+      })
+    })
+
+    it('parses "entrada cinco novillo" as 5 novillo', () => {
+      const result = parseVoiceInput('entrada cinco novillo', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'inventory',
+        movementType: 'in',
+        quantity: 5,
+        categoryName: 'Novillo',
+      })
+    })
+
+    it('parses "salida diez cerdo" as 10 cerdo', () => {
+      const result = parseVoiceInput('salida diez cerdo', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'inventory',
+        movementType: 'out',
+        quantity: 10,
+        categoryName: 'Cerdo',
+      })
+    })
+
+    it('parses mixed digits and words "efectivo 5 mil"', () => {
+      const result = parseVoiceInput('efectivo 5 mil', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 5000,
+      })
+    })
+  })
 })

@@ -23,6 +23,164 @@ export type ParsedMovement = ParsedTransaction | ParsedInventoryMovement
 
 type CategoryMatch = { id: string; name: string }
 
+/** Spanish number words mapped to their integer values */
+const NUMBER_WORDS: Record<string, number> = {
+  cero: 0,
+  un: 1,
+  uno: 1,
+  una: 1,
+  dos: 2,
+  tres: 3,
+  cuatro: 4,
+  cinco: 5,
+  seis: 6,
+  siete: 7,
+  ocho: 8,
+  nueve: 9,
+  diez: 10,
+  once: 11,
+  doce: 12,
+  trece: 13,
+  catorce: 14,
+  quince: 15,
+  veinte: 20,
+  veintiuno: 21,
+  veintidós: 22,
+  veintidos: 22,
+  veintitrés: 23,
+  veintitres: 23,
+  veinticuatro: 24,
+  veinticinco: 25,
+  veintiséis: 26,
+  veintiseis: 26,
+  veintisiete: 27,
+  veintiocho: 28,
+  veintinueve: 29,
+  treinta: 30,
+  cuarenta: 40,
+  cincuenta: 50,
+  sesenta: 60,
+  setenta: 70,
+  ochenta: 80,
+  noventa: 90,
+  cien: 100,
+  ciento: 100,
+  doscientos: 200,
+  doscientas: 200,
+  trescientos: 300,
+  trescientas: 300,
+  cuatrocientos: 400,
+  cuatrocientas: 400,
+  quinientos: 500,
+  quinientas: 500,
+  seiscientos: 600,
+  seiscientas: 600,
+  setecientos: 700,
+  setecientas: 700,
+  ochocientos: 800,
+  ochocientas: 800,
+  novecientos: 900,
+  novecientas: 900,
+}
+
+/** Multipliers applied to the accumulated value before them */
+const MULTIPLIERS: Record<string, number> = {
+  mil: 1000,
+  millón: 1_000_000,
+  millones: 1_000_000,
+}
+
+/**
+ * Converts a Spanish number expression into an integer.
+ *
+ * Handles plain digits ("15000"), digit+word ("15 mil"), and
+ * fully-spoken Spanish ("quince mil", "doscientos treinta", etc.).
+ */
+const parseSpanishNumber = (str: string): number | null => {
+  const normalized = str
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/^y\s+/, '')
+
+  if (!normalized) return null
+
+  // Fast path: plain digits only
+  if (/^\d+$/.test(normalized)) {
+    const num = parseInt(normalized, 10)
+    return isNaN(num) ? null : num
+  }
+
+  // Token-based parsing for Spanish words + mixed input
+  const tokens = normalized.split(/\s+/)
+  let total = 0
+  let current = 0
+
+  for (const token of tokens) {
+    if (token === 'y') continue
+
+    if (MULTIPLIERS[token] !== undefined) {
+      // "mil" multiplies whatever we accumulated, default to 1
+      total += (current || 1) * MULTIPLIERS[token]
+      current = 0
+    } else if (NUMBER_WORDS[token] !== undefined) {
+      current += NUMBER_WORDS[token]
+    } else {
+      // Try as a plain digit
+      const digit = parseInt(token, 10)
+      if (!isNaN(digit)) {
+        current += digit
+      }
+      // Silently skip unrecognised tokens so "mil" still works in phrases
+    }
+  }
+
+  total += current
+  return total > 0 ? total : null
+}
+
+/** Checks if a single token looks like part of a Spanish number expression */
+const isNumberToken = (token: string): boolean => {
+  if (/^\d+$/.test(token)) return true
+  if (NUMBER_WORDS[token] !== undefined) return true
+  if (MULTIPLIERS[token] !== undefined) return true
+  return false
+}
+
+/**
+ * Given text that starts with a number expression, extracts the
+ * numeric value and the remaining text (description / category).
+ *
+ * @example
+ *   extractNumberFromStart('500 desayuno')       → { amount: 500,  rest: 'desayuno' }
+ *   extractNumberFromStart('15 mil')             → { amount: 15000, rest: '' }
+ *   extractNumberFromStart('treinta y cinco')    → { amount: 35,    rest: '' }
+ */
+const extractNumberFromStart = (
+  text: string
+): { amount: number; rest: string } | null => {
+  const tokens = text.trim().split(/\s+/)
+  if (tokens.length === 0) return null
+
+  const numberTokens: string[] = []
+  const restTokens: string[] = []
+  let passedNumber = false
+
+  for (const token of tokens) {
+    if (!passedNumber && (isNumberToken(token) || token === 'y')) {
+      numberTokens.push(token)
+    } else {
+      passedNumber = true
+      restTokens.push(token)
+    }
+  }
+
+  if (numberTokens.length === 0) return null
+  const amount = parseSpanishNumber(numberTokens.join(' '))
+  if (amount === null) return null
+  return { amount, rest: restTokens.join(' ') }
+}
+
 /** Fuzzy-match a spoken category name against available categories */
 const fuzzyMatchCategory = (
   spoken: string,
@@ -40,12 +198,6 @@ const fuzzyMatchCategory = (
   )
 }
 
-const parseNumber = (str: string): number | null => {
-  const cleaned = str.replace(/[^0-9]/g, '')
-  const num = parseInt(cleaned, 10)
-  return isNaN(num) ? null : num
-}
-
 /**
  * Attempts to parse a voice transcript into a structured movement.
  * Returns null if the transcript doesn't match any known pattern.
@@ -56,12 +208,14 @@ export const parseVoiceInput = (
 ): ParsedMovement | null => {
   const trimmed = text.trim().toLowerCase()
 
+  if (!trimmed) return null
+
   // ── Transaction patterns ──────────────────────────────────────
 
-  // "efectivo/efect/ef 500" → sale, cash
-  const cashSaleMatch = trimmed.match(/^(efectivo|efect|ef)\s+(\d[\d\s]*)$/i)
+  // "efectivo/efect/ef 15 mil" → sale, cash
+  const cashSaleMatch = trimmed.match(/^(efectivo|efect|ef)\s+(.+)$/i)
   if (cashSaleMatch) {
-    const amount = parseNumber(cashSaleMatch[2])
+    const amount = parseSpanishNumber(cashSaleMatch[2])
     if (amount !== null) {
       return {
         type: 'transaction',
@@ -72,12 +226,12 @@ export const parseVoiceInput = (
     }
   }
 
-  // "transferencia/transf/transfer 490" → sale, transfer
+  // "transferencia/transf/transfer 15 mil" → sale, transfer
   const transferSaleMatch = trimmed.match(
-    /^(transferencia|transf|transfer)\s+(\d[\d\s]*)$/i
+    /^(transferencia|transf|transfer)\s+(.+)$/i
   )
   if (transferSaleMatch) {
-    const amount = parseNumber(transferSaleMatch[2])
+    const amount = parseSpanishNumber(transferSaleMatch[2])
     if (amount !== null) {
       return {
         type: 'transaction',
@@ -88,12 +242,12 @@ export const parseVoiceInput = (
     }
   }
 
-  // "venta/vta 500 efectivo/efect"
+  // "venta/vta 15 mil efectivo"
   const saleCashMatch = trimmed.match(
-    /^(venta|vta)\s+(\d[\d\s]*)\s*(efectivo|efect|ef)/i
+    /^(venta|vta)\s+(.+?)\s*(efectivo|efect|ef)$/i
   )
   if (saleCashMatch) {
-    const amount = parseNumber(saleCashMatch[2])
+    const amount = parseSpanishNumber(saleCashMatch[2])
     if (amount !== null) {
       return {
         type: 'transaction',
@@ -104,12 +258,12 @@ export const parseVoiceInput = (
     }
   }
 
-  // "venta/vta 500 transferencia/transf/tranferencia"
+  // "venta/vta 15 mil transferencia/transf"
   const saleTransferMatch = trimmed.match(
-    /^(venta|vta)\s+(\d[\d\s]*)\s*(transferencia|transf|transfer)/i
+    /^(venta|vta)\s+(.+?)\s*(transferencia|transf|transfer)$/i
   )
   if (saleTransferMatch) {
-    const amount = parseNumber(saleTransferMatch[2])
+    const amount = parseSpanishNumber(saleTransferMatch[2])
     if (amount !== null) {
       return {
         type: 'transaction',
@@ -120,61 +274,58 @@ export const parseVoiceInput = (
     }
   }
 
-  // "venta/vta 500"
-  const salePlainMatch = trimmed.match(/^(venta|vta)\s+(\d[\d\s]*)$/i)
+  // "venta/vta 15 mil" (plain, defaults to cash)
+  const salePlainMatch = trimmed.match(/^(venta|vta)\s+(.+)$/i)
   if (salePlainMatch) {
-    const amount = parseNumber(salePlainMatch[2])
+    const amount = parseSpanishNumber(salePlainMatch[2])
     if (amount !== null) {
       return {
         type: 'transaction',
         transactionType: 'sale',
         amount,
-        paymentMethod: 'cash', // default
+        paymentMethod: 'cash',
       }
     }
   }
 
-  // "gasto/gto 200" o "gasto/gto 5 desayuno"
-  const expenseMatch = trimmed.match(/^(gasto|gto)\s+(\d[\d\s]*)\s*(.+)?$/i)
+  // "gasto/gto 5 mil desayuno" or "gasto 5000"
+  const expenseMatch = trimmed.match(/^(gasto|gto)\s+(.+)$/i)
   if (expenseMatch) {
-    const amount = parseNumber(expenseMatch[2])
-    const rest = expenseMatch[3]?.trim()
-    if (amount !== null) {
+    const extracted = extractNumberFromStart(expenseMatch[2])
+    if (extracted) {
       return {
         type: 'transaction',
         transactionType: 'expense',
-        amount,
-        ...(rest ? { description: rest } : {}),
+        amount: extracted.amount,
+        ...(extracted.rest ? { description: extracted.rest } : {}),
       }
     }
   }
 
-  // "retiro/ret 100" o "retiro/ret 5000 juan"
-  const withdrawalMatch = trimmed.match(/^(retiro|ret)\s+(\d[\d\s]*)\s*(.+)?$/i)
+  // "retiro/ret 5 mil juan" or "retiro 5000"
+  const withdrawalMatch = trimmed.match(/^(retiro|ret)\s+(.+)$/i)
   if (withdrawalMatch) {
-    const amount = parseNumber(withdrawalMatch[2])
-    const rest = withdrawalMatch[3]?.trim()
-    if (amount !== null) {
+    const extracted = extractNumberFromStart(withdrawalMatch[2])
+    if (extracted) {
       return {
         type: 'transaction',
         transactionType: 'withdrawal',
-        amount,
-        ...(rest ? { description: rest } : {}),
+        amount: extracted.amount,
+        ...(extracted.rest ? { description: extracted.rest } : {}),
       }
     }
   }
 
-  // "ingreso/ing 300" o "ingreso/ing 5000 alquiler"
-  const incomeMatch = trimmed.match(/^(ingreso|ing)\s+(\d[\d\s]*)\s*(.+)?$/i)
+  // "ingreso/ing 5 mil alquiler" or "ingreso 3000"
+  const incomeMatch = trimmed.match(/^(ingreso|ing)\s+(.+)$/i)
   if (incomeMatch) {
-    const amount = parseNumber(incomeMatch[2])
-    const rest = incomeMatch[3]?.trim()
-    if (amount !== null) {
+    const extracted = extractNumberFromStart(incomeMatch[2])
+    if (extracted) {
       return {
         type: 'transaction',
         transactionType: 'income',
-        amount,
-        ...(rest ? { description: rest } : {}),
+        amount: extracted.amount,
+        ...(extracted.rest ? { description: extracted.rest } : {}),
       }
     }
   }
@@ -182,35 +333,33 @@ export const parseVoiceInput = (
   // ── Inventory patterns ────────────────────────────────────────
 
   // "entrada/ent 5 novillo [nota]"
-  const inMatch = trimmed.match(/^(entrada|ent)\s+(\d[\d\s]*)\s+(.+)/i)
+  const inMatch = trimmed.match(/^(entrada|ent)\s+(.+)$/i)
   if (inMatch) {
-    const quantity = parseNumber(inMatch[2])
-    const rest = inMatch[3].trim()
-    if (quantity !== null && rest) {
-      const category = fuzzyMatchCategory(rest, categories)
+    const extracted = extractNumberFromStart(inMatch[2])
+    if (extracted && extracted.rest) {
+      const category = fuzzyMatchCategory(extracted.rest, categories)
       return {
         type: 'inventory',
         movementType: 'in',
-        quantity,
-        categoryName: category?.name ?? rest,
-        notes: category ? undefined : rest,
+        quantity: extracted.amount,
+        categoryName: category?.name ?? extracted.rest,
+        notes: category ? undefined : extracted.rest,
       }
     }
   }
 
   // "salida/sal 2 cerdo [nota]"
-  const outMatch = trimmed.match(/^(salida|sal)\s+(\d[\d\s]*)\s+(.+)/i)
+  const outMatch = trimmed.match(/^(salida|sal)\s+(.+)$/i)
   if (outMatch) {
-    const quantity = parseNumber(outMatch[2])
-    const rest = outMatch[3].trim()
-    if (quantity !== null && rest) {
-      const category = fuzzyMatchCategory(rest, categories)
+    const extracted = extractNumberFromStart(outMatch[2])
+    if (extracted && extracted.rest) {
+      const category = fuzzyMatchCategory(extracted.rest, categories)
       return {
         type: 'inventory',
         movementType: 'out',
-        quantity,
-        categoryName: category?.name ?? rest,
-        notes: category ? undefined : rest,
+        quantity: extracted.amount,
+        categoryName: category?.name ?? extracted.rest,
+        notes: category ? undefined : extracted.rest,
       }
     }
   }
