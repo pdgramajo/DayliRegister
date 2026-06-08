@@ -40,7 +40,8 @@ export function useVoiceRecognition({
 
     if (!SpeechRecognitionAPI) {
       toast.error(
-        'Tu navegador no soporta reconocimiento de voz. Probá con Chrome o Edge.'
+        'Tu navegador no soporta reconocimiento de voz. Probá con Chrome o Edge.',
+        2000
       )
       return
     }
@@ -61,7 +62,8 @@ export function useVoiceRecognition({
       const parsed = parseVoiceInput(text, categories)
       if (!parsed) {
         toast.error(
-          `No se entendió "${text}". Probá con "venta 500 efectivo", "gasto 200", etc.`
+          `No se entendió "${text}". Probá con "venta 500 efectivo", "gasto 200", etc.`,
+          2000
         )
         setStatus('idle')
         return
@@ -101,7 +103,8 @@ export function useVoiceRecognition({
 
           const descStr = parsed.description ? ` - ${parsed.description}` : ''
           toast.success(
-            `${typeLabel[parsed.transactionType]} ${amountStr}${paymentStr}${descStr}`
+            `${typeLabel[parsed.transactionType]} ${amountStr}${paymentStr}${descStr}`,
+            2000
           )
         } else {
           // Find category by name
@@ -125,12 +128,14 @@ export function useVoiceRecognition({
 
           const typeLabel = parsed.movementType === 'in' ? 'Entrada' : 'Salida'
           toast.success(
-            `${typeLabel}: ${parsed.quantity} ${parsed.categoryName}${parsed.notes ? ` (${parsed.notes})` : ''}`
+            `${typeLabel}: ${parsed.quantity} ${parsed.categoryName}${parsed.notes ? ` (${parsed.notes})` : ''}`,
+            2000
           )
         }
       } catch (err: any) {
         toast.error(
-          typeof err === 'string' ? err : err?.message || 'Error al crear'
+          typeof err === 'string' ? err : err?.message || 'Error al crear',
+          2000
         )
       }
 
@@ -148,13 +153,13 @@ export function useVoiceRecognition({
         network: 'Error de red. Verificá tu conexión.',
         'service-not-allowed': 'Reconocimiento de voz no disponible.',
       }
-      toast.error(errorMap[event.error] || `Error: ${event.error}`)
+      toast.error(errorMap[event.error] || `Error: ${event.error}`, 2000)
       setStatus('idle')
     }
 
     recognition.onend = () => {
       if (!gotResultRef.current) {
-        toast.error('No se detectó voz. Intentá de nuevo.')
+        toast.error('No se detectó voz. Intentá de nuevo.', 2000)
         setStatus('idle')
       }
     }
