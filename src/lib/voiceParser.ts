@@ -113,10 +113,12 @@ const parseSpanishNumber = (str: string): number | null => {
 
   // Token-based parsing for Spanish words + mixed input
   const tokens = normalized.split(/\s+/)
+  // Expand concatenated digit+letter tokens ("15mil" → ["15", "mil"])
+  const expanded = expandNumberTokens(tokens)
   let total = 0
   let current = 0
 
-  for (const token of tokens) {
+  for (const token of expanded) {
     if (token === 'y') continue
 
     if (MULTIPLIERS[token] !== undefined) {
@@ -137,6 +139,25 @@ const parseSpanishNumber = (str: string): number | null => {
 
   total += current
   return total > 0 ? total : null
+}
+
+/**
+ * Splits tokens that contain digits immediately followed by letters,
+ * e.g. "15mil" → ["15", "mil"]. This handles speech transcriptions
+ * where the speaker doesn't pause between the number and "mil".
+ */
+const expandNumberTokens = (tokens: string[]): string[] => {
+  const result: string[] = []
+  for (const token of tokens) {
+    const match = token.match(/^(\d+)([a-záéíóú]+)$/i)
+    if (match) {
+      result.push(match[1])
+      result.push(match[2])
+    } else {
+      result.push(token)
+    }
+  }
+  return result
 }
 
 /** Checks if a single token looks like part of a Spanish number expression */
@@ -160,13 +181,15 @@ const extractNumberFromStart = (
   text: string
 ): { amount: number; rest: string } | null => {
   const tokens = text.trim().split(/\s+/)
-  if (tokens.length === 0) return null
+  // Expand concatenated digit+letter tokens
+  const expanded = expandNumberTokens(tokens)
+  if (expanded.length === 0) return null
 
   const numberTokens: string[] = []
   const restTokens: string[] = []
   let passedNumber = false
 
-  for (const token of tokens) {
+  for (const token of expanded) {
     if (!passedNumber && (isNumberToken(token) || token === 'y')) {
       numberTokens.push(token)
     } else {
@@ -274,6 +297,22 @@ export const parseVoiceInput = (
     }
   }
 
+  // "venta/vta efectivo/efect/ef 15 mil" → sale, cash
+  const ventaCashPrefixMatch = trimmed.match(
+    /^(venta|vta)\s+(efectivo|efect|ef)\s+(.+)$/i
+  )
+  if (ventaCashPrefixMatch) {
+    const amount = parseSpanishNumber(ventaCashPrefixMatch[3])
+    if (amount !== null) {
+      return {
+        type: 'transaction',
+        transactionType: 'sale',
+        amount,
+        paymentMethod: 'cash',
+      }
+    }
+  }
+
   // "venta/vta 15 mil" (plain, defaults to cash)
   const salePlainMatch = trimmed.match(/^(venta|vta)\s+(.+)$/i)
   if (salePlainMatch) {
@@ -326,6 +365,37 @@ export const parseVoiceInput = (
         transactionType: 'income',
         amount: extracted.amount,
         ...(extracted.rest ? { description: extracted.rest } : {}),
+      }
+    }
+  }
+
+  // ── Suffix patterns: "{amount} {payment_method}" ───────────────
+  // "15 mil efectivo" → sale, cash (no keyword prefix)
+  const cashSuffixMatch = trimmed.match(/^(.+?)\s*(efectivo|efect|ef)$/i)
+  if (cashSuffixMatch) {
+    const extracted = extractNumberFromStart(cashSuffixMatch[1])
+    if (extracted && !extracted.rest) {
+      return {
+        type: 'transaction',
+        transactionType: 'sale',
+        amount: extracted.amount,
+        paymentMethod: 'cash',
+      }
+    }
+  }
+
+  // "15 mil transferencia" → sale, transfer (no keyword prefix)
+  const transferSuffixMatch = trimmed.match(
+    /^(.+?)\s*(transferencia|transf|transfer)$/i
+  )
+  if (transferSuffixMatch) {
+    const extracted = extractNumberFromStart(transferSuffixMatch[1])
+    if (extracted && !extracted.rest) {
+      return {
+        type: 'transaction',
+        transactionType: 'sale',
+        amount: extracted.amount,
+        paymentMethod: 'transfer',
       }
     }
   }

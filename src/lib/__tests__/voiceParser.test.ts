@@ -362,6 +362,26 @@ describe('parseVoiceInput', () => {
       })
     })
 
+    it('parses "venta efectivo 15 mil" as cash 15000', () => {
+      const result = parseVoiceInput('venta efectivo 15 mil', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 15000,
+      })
+    })
+
+    it('parses "vta efect 5 mil" as cash 5000', () => {
+      const result = parseVoiceInput('vta efect 5 mil', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 5000,
+      })
+    })
+
     it('parses "gasto 15 mil desayuno" as expense 15000 with description', () => {
       const result = parseVoiceInput('gasto 15 mil desayuno', dummyCategories)
       expect(result).toMatchObject({
@@ -447,6 +467,134 @@ describe('parseVoiceInput', () => {
         transactionType: 'sale',
         paymentMethod: 'cash',
         amount: 5000,
+      })
+    })
+  })
+
+  // ── Concatenated tokens ("15mil") ────────────────────────────
+
+  describe('concatenated number tokens', () => {
+    it('parses "efectivo 15mil" as 15000', () => {
+      const result = parseVoiceInput('efectivo 15mil', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 15000,
+      })
+    })
+
+    it('parses "transferencia 5mil" as 5000', () => {
+      const result = parseVoiceInput('transferencia 5mil', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'transfer',
+        amount: 5000,
+      })
+    })
+
+    it('parses "gasto 15mil desayuno" as 15000 with description', () => {
+      const result = parseVoiceInput('gasto 15mil desayuno', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'expense',
+        amount: 15000,
+        description: 'desayuno',
+      })
+    })
+
+    it('parses "retiro 5mil juan" as 5000 with description', () => {
+      const result = parseVoiceInput('retiro 5mil juan', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'withdrawal',
+        amount: 5000,
+        description: 'juan',
+      })
+    })
+
+    it('parses "venta 5mil efectivo" as sale cash 5000', () => {
+      const result = parseVoiceInput('venta 5mil efectivo', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 5000,
+      })
+    })
+
+    it('parses "entrada 10mil novillo" as inventory in', () => {
+      const result = parseVoiceInput('entrada 10mil novillo', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'inventory',
+        movementType: 'in',
+        quantity: 10000,
+        categoryName: 'Novillo',
+      })
+    })
+  })
+
+  // ── Suffix amount patterns ("15 mil efectivo") ───────────────
+
+  describe('suffix amount patterns', () => {
+    it('parses "15 mil efectivo" as sale cash 15000', () => {
+      const result = parseVoiceInput('15 mil efectivo', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 15000,
+      })
+    })
+
+    it('parses "500 efectivo" as sale cash 500', () => {
+      const result = parseVoiceInput('500 efectivo', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 500,
+      })
+    })
+
+    it('parses "quinientos efectivo" as sale cash 500', () => {
+      const result = parseVoiceInput('quinientos efectivo', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 500,
+      })
+    })
+
+    it('parses "mil quinientos efectivo" as sale cash 1500', () => {
+      const result = parseVoiceInput('mil quinientos efectivo', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'cash',
+        amount: 1500,
+      })
+    })
+
+    it('parses "15 mil transferencia" as sale transfer 15000', () => {
+      const result = parseVoiceInput('15 mil transferencia', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'transfer',
+        amount: 15000,
+      })
+    })
+
+    it('parses "15mil transfer" as sale transfer 15000 (concatenated)', () => {
+      const result = parseVoiceInput('15mil transfer', dummyCategories)
+      expect(result).toMatchObject({
+        type: 'transaction',
+        transactionType: 'sale',
+        paymentMethod: 'transfer',
+        amount: 15000,
       })
     })
   })
