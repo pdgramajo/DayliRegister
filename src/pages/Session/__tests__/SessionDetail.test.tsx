@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { MemoryRouter } from 'react-router-dom'
+import { FILTERS } from '../../../constants/session'
 import sessionReducer from '../../../store/sessionSlice'
 import transactionReducer from '../../../store/transactionSlice'
 import { SessionService } from '../../../services'
@@ -62,6 +63,8 @@ const defaultTransactionState = {
   inventoryCategories: [],
   isLoading: false,
   error: null,
+  transactionFilter: FILTERS.ALL,
+  currentSessionId: null,
 }
 
 const createStore = (sessionOverrides = {}, transactionOverrides = {}) =>

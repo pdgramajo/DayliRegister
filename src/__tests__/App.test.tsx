@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
+import { FILTERS } from '../constants/session'
 import branchReducer from '../store/branchSlice'
 import sessionReducer from '../store/sessionSlice'
 import transactionReducer from '../store/transactionSlice'
@@ -59,6 +60,8 @@ const createStore = (overrides = {}) =>
         inventoryCategories: [],
         isLoading: false,
         error: null,
+        transactionFilter: FILTERS.ALL,
+        currentSessionId: null,
       },
       products: {
         products: [],
