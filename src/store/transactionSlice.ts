@@ -3,6 +3,7 @@ import { createLoggedAsyncThunk } from '../lib/createLoggedAsyncThunk'
 import { TransactionService } from '../services/TransactionService'
 import { InventoryMovementService } from '../services/InventoryMovementService'
 import { InventoryCategoryService } from '../services/InventoryCategoryService'
+import { FILTERS } from '../constants/session'
 import type {
   Transaction,
   InventoryCategory,
@@ -13,12 +14,16 @@ import type {
   CreateInventoryMovementDTO,
 } from '../types/dtos'
 
+type TransactionFilter = (typeof FILTERS)[keyof typeof FILTERS]
+
 interface TransactionState {
   transactions: Transaction[]
   inventoryMovements: InventoryMovement[]
   inventoryCategories: InventoryCategory[]
   isLoading: boolean
   error: string | null
+  transactionFilter: TransactionFilter
+  currentSessionId: string | null
 }
 
 const initialState: TransactionState = {
@@ -27,6 +32,8 @@ const initialState: TransactionState = {
   inventoryCategories: [],
   isLoading: false,
   error: null,
+  transactionFilter: FILTERS.ALL,
+  currentSessionId: null,
 }
 
 export const fetchTransactionsBySession = createLoggedAsyncThunk(
@@ -95,6 +102,9 @@ const transactionSlice = createSlice({
       state.transactions = []
       state.inventoryMovements = []
     },
+    setTransactionFilter: (state, action: PayloadAction<TransactionFilter>) => {
+      state.transactionFilter = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -103,13 +113,15 @@ const transactionSlice = createSlice({
         state.isLoading = true
         state.error = null
       })
-      .addCase(
-        fetchTransactionsBySession.fulfilled,
-        (state, action: PayloadAction<Transaction[]>) => {
-          state.isLoading = false
-          state.transactions = action.payload
+      .addCase(fetchTransactionsBySession.fulfilled, (state, action) => {
+        state.isLoading = false
+        const sessionId = action.meta.arg
+        if (state.currentSessionId !== sessionId) {
+          state.transactionFilter = FILTERS.ALL
         }
-      )
+        state.currentSessionId = sessionId
+        state.transactions = action.payload
+      })
       .addCase(fetchTransactionsBySession.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload as string
@@ -217,5 +229,6 @@ const transactionSlice = createSlice({
   },
 })
 
-export const { clearTransactions } = transactionSlice.actions
+export const { clearTransactions, setTransactionFilter } =
+  transactionSlice.actions
 export default transactionSlice.reducer

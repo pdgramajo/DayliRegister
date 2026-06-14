@@ -13,12 +13,13 @@ import {
   deleteTransaction,
   deleteInventoryMovement,
   clearTransactions,
+  setTransactionFilter,
 } from '../../store/transactionSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Button, Modal, MoneyInput, toast } from '../../components/ui'
 import { Entities } from '../../types/entities'
-import { TABS, FILTERS, DELETE_TARGET_TYPES } from '../../constants/session'
+import { TABS, DELETE_TARGET_TYPES } from '../../constants/session'
 import { ROUTES, buildRoute } from '../../constants/routes'
 import { SessionHeaderOpen, SessionHeaderClosed } from './SessionHeader'
 import { SummaryCards } from './SummaryCards'
@@ -27,7 +28,7 @@ import { MovementActionButtons, InventoryActionButtons } from './ActionButtons'
 import { TransactionList } from './TransactionList'
 import { InventoryList } from './InventoryList'
 import { useVoiceRecognition } from '../../hooks/useVoiceRecognition'
-import type { TabType, TransactionFilter } from './types'
+import type { TabType } from './types'
 
 export const SessionDetail = () => {
   const { id: branchId, sessionId } = useParams<{
@@ -42,9 +43,6 @@ export const SessionDetail = () => {
       ? TABS.INVENTORY
       : TABS.MOVEMENTS
   const [activeTab, setActiveTab] = useState<TabType>(initialTab)
-  const [transactionFilter, setTransactionFilter] = useState<TransactionFilter>(
-    FILTERS.ALL
-  )
   const [showCloseModal, setShowCloseModal] = useState(false)
   const [closingBalance, setClosingBalance] = useState<number | undefined>()
   const [closeError, setCloseError] = useState<string | null>(null)
@@ -60,6 +58,7 @@ export const SessionDetail = () => {
     transactions,
     inventoryMovements,
     inventoryCategories,
+    transactionFilter,
     isLoading: transactionsLoading,
   } = useAppSelector((state: RootState) => state.transactions)
 
@@ -239,7 +238,7 @@ export const SessionDetail = () => {
             isLoading={transactionsLoading}
             filter={transactionFilter}
             isOpen={isOpen}
-            onFilterChange={setTransactionFilter}
+            onFilterChange={(f) => dispatch(setTransactionFilter(f))}
             onDelete={handleDeleteTransaction}
           />
         ) : (

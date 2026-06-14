@@ -9,7 +9,9 @@ import transactionReducer, {
   createInventoryMovement,
   deleteInventoryMovement,
   clearTransactions,
+  setTransactionFilter,
 } from '../transactionSlice'
+import { FILTERS } from '../../constants/session'
 import type {
   Transaction,
   InventoryMovement,
@@ -65,6 +67,8 @@ describe('transactionSlice', () => {
       expect(state.inventoryCategories).toEqual([])
       expect(state.isLoading).toBe(false)
       expect(state.error).toBeNull()
+      expect(state.transactionFilter).toBe(FILTERS.ALL)
+      expect(state.currentSessionId).toBeNull()
     })
 
     it('should handle clearTransactions', () => {
@@ -83,6 +87,50 @@ describe('transactionSlice', () => {
 
       expect(state.transactions).toEqual([])
       expect(state.inventoryMovements).toEqual([])
+    })
+
+    it('should not reset transactionFilter on clearTransactions', () => {
+      const store = createTestStore()
+      store.dispatch(setTransactionFilter(FILTERS.CASH))
+      store.dispatch(clearTransactions())
+      expect(store.getState().transactions.transactionFilter).toBe(FILTERS.CASH)
+    })
+
+    it('should update transactionFilter via setTransactionFilter', () => {
+      const store = createTestStore()
+      store.dispatch(setTransactionFilter(FILTERS.CASH))
+      expect(store.getState().transactions.transactionFilter).toBe(FILTERS.CASH)
+      store.dispatch(setTransactionFilter(FILTERS.EXPENSES))
+      expect(store.getState().transactions.transactionFilter).toBe(
+        FILTERS.EXPENSES
+      )
+    })
+  })
+
+  describe('fetchTransactionsBySession - filter behavior', () => {
+    it('should reset transactionFilter when a different session is loaded', () => {
+      const store = createTestStore()
+
+      store.dispatch(fetchTransactionsBySession.fulfilled([], '', 'session-1'))
+      expect(store.getState().transactions.currentSessionId).toBe('session-1')
+
+      store.dispatch(setTransactionFilter(FILTERS.CASH))
+      expect(store.getState().transactions.transactionFilter).toBe(FILTERS.CASH)
+
+      store.dispatch(fetchTransactionsBySession.fulfilled([], '', 'session-2'))
+      const state = store.getState().transactions
+      expect(state.transactionFilter).toBe(FILTERS.ALL)
+      expect(state.currentSessionId).toBe('session-2')
+    })
+
+    it('should keep transactionFilter when the same session is reloaded', () => {
+      const store = createTestStore()
+
+      store.dispatch(fetchTransactionsBySession.fulfilled([], '', 'session-1'))
+      store.dispatch(setTransactionFilter(FILTERS.CASH))
+
+      store.dispatch(fetchTransactionsBySession.fulfilled([], '', 'session-1'))
+      expect(store.getState().transactions.transactionFilter).toBe(FILTERS.CASH)
     })
   })
 
