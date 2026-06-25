@@ -6,6 +6,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { MemoryRouter } from 'react-router-dom'
 import { FILTERS } from '../../../constants/session'
 import transactionReducer from '../../../store/transactionSlice'
+import uiReducer from '../../../store/uiSlice'
 import { TransactionService } from '../../../services/TransactionService'
 
 const mockNavigate = vi.fn()
@@ -24,7 +25,7 @@ vi.mock('react-router-dom', async () => {
 
 const createStore = (preloadedState = {}) =>
   configureStore({
-    reducer: { transactions: transactionReducer },
+    reducer: { transactions: transactionReducer, ui: uiReducer },
     preloadedState: {
       transactions: {
         transactions: [],

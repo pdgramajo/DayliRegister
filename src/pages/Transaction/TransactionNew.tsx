@@ -9,6 +9,7 @@ import {
   toast,
 } from '../../components/ui'
 import { createTransaction } from '../../store/transactionSlice'
+import { setLastPaymentMethod } from '../../store/uiSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore'
 import type { RootState } from '../../store'
 import { Entities } from '../../types/entities'
@@ -35,14 +36,11 @@ export const TransactionNew = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { isLoading } = useAppSelector((state: RootState) => state.transactions)
+  const { lastPaymentMethod } = useAppSelector((state: RootState) => state.ui)
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     PaymentMethod | undefined
-  >(
-    type === Entities.TransactionTypes.SALE
-      ? Entities.PaymentMethods.CASH
-      : undefined
-  )
+  >(type === Entities.TransactionTypes.SALE ? lastPaymentMethod : undefined)
 
   const {
     handleSubmit,
@@ -101,6 +99,7 @@ export const TransactionNew = () => {
           onClick={() => {
             setSelectedPaymentMethod(Entities.PaymentMethods.CASH)
             setValue('paymentMethod', Entities.PaymentMethods.CASH)
+            dispatch(setLastPaymentMethod(Entities.PaymentMethods.CASH))
           }}
           className={`flex-1 py-2.5 text-sm font-medium rounded-lg border transition-colors ${
             selectedPaymentMethod === Entities.PaymentMethods.CASH
@@ -115,6 +114,7 @@ export const TransactionNew = () => {
           onClick={() => {
             setSelectedPaymentMethod(Entities.PaymentMethods.TRANSFER)
             setValue('paymentMethod', Entities.PaymentMethods.TRANSFER)
+            dispatch(setLastPaymentMethod(Entities.PaymentMethods.TRANSFER))
           }}
           className={`flex-1 py-2.5 text-sm font-medium rounded-lg border transition-colors ${
             selectedPaymentMethod === Entities.PaymentMethods.TRANSFER

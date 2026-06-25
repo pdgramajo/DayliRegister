@@ -4,6 +4,7 @@ import sessionReducer from './sessionSlice'
 import transactionReducer from './transactionSlice'
 import productReducer from './productSlice'
 import clientReducer from './clientSlice'
+import uiReducer from './uiSlice'
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     transactions: transactionReducer,
     products: productReducer,
     clients: clientReducer,
+    ui: uiReducer,
   },
 })
 

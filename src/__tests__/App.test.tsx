@@ -9,6 +9,7 @@ import sessionReducer from '../store/sessionSlice'
 import transactionReducer from '../store/transactionSlice'
 import productReducer from '../store/productSlice'
 import clientReducer from '../store/clientSlice'
+import uiReducer from '../store/uiSlice'
 
 const mockBranch = {
   id: '1',
@@ -40,6 +41,7 @@ const createStore = (overrides = {}) =>
       transactions: transactionReducer,
       products: productReducer,
       clients: clientReducer,
+      ui: uiReducer,
     },
     preloadedState: {
       branches: {
