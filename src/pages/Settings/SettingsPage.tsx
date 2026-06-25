@@ -16,6 +16,7 @@ import {
   ChevronRight,
   ClipboardList,
   Download,
+  Book,
 } from 'lucide-react'
 
 import { useInstallPWA } from '../../hooks/useInstallPWA'
@@ -188,6 +189,30 @@ export const SettingsPage = () => {
               </div>
             </section>
           )}
+
+          {/* Manual section */}
+          <section className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+            <div className="px-4 py-3 border-b border-surface-100 dark:border-surface-700/50">
+              <h2 className="text-sm font-semibold text-content-700 dark:text-content-300">
+                Manual de Usuario
+              </h2>
+            </div>
+            <div className="p-4">
+              <p className="text-sm text-content-600 dark:text-content-400 mb-4">
+                Consultá la guía completa de DayliRegister con instrucciones
+                paso a paso para cada módulo.
+              </p>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => navigate(ROUTES.HELP)}
+                className="gap-2"
+              >
+                <Book className="size-4" />
+                Ver manual
+              </Button>
+            </div>
+          </section>
 
           {/* Log viewer section */}
           <section className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden">

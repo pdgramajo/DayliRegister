@@ -21,6 +21,7 @@ export const ROUTES = {
   BRANCH_INVENTORY: '/branches/:id/inventory',
   BACKUP: '/backup',
   SETTINGS: '/settings',
+  HELP: '/help',
 } as const
 
 type RouteParams = Record<string, string | undefined>

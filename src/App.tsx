@@ -93,6 +93,11 @@ const BackupPage = lazy(() =>
     default: m.BackupPage,
   }))
 )
+const HelpPage = lazy(() =>
+  import('./pages/Help/HelpPage').then((m) => ({
+    default: m.HelpPage,
+  }))
+)
 
 const Loading = () => (
   <div
@@ -161,6 +166,7 @@ const App = () => {
             />
             <Route path={ROUTES.BACKUP} element={<BackupPage />} />
             <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+            <Route path={ROUTES.HELP} element={<HelpPage />} />
             <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
           </Routes>
         </Suspense>
