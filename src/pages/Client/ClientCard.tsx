@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { Button, Badge } from '../../components/ui'
 import { openWhatsApp } from '../../lib/whatsapp'
-import { formatPhoneForDisplay, formatMoney } from '../../lib/formatters'
+import {
+  formatPhoneForDisplay,
+  formatMoney,
+  formatDate,
+} from '../../lib/formatters'
 import {
   Entities,
   type DebtEntry,
@@ -65,41 +69,48 @@ const HistoryPanel = ({
       ) : (
         <div className="space-y-0.5">
           {displayed.map((entry) => (
-            <div
+            <article
               key={entry.id}
-              className="group flex items-center gap-2.5 py-1.5 px-2 -mx-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800/60 transition-colors"
+              className="group grid grid-cols-[40px_1fr] gap-x-2 py-1.5 px-2 -mx-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800/60 transition-colors"
             >
-              <EntryIcon type={entry.type} />
-              <span className="text-[11px] text-content-400 w-12 shrink-0 font-mono tabular-nums">
-                {new Date(entry.createdAt).toLocaleDateString('es-AR', {
-                  day: '2-digit',
-                  month: '2-digit',
-                })}
-              </span>
-              <span
-                className={`text-xs font-semibold tabular-nums ${
-                  entry.type === Entities.DebtEntryTypes.DEBT
-                    ? 'text-red-500 dark:text-red-400'
-                    : 'text-emerald-600 dark:text-emerald-400'
-                }`}
-              >
-                {entry.type === Entities.DebtEntryTypes.DEBT ? '+' : '−'}$
-                {formatMoney(entry.amount)}
-              </span>
-              {entry.description && (
-                <span className="text-[11px] text-content-400 truncate flex-1 min-w-0 italic">
-                  {entry.description}
-                </span>
-              )}
-              <button
-                onClick={() => onDeleteEntry(entry.id, clientId)}
-                data-testid="delete-entry-button"
-                className="p-1 rounded-md text-content-300 opacity-0 group-hover:opacity-100 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all shrink-0"
-                title="Eliminar"
-              >
-                <Trash2 className="size-3" />
-              </button>
-            </div>
+              <div className="flex items-start justify-center pt-0.5">
+                <EntryIcon type={entry.type} />
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex justify-between items-center gap-2">
+                  <time className="text-[11px] text-content-400 font-mono tabular-nums whitespace-nowrap">
+                    {formatDate(entry.createdAt)}
+                  </time>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span
+                      className={`text-xs font-semibold tabular-nums ${
+                        entry.type === Entities.DebtEntryTypes.DEBT
+                          ? 'text-red-500 dark:text-red-400'
+                          : 'text-emerald-600 dark:text-emerald-400'
+                      }`}
+                    >
+                      {entry.type === Entities.DebtEntryTypes.DEBT ? '+' : '−'}$
+                      {formatMoney(entry.amount)}
+                    </span>
+                    <button
+                      onClick={() => onDeleteEntry(entry.id, clientId)}
+                      data-testid="delete-entry-button"
+                      className="p-1 rounded-md text-content-300 opacity-0 group-hover:opacity-100 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all shrink-0"
+                      title="Eliminar"
+                    >
+                      <Trash2 className="size-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {entry.description && (
+                  <span className="text-[11px] text-content-400 block truncate">
+                    {entry.description}
+                  </span>
+                )}
+              </div>
+            </article>
           ))}
         </div>
       )}
@@ -138,11 +149,11 @@ export const ClientCard = ({
   const hasDebt = client.balance > 0
 
   const handleSendWhatsApp = () => {
-    if (!client.phone || !hasDebt) return
-    openWhatsApp(
-      client.phone,
-      `Hola ${client.name}, tu deuda actual es de $${formatMoney(client.balance)}`
-    )
+    if (!client.phone) return
+    const message = hasDebt
+      ? `Hola ${client.name}, tu deuda actual es de $${formatMoney(client.balance)}`
+      : `Hola ${client.name}, no tenés deudas pendientes. ¡Gracias por siempre estar al día!`
+    openWhatsApp(client.phone, message)
   }
 
   return (
@@ -233,7 +244,7 @@ export const ClientCard = ({
         </div>
 
         <div className="flex items-center gap-1 mt-3 pt-2.5 border-t border-surface-100 dark:border-surface-700/50">
-          {client.phone && hasDebt && (
+          {client.phone && (
             <button
               onClick={handleSendWhatsApp}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-content-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 dark:hover:text-green-400 transition-colors"

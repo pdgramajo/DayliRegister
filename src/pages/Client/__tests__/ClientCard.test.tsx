@@ -182,7 +182,7 @@ describe('ClientCard', () => {
     expect(screen.getByText('Sin movimientos')).toBeInTheDocument()
   })
 
-  it('should show WhatsApp button only when client has phone and debt', () => {
+  it('should show WhatsApp button when client has phone and debt', () => {
     const debtor = { ...baseClient, balance: 1500 }
 
     renderWithRouter(<ClientCard client={debtor} {...defaultProps} />)
@@ -190,10 +190,10 @@ describe('ClientCard', () => {
     expect(screen.getByText('WhatsApp')).toBeInTheDocument()
   })
 
-  it('should hide WhatsApp button when client has no debt', () => {
+  it('should show WhatsApp button when client has phone but no debt', () => {
     renderWithRouter(<ClientCard client={baseClient} {...defaultProps} />)
 
-    expect(screen.queryByText('WhatsApp')).not.toBeInTheDocument()
+    expect(screen.getByText('WhatsApp')).toBeInTheDocument()
   })
 
   it('should hide WhatsApp button when client has no phone', () => {
@@ -216,6 +216,20 @@ describe('ClientCard', () => {
     expect(openWhatsApp).toHaveBeenCalledWith(
       '+543884123456',
       'Hola Juan Pérez, tu deuda actual es de $1.500'
+    )
+  })
+
+  it('should send no-debt message when clicking WhatsApp with zero balance', async () => {
+    const user = userEvent.setup()
+    const { openWhatsApp } = await import('../../../lib/whatsapp')
+
+    renderWithRouter(<ClientCard client={baseClient} {...defaultProps} />)
+
+    await user.click(screen.getByText('WhatsApp'))
+
+    expect(openWhatsApp).toHaveBeenCalledWith(
+      '+543884123456',
+      'Hola Juan Pérez, no tenés deudas pendientes. ¡Gracias por siempre estar al día!'
     )
   })
 
