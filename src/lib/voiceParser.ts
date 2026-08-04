@@ -100,6 +100,7 @@ const parseSpanishNumber = (str: string): number | null => {
   const normalized = str
     .trim()
     .toLowerCase()
+    .replace(/\./g, '') // "5.000" → "5000" (Spanish thousand separator)
     .replace(/\s+/g, ' ')
     .replace(/^y\s+/, '')
 
@@ -132,8 +133,11 @@ const parseSpanishNumber = (str: string): number | null => {
       const digit = parseInt(token, 10)
       if (!isNaN(digit)) {
         current += digit
+      } else {
+        // Unrecognised token (e.g. Whisper garbage "a", "the") — reset accumulator
+        // so "20 a 10 mil" → 10000 instead of 30000
+        current = 0
       }
-      // Silently skip unrecognised tokens so "mil" still works in phrases
     }
   }
 
@@ -229,14 +233,22 @@ export const parseVoiceInput = (
   text: string,
   categories: CategoryMatch[]
 ): ParsedMovement | null => {
-  const trimmed = text.trim().toLowerCase()
+  const normalized = text
+    .trim()
+    .toLowerCase()
+    .replace(/([a-záéíóúñ])\1+\b/gi, '$1') // collapse repeated letters at word end: "ventaa" → "venta" (but NOT "novillo")
+    .replace(/[.,;:!?]+/g, '') // strip ALL punctuation
+    .replace(/\befectivos?\b/g, 'efectivo') // efectivos → efectivo (Whisper plural)
+    .replace(/\btransferencias?\b/g, 'transferencia') // transferencias → transferencia
+    .replace(/\bbenta\b/g, 'venta') // V/B merger: Argentine "benta" → "venta"
+    .replace(/\bbta\b/g, 'vta') // V/B merger: "bta" → "vta"
 
-  if (!trimmed) return null
+  if (!normalized) return null
 
   // ── Transaction patterns ──────────────────────────────────────
 
   // "efectivo/efect/ef 15 mil" → sale, cash
-  const cashSaleMatch = trimmed.match(/^(efectivo|efect|ef)\s+(.+)$/i)
+  const cashSaleMatch = normalized.match(/^(efectivo|efect|ef)\s+(.+)$/i)
   if (cashSaleMatch) {
     const amount = parseSpanishNumber(cashSaleMatch[2])
     if (amount !== null) {
@@ -250,7 +262,7 @@ export const parseVoiceInput = (
   }
 
   // "transferencia/transf/transfer 15 mil" → sale, transfer
-  const transferSaleMatch = trimmed.match(
+  const transferSaleMatch = normalized.match(
     /^(transferencia|transf|transfer)\s+(.+)$/i
   )
   if (transferSaleMatch) {
@@ -266,7 +278,7 @@ export const parseVoiceInput = (
   }
 
   // "venta/vta 15 mil efectivo"
-  const saleCashMatch = trimmed.match(
+  const saleCashMatch = normalized.match(
     /^(venta|vta)\s+(.+?)\s*(efectivo|efect|ef)$/i
   )
   if (saleCashMatch) {
@@ -282,7 +294,7 @@ export const parseVoiceInput = (
   }
 
   // "venta/vta 15 mil transferencia/transf"
-  const saleTransferMatch = trimmed.match(
+  const saleTransferMatch = normalized.match(
     /^(venta|vta)\s+(.+?)\s*(transferencia|transf|transfer)$/i
   )
   if (saleTransferMatch) {
@@ -298,7 +310,7 @@ export const parseVoiceInput = (
   }
 
   // "venta/vta efectivo/efect/ef 15 mil" → sale, cash
-  const ventaCashPrefixMatch = trimmed.match(
+  const ventaCashPrefixMatch = normalized.match(
     /^(venta|vta)\s+(efectivo|efect|ef)\s+(.+)$/i
   )
   if (ventaCashPrefixMatch) {
@@ -314,7 +326,7 @@ export const parseVoiceInput = (
   }
 
   // "venta/vta 15 mil" (plain, defaults to cash)
-  const salePlainMatch = trimmed.match(/^(venta|vta)\s+(.+)$/i)
+  const salePlainMatch = normalized.match(/^(venta|vta)\s+(.+)$/i)
   if (salePlainMatch) {
     const amount = parseSpanishNumber(salePlainMatch[2])
     if (amount !== null) {
@@ -328,7 +340,7 @@ export const parseVoiceInput = (
   }
 
   // "gasto/gto 5 mil desayuno" or "gasto 5000"
-  const expenseMatch = trimmed.match(/^(gasto|gto)\s+(.+)$/i)
+  const expenseMatch = normalized.match(/^(gasto|gto)\s+(.+)$/i)
   if (expenseMatch) {
     const extracted = extractNumberFromStart(expenseMatch[2])
     if (extracted) {
@@ -342,7 +354,7 @@ export const parseVoiceInput = (
   }
 
   // "retiro/ret 5 mil juan" or "retiro 5000"
-  const withdrawalMatch = trimmed.match(/^(retiro|ret)\s+(.+)$/i)
+  const withdrawalMatch = normalized.match(/^(retiro|ret)\s+(.+)$/i)
   if (withdrawalMatch) {
     const extracted = extractNumberFromStart(withdrawalMatch[2])
     if (extracted) {
@@ -356,7 +368,7 @@ export const parseVoiceInput = (
   }
 
   // "ingreso/ing 5 mil alquiler" or "ingreso 3000"
-  const incomeMatch = trimmed.match(/^(ingreso|ing)\s+(.+)$/i)
+  const incomeMatch = normalized.match(/^(ingreso|ing)\s+(.+)$/i)
   if (incomeMatch) {
     const extracted = extractNumberFromStart(incomeMatch[2])
     if (extracted) {
@@ -371,7 +383,7 @@ export const parseVoiceInput = (
 
   // ── Suffix patterns: "{amount} {payment_method}" ───────────────
   // "15 mil efectivo" → sale, cash (no keyword prefix)
-  const cashSuffixMatch = trimmed.match(/^(.+?)\s*(efectivo|efect|ef)$/i)
+  const cashSuffixMatch = normalized.match(/^(.+?)\s*(efectivo|efect|ef)$/i)
   if (cashSuffixMatch) {
     const extracted = extractNumberFromStart(cashSuffixMatch[1])
     if (extracted && !extracted.rest) {
@@ -385,7 +397,7 @@ export const parseVoiceInput = (
   }
 
   // "15 mil transferencia" → sale, transfer (no keyword prefix)
-  const transferSuffixMatch = trimmed.match(
+  const transferSuffixMatch = normalized.match(
     /^(.+?)\s*(transferencia|transf|transfer)$/i
   )
   if (transferSuffixMatch) {
@@ -403,7 +415,7 @@ export const parseVoiceInput = (
   // ── Inventory patterns ────────────────────────────────────────
 
   // "entrada/ent 5 novillo [nota]"
-  const inMatch = trimmed.match(/^(entrada|ent)\s+(.+)$/i)
+  const inMatch = normalized.match(/^(entrada|ent)\s+(.+)$/i)
   if (inMatch) {
     const extracted = extractNumberFromStart(inMatch[2])
     if (extracted && extracted.rest) {
@@ -419,7 +431,7 @@ export const parseVoiceInput = (
   }
 
   // "salida/sal 2 cerdo [nota]"
-  const outMatch = trimmed.match(/^(salida|sal)\s+(.+)$/i)
+  const outMatch = normalized.match(/^(salida|sal)\s+(.+)$/i)
   if (outMatch) {
     const extracted = extractNumberFromStart(outMatch[2])
     if (extracted && extracted.rest) {
