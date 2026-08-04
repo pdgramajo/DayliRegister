@@ -28,6 +28,7 @@ import { MovementActionButtons, InventoryActionButtons } from './ActionButtons'
 import { TransactionList } from './TransactionList'
 import { InventoryList } from './InventoryList'
 import { useVoiceRecognition } from '../../hooks/useVoiceRecognition'
+import { useWhisperModel } from '../../hooks/useWhisperModel'
 import type { TabType } from './types'
 
 export const SessionDetail = () => {
@@ -152,6 +153,8 @@ export const SessionDetail = () => {
     categories: inventoryCategories,
   })
 
+  const { isLoading: whisperLoading } = useWhisperModel()
+
   if (sessionLoading || !currentSession) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -255,20 +258,30 @@ export const SessionDetail = () => {
       {/* FAB - Ingreso por voz */}
       {isOpen && (
         <button
-          onClick={voiceStatus === 'recording' ? stopVoice : startVoice}
-          disabled={voiceStatus === 'processing'}
+          onClick={
+            whisperLoading
+              ? undefined
+              : voiceStatus === 'recording'
+                ? stopVoice
+                : startVoice
+          }
+          disabled={voiceStatus === 'processing' || whisperLoading}
           className={`fixed bottom-6 right-4 sm:right-6 z-40 flex items-center justify-center size-14 rounded-full shadow-lg transition-all duration-200 ${
             voiceStatus === 'recording'
               ? 'bg-red-500 text-white animate-pulse shadow-xl'
-              : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed'
+              : whisperLoading
+                ? 'bg-content-400 text-white cursor-not-allowed'
+                : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed'
           }`}
           aria-label={
-            voiceStatus === 'recording'
-              ? 'Detener grabación'
-              : 'Ingreso por voz'
+            whisperLoading
+              ? 'Descargando modelo de voz...'
+              : voiceStatus === 'recording'
+                ? 'Detener grabación'
+                : 'Ingreso por voz'
           }
         >
-          {voiceStatus === 'processing' ? (
+          {whisperLoading || voiceStatus === 'processing' ? (
             <Loader2 className="size-6 animate-spin" />
           ) : (
             <Mic className="size-6" />
