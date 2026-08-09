@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ROUTES } from './constants/routes'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { PwaUpdateBanner } from './components/PwaUpdateBanner'
 
 const BranchList = lazy(() =>
   import('./pages/Branch/BranchList').then((m) => ({ default: m.BranchList }))
@@ -125,6 +126,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-surface-50 dark:bg-surface-900 transition-colors">
+      <PwaUpdateBanner />
       <ErrorBoundary>
         <Suspense fallback={<Loading />}>
           <Routes>
