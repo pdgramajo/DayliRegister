@@ -2,7 +2,6 @@ import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ROUTES } from './constants/routes'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { useWhisperModel } from './hooks/useWhisperModel'
 
 const BranchList = lazy(() =>
   import('./pages/Branch/BranchList').then((m) => ({ default: m.BranchList }))
@@ -111,16 +110,6 @@ const Loading = () => (
   </div>
 )
 
-/**
- * Invisible component mounted at the App root.
- * Triggers Whisper model preload as soon as the app opens.
- */
-const WhisperModelLoader = () => {
-  const { status } = useWhisperModel()
-  if (status === 'idle') return null
-  return null
-}
-
 const App = () => {
   useEffect(() => {
     if (navigator.storage?.persist) {
@@ -136,7 +125,6 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-surface-50 dark:bg-surface-900 transition-colors">
-      <WhisperModelLoader />
       <ErrorBoundary>
         <Suspense fallback={<Loading />}>
           <Routes>
