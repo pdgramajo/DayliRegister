@@ -7,6 +7,7 @@ interface DebtEntryModalProps {
   type: DebtEntryType
   onClose: () => void
   onConfirm: (amount: number, description: string) => void
+  currentBalance?: number
 }
 
 export const DebtEntryModal = ({

@@ -39,6 +39,7 @@ export const ClientList = () => {
 
   const [debtModalClient, setDebtModalClient] = useState<string | null>(null)
   const [debtModalType, setDebtModalType] = useState<DebtEntryType>('debt')
+  const [debtModalBalance, setDebtModalBalance] = useState<number>(0)
 
   useEffect(() => {
     if (branchId) {
@@ -105,8 +106,10 @@ export const ClientList = () => {
   }
 
   const handleRegisterDebt = (clientId: string, type: DebtEntryType) => {
+    const client = clients.find((c) => c.id === clientId)
     setDebtModalClient(clientId)
     setDebtModalType(type)
+    setDebtModalBalance(client?.balance ?? 0)
   }
 
   const displayClients = clients
@@ -248,6 +251,7 @@ export const ClientList = () => {
           type={debtModalType}
           onClose={() => setDebtModalClient(null)}
           onConfirm={handleAddEntry}
+          currentBalance={debtModalBalance}
         />
 
         <DeleteConfirmModal

@@ -33,6 +33,12 @@ const EntryIcon = ({ type }: { type: 'debt' | 'payment' }) =>
     <Circle className="size-2.5 fill-emerald-400 text-emerald-400 shrink-0" />
   )
 
+const getClientStatus = (balance: number) => {
+  if (balance > 0) return { hasDebt: true, hasCredit: false }
+  if (balance < 0) return { hasDebt: false, hasCredit: true }
+  return { hasDebt: false, hasCredit: false }
+}
+
 interface HistoryPanelProps {
   entries: DebtEntry[]
   clientId: string
@@ -146,13 +152,15 @@ export const ClientCard = ({
   onDeleteClient,
   onDeleteEntry,
 }: ClientCardProps) => {
-  const hasDebt = client.balance > 0
+  const { hasDebt, hasCredit } = getClientStatus(client.balance)
 
   const handleSendWhatsApp = () => {
     if (!client.phone) return
     const message = hasDebt
       ? `Hola ${client.name}, tu deuda actual es de $${formatMoney(client.balance)}`
-      : `Hola ${client.name}, no tenés deudas pendientes. ¡Gracias por siempre estar al día!`
+      : hasCredit
+        ? `Hola ${client.name}, tenés saldo a favor de $${formatMoney(-client.balance)}`
+        : `Hola ${client.name}, no tenés deudas pendientes. ¡Gracias por siempre estar al día!`
     openWhatsApp(client.phone, message)
   }
 
@@ -161,7 +169,9 @@ export const ClientCard = ({
       className={`rounded-xl border transition-all ${
         hasDebt
           ? 'border-amber-200 dark:border-amber-700/60 bg-white dark:bg-surface-800 shadow-sm'
-          : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800/50'
+          : hasCredit
+            ? 'border-emerald-200 dark:border-emerald-700/60 bg-white dark:bg-surface-800 shadow-sm'
+            : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800/50'
       }`}
     >
       <div className="p-4">
@@ -194,10 +204,16 @@ export const ClientCard = ({
               className={`text-sm font-bold tabular-nums ${
                 hasDebt
                   ? 'text-red-500 dark:text-red-400'
-                  : 'text-emerald-600 dark:text-emerald-400'
+                  : hasCredit
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : 'text-emerald-600 dark:text-emerald-400'
               }`}
             >
-              {hasDebt ? `$${formatMoney(client.balance)}` : '$0'}
+              {hasDebt
+                ? `$${formatMoney(client.balance)}`
+                : hasCredit
+                  ? `Saldo a favor: $${formatMoney(-client.balance)}`
+                  : '$0'}
             </span>
             {hasDebt ? (
               <Badge
@@ -206,9 +222,16 @@ export const ClientCard = ({
               >
                 Debe
               </Badge>
-            ) : (
+            ) : hasCredit ? (
               <Badge
                 variant="success"
+                className="text-[10px] px-1.5 py-0.5 uppercase tracking-wider font-semibold"
+              >
+                Saldo a favor
+              </Badge>
+            ) : (
+              <Badge
+                variant="secondary"
                 className="text-[10px] px-1.5 py-0.5 uppercase tracking-wider font-semibold"
               >
                 Pagado
