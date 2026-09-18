@@ -90,4 +90,49 @@ describe('DebtEntryModal', () => {
 
     expect(screen.getAllByText('Registrar pago')).toHaveLength(2)
   })
+
+  it('should pre-fill amount when prefilledAmount prop is provided', () => {
+    render(
+      <DebtEntryModal
+        {...defaultProps}
+        type="payment"
+        prefilledAmount={129645}
+      />
+    )
+
+    const amountInput = screen.getByPlaceholderText('0')
+    // MoneyInput formats with thousand separators
+    expect(amountInput).toHaveValue('129.645')
+  })
+
+  it('should pre-fill amount for debt type when prefilledAmount prop is provided', () => {
+    render(
+      <DebtEntryModal {...defaultProps} type="debt" prefilledAmount={5000} />
+    )
+
+    const amountInput = screen.getByPlaceholderText('0')
+    expect(amountInput).toHaveValue('5.000')
+  })
+
+  it('should allow editing pre-filled amount', async () => {
+    const user = userEvent.setup()
+    const handleConfirm = vi.fn()
+
+    render(
+      <DebtEntryModal
+        {...defaultProps}
+        type="payment"
+        prefilledAmount={129645}
+        onConfirm={handleConfirm}
+      />
+    )
+
+    const amountInput = screen.getByPlaceholderText('0')
+    await user.clear(amountInput)
+    await user.type(amountInput, '10000')
+
+    await user.click(screen.getAllByText('Registrar pago')[1])
+
+    expect(handleConfirm).toHaveBeenCalledWith(10000, '')
+  })
 })

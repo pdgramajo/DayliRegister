@@ -447,4 +447,65 @@ describe('ClientList', () => {
 
     await user.click(screen.getAllByText('Eliminar')[1])
   })
+
+  it('should open payment modal with pre-filled amount when clicking Pagar todo', async () => {
+    vi.spyOn(ClientService, 'getClientsByBranch').mockResolvedValue([
+      mockClient,
+    ])
+    const user = userEvent.setup()
+    await renderWithProviders({}, {})
+
+    await waitFor(() => {
+      expect(screen.getByText('Juan Pérez')).toBeInTheDocument()
+    })
+
+    // Find the client card and click "Pagar todo" button
+    const pagarTodoButton = screen.getByText('Pagar todo')
+    await user.click(pagarTodoButton)
+
+    // Modal should open with payment type (title - h2)
+    expect(
+      screen.getByRole('heading', { name: 'Registrar pago' })
+    ).toBeInTheDocument()
+    // Amount should be pre-filled with client's balance (formatted)
+    const amountInput = screen.getByPlaceholderText('0')
+    expect(amountInput).toHaveValue('2.500')
+  })
+
+  it('should create payment entry with pre-filled amount when confirming Pagar todo', async () => {
+    vi.spyOn(ClientService, 'getClientsByBranch').mockResolvedValue([
+      mockClient,
+    ])
+    const addDebtEntrySpy = vi
+      .spyOn(ClientService, 'addDebtEntry')
+      .mockResolvedValue(undefined as any)
+    const user = userEvent.setup()
+    await renderWithProviders({}, {})
+
+    await waitFor(() => {
+      expect(screen.getByText('Juan Pérez')).toBeInTheDocument()
+    })
+
+    // Click "Pagar todo" button
+    const pagarTodoButton = screen.getByText('Pagar todo')
+    await user.click(pagarTodoButton)
+
+    // Confirm payment - click the confirm button in modal (button with text "Registrar pago")
+    const confirmButton = screen.getAllByRole('button', {
+      name: 'Registrar pago',
+    })[1]
+    await user.click(confirmButton)
+
+    // Should call addDebtEntry with payment type and pre-filled amount
+    await waitFor(() => {
+      expect(addDebtEntrySpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          clientId: 'client-1',
+          branchId: 'test-branch-1',
+          type: 'payment',
+          amount: 2500,
+        })
+      )
+    })
+  })
 })

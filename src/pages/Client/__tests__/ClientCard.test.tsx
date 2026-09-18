@@ -28,6 +28,7 @@ const defaultProps = {
   isExpanded: false,
   onToggleExpand: vi.fn(),
   onRegisterDebt: vi.fn(),
+  onSettleDebt: vi.fn(),
   onEdit: vi.fn(),
   onDeleteClient: vi.fn(),
   onDeleteEntry: vi.fn(),
@@ -259,5 +260,60 @@ describe('ClientCard', () => {
     await user.click(screen.getByText('Ver más historial →'))
 
     expect(screen.getByText('Mostrar menos ↑')).toBeInTheDocument()
+  })
+
+  it('should show "Pagar todo" button when client has debt', () => {
+    const debtor = { ...baseClient, balance: 2500 }
+
+    renderWithRouter(<ClientCard client={debtor} {...defaultProps} />)
+
+    expect(screen.getByText('Pagar todo')).toBeInTheDocument()
+  })
+
+  it('should NOT show "Pagar todo" button when client has no debt', () => {
+    renderWithRouter(<ClientCard client={baseClient} {...defaultProps} />)
+
+    expect(screen.queryByText('Pagar todo')).not.toBeInTheDocument()
+  })
+
+  it('should NOT show "Pagar todo" button when client has credit', () => {
+    const creditClient = { ...baseClient, balance: -500 }
+
+    renderWithRouter(<ClientCard client={creditClient} {...defaultProps} />)
+
+    expect(screen.queryByText('Pagar todo')).not.toBeInTheDocument()
+  })
+
+  it('should call onSettleDebt when clicking Pagar todo', async () => {
+    const user = userEvent.setup()
+    const handleSettle = vi.fn()
+    const debtor = { ...baseClient, balance: 2500 }
+
+    renderWithRouter(
+      <ClientCard
+        client={debtor}
+        {...defaultProps}
+        onSettleDebt={handleSettle}
+      />
+    )
+
+    await user.click(screen.getByText('Pagar todo'))
+
+    expect(handleSettle).toHaveBeenCalledWith('client-1')
+  })
+
+  it('should send credit message when clicking WhatsApp with negative balance', async () => {
+    const user = userEvent.setup()
+    const { openWhatsApp } = await import('../../../lib/whatsapp')
+    const creditClient = { ...baseClient, balance: -1500 }
+
+    renderWithRouter(<ClientCard client={creditClient} {...defaultProps} />)
+
+    await user.click(screen.getByText('WhatsApp'))
+
+    expect(openWhatsApp).toHaveBeenCalledWith(
+      '+543884123456',
+      'Hola Juan Pérez, tenés saldo a favor de $1.500'
+    )
   })
 })

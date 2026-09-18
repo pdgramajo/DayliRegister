@@ -22,6 +22,7 @@ import {
   Clock,
   Plus,
   Minus,
+  Check,
 } from 'lucide-react'
 
 const HISTORY_PAGE_SIZE = 5
@@ -138,6 +139,7 @@ interface ClientCardProps {
   isExpanded: boolean
   onToggleExpand: (clientId: string) => void
   onRegisterDebt: (clientId: string, type: DebtEntryType) => void
+  onSettleDebt?: (clientId: string) => void
   onEdit: (clientId: string) => void
   onDeleteClient: (clientId: string) => void
   onDeleteEntry: (entryId: string, clientId: string) => void
@@ -148,6 +150,7 @@ export const ClientCard = ({
   isExpanded,
   onToggleExpand,
   onRegisterDebt,
+  onSettleDebt,
   onEdit,
   onDeleteClient,
   onDeleteEntry,
@@ -264,6 +267,17 @@ export const ClientCard = ({
             <Minus className="size-3.5" />
             Registrar pago
           </Button>
+          {hasDebt && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => onSettleDebt?.(client.id)}
+              className="text-xs gap-1 h-8 flex-1"
+            >
+              <Check className="size-3.5" />
+              Pagar todo
+            </Button>
+          )}
         </div>
 
         <div className="flex items-center gap-1 mt-3 pt-2.5 border-t border-surface-100 dark:border-surface-700/50">

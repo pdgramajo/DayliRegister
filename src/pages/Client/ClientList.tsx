@@ -40,6 +40,8 @@ export const ClientList = () => {
   const [debtModalClient, setDebtModalClient] = useState<string | null>(null)
   const [debtModalType, setDebtModalType] = useState<DebtEntryType>('debt')
   const [debtModalBalance, setDebtModalBalance] = useState<number>(0)
+  const [debtModalPrefilledAmount, setDebtModalPrefilledAmount] =
+    useState<number>(0)
 
   useEffect(() => {
     if (branchId) {
@@ -110,6 +112,14 @@ export const ClientList = () => {
     setDebtModalClient(clientId)
     setDebtModalType(type)
     setDebtModalBalance(client?.balance ?? 0)
+    setDebtModalPrefilledAmount(0)
+  }
+
+  const handleSettleDebt = (clientId: string) => {
+    const client = clients.find((c) => c.id === clientId)
+    setDebtModalClient(clientId)
+    setDebtModalType('payment')
+    setDebtModalPrefilledAmount(client?.balance ?? 0)
   }
 
   const displayClients = clients
@@ -227,6 +237,7 @@ export const ClientList = () => {
                     setExpandedId(expandedId === id ? null : id)
                   }
                   onRegisterDebt={handleRegisterDebt}
+                  onSettleDebt={handleSettleDebt}
                   onEdit={(id) =>
                     navigate(
                       buildRoute(ROUTES.BRANCH_CLIENT_EDIT, {
@@ -249,9 +260,13 @@ export const ClientList = () => {
         <DebtEntryModal
           open={!!debtModalClient}
           type={debtModalType}
-          onClose={() => setDebtModalClient(null)}
+          onClose={() => {
+            setDebtModalClient(null)
+            setDebtModalPrefilledAmount(0)
+          }}
           onConfirm={handleAddEntry}
           currentBalance={debtModalBalance}
+          prefilledAmount={debtModalPrefilledAmount}
         />
 
         <DeleteConfirmModal

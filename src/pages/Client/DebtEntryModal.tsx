@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Entities, type DebtEntryType } from '../../types/entities'
 import { Modal, Button, MoneyInput } from '../../components/ui'
 
@@ -8,6 +8,7 @@ interface DebtEntryModalProps {
   onClose: () => void
   onConfirm: (amount: number, description: string) => void
   currentBalance?: number
+  prefilledAmount?: number
 }
 
 export const DebtEntryModal = ({
@@ -15,9 +16,17 @@ export const DebtEntryModal = ({
   type,
   onClose,
   onConfirm,
+  prefilledAmount,
 }: DebtEntryModalProps) => {
-  const [amount, setAmount] = useState<number | undefined>()
+  const [amount, setAmount] = useState<number | undefined>(prefilledAmount)
   const [description, setDescription] = useState('')
+
+  // Sync amount with prefilledAmount when it changes (e.g., when modal reopens with different amount)
+  useEffect(() => {
+    if (prefilledAmount !== undefined) {
+      setAmount(prefilledAmount)
+    }
+  }, [prefilledAmount])
 
   const handleConfirm = () => {
     if (amount === undefined || amount <= 0) return
