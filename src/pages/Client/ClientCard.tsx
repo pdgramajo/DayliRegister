@@ -215,7 +215,7 @@ export const ClientCard = ({
               {hasDebt
                 ? `$${formatMoney(client.balance)}`
                 : hasCredit
-                  ? `Saldo a favor: $${formatMoney(-client.balance)}`
+                  ? `$${formatMoney(-client.balance)}`
                   : '$0'}
             </span>
             {hasDebt ? (
