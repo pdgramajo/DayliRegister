@@ -243,7 +243,7 @@ export const ClientCard = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mt-3.5">
+        <div className="flex flex-wrap items-center gap-2 mt-3.5">
           <Button
             variant="outline"
             size="sm"
@@ -251,7 +251,7 @@ export const ClientCard = ({
               onRegisterDebt(client.id, Entities.DebtEntryTypes.DEBT)
             }
             data-testid="add-debt-button"
-            className="text-xs gap-1 h-8 flex-1"
+            className="text-xs gap-1 h-8 flex-1 sm:flex-none min-w-[130px] shrink-0"
           >
             <Plus className="size-3.5" />
             Registrar deuda
@@ -262,7 +262,7 @@ export const ClientCard = ({
             onClick={() =>
               onRegisterDebt(client.id, Entities.DebtEntryTypes.PAYMENT)
             }
-            className="text-xs gap-1 h-8 flex-1"
+            className="text-xs gap-1 h-8 flex-1 sm:flex-none min-w-[130px] shrink-0"
           >
             <Minus className="size-3.5" />
             Registrar pago
@@ -272,7 +272,7 @@ export const ClientCard = ({
               variant="default"
               size="sm"
               onClick={() => onSettleDebt?.(client.id)}
-              className="text-xs gap-1 h-8 flex-1"
+              className="text-xs gap-1 h-8 w-full sm:flex-1 shrink-0"
             >
               <Check className="size-3.5" />
               Pagar todo
