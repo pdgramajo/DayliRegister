@@ -121,6 +121,9 @@ export const BranchList = () => {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <Button
               variant="outline"
+              onClick={() =>
+                toast.info('Reportes: funcionalidad en desarrollo')
+              }
               className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
               <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
@@ -128,6 +131,9 @@ export const BranchList = () => {
             </Button>
             <Button
               variant="outline"
+              onClick={() =>
+                toast.info('Recepciones: funcionalidad en desarrollo')
+              }
               className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
               <ClipboardList className="size-5 text-emerald-500 dark:text-emerald-400" />
