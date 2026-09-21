@@ -32,16 +32,6 @@ export const ToastProvider = () => (
           secondary: '#EF4444',
         },
       },
-      info: {
-        style: {
-          background: '#3B82F6',
-          color: '#fff',
-        },
-        iconTheme: {
-          primary: '#fff',
-          secondary: '#3B82F6',
-        },
-      },
     }}
   />
 )
@@ -56,7 +46,11 @@ export const toast = {
     hotToast.error(message, { duration })
   },
   info: (message: string, duration: number = DEFAULT_DURATION) => {
-    hotToast(message, { duration, icon: 'ℹ️' })
+    hotToast(message, {
+      duration,
+      icon: 'ℹ️',
+      style: { background: '#3B82F6', color: '#fff' },
+    })
   },
   /**
    * Muestra un toast con contenido JSX personalizado.
