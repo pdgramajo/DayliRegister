@@ -31,3 +31,4 @@ coverage
 *.sln
 *.sw?
 tmp_mock_test.ts
+.atl/
