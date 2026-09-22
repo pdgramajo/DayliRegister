@@ -32,3 +32,6 @@ coverage
 *.sw?
 tmp_mock_test.ts
 .atl/
+
+# OpenSpec artifacts (local only)
+openspec/
