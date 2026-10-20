@@ -196,7 +196,7 @@ export const SessionDetail = () => {
     totalWithdrawals
 
   return (
-    <div className="flex flex-col h-dvh max-w-2xl mx-auto px-4 pt-4">
+    <div className="flex flex-col h-dvh max-w-7xl mx-auto px-4 pt-4">
       {isOpen ? (
         <SessionHeaderOpen
           name={currentSession.name}
@@ -257,7 +257,7 @@ export const SessionDetail = () => {
         <button
           onClick={voiceStatus === 'recording' ? stopVoice : startVoice}
           disabled={voiceStatus === 'processing'}
-          className={`fixed bottom-6 right-4 sm:right-6 z-40 flex items-center justify-center size-14 rounded-full shadow-lg transition-all duration-200 ${
+          className={`fixed bottom-6 right-4 sm:right-6 lg:right-8 z-40 flex items-center justify-center size-14 lg:size-16 rounded-full shadow-lg transition-all duration-200 ${
             voiceStatus === 'recording'
               ? 'bg-red-500 text-white animate-pulse shadow-xl'
               : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed'

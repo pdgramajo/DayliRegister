@@ -116,81 +116,81 @@ export const BranchList = () => {
 
   return (
     <div className="min-h-screen bg-surface-50 dark:bg-surface-900 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="max-w-xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-8">
         <div className="space-y-4">
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
             <Button
               variant="outline"
               onClick={() =>
                 toast.info('Reportes: funcionalidad en desarrollo')
               }
-              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+              className="h-14 justify-start gap-3 px-4 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
-              <BarChart3 className="size-5 text-indigo-500 dark:text-indigo-400" />
-              <span className="text-xs">Reportes</span>
+              <BarChart3 className="size-6 text-indigo-500 dark:text-indigo-400" />
+              <span className="text-sm">Reportes</span>
             </Button>
             <Button
               variant="outline"
               onClick={() =>
                 toast.info('Recepciones: funcionalidad en desarrollo')
               }
-              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+              className="h-14 justify-start gap-3 px-4 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
-              <ClipboardList className="size-5 text-emerald-500 dark:text-emerald-400" />
-              <span className="text-xs">Recepciones</span>
+              <ClipboardList className="size-6 text-emerald-500 dark:text-emerald-400" />
+              <span className="text-sm">Recepciones</span>
             </Button>
             <Button
               variant="outline"
               onClick={() => navigate(ROUTES.SETTINGS)}
-              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+              className="h-14 justify-start gap-3 px-4 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
-              <Settings className="size-5 text-amber-500 dark:text-amber-400" />
-              <span className="text-xs">Configuración</span>
+              <Settings className="size-6 text-amber-500 dark:text-amber-400" />
+              <span className="text-sm">Configuración</span>
             </Button>
             <Button
               variant="outline"
-              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+              className="h-14 justify-start gap-3 px-4 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
               onClick={toggleTheme}
             >
               {isDark ? (
-                <Sun className="size-5 text-amber-500 dark:text-amber-400" />
+                <Sun className="size-6 text-amber-500 dark:text-amber-400" />
               ) : (
-                <Moon className="size-5 text-indigo-500 dark:text-indigo-400" />
+                <Moon className="size-6 text-indigo-500 dark:text-indigo-400" />
               )}
-              <span className="text-xs">{isDark ? 'Claro' : 'Oscuro'}</span>
+              <span className="text-sm">{isDark ? 'Claro' : 'Oscuro'}</span>
             </Button>
             <Button
               variant="outline"
               onClick={() => navigate(ROUTES.BACKUP)}
-              className="h-12 justify-start gap-2 px-3 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
+              className="h-14 justify-start gap-3 px-4 dark:border-surface-700 dark:text-content-300 dark:hover:bg-surface-800 dark:hover:border-surface-600"
             >
-              <Database className="size-5 text-indigo-500 dark:text-indigo-400" />
-              <span className="text-xs">Backup</span>
+              <Database className="size-6 text-indigo-500 dark:text-indigo-400" />
+              <span className="text-sm">Backup</span>
             </Button>
           </div>
           <Link to="/branches/new">
-            <Button className="w-full shadow-lg shadow-indigo-200 dark:shadow-none py-6 hover:shadow-xl hover:shadow-indigo-200/50 transition-all duration-300 dark:hover:shadow-none">
-              <Plus className="size-4" />
+            <Button className="w-full shadow-lg shadow-indigo-200 dark:shadow-none py-6 lg:py-7 text-base lg:text-lg hover:shadow-xl hover:shadow-indigo-200/50 transition-all duration-300 dark:hover:shadow-none">
+              <Plus className="size-5" />
               Nueva Sucursal
             </Button>
           </Link>
         </div>
 
         <div className="pt-4">
-          <h2 className="text-lg font-bold text-content-900 dark:text-white tracking-tight mb-4">
+          <h2 className="text-lg lg:text-xl font-bold text-content-900 dark:text-white tracking-tight mb-4 lg:mb-6">
             SUCURSALES
           </h2>
           {branches.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="size-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mb-4">
-                <MapPin className="size-6 text-content-400 dark:text-surface-500" />
+              <div className="size-14 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mb-4">
+                <MapPin className="size-7 text-content-400 dark:text-surface-500" />
               </div>
-              <p className="text-sm text-surface-500 dark:text-content-400">
+              <p className="text-base text-surface-500 dark:text-content-400">
                 No hay sucursales creadas
               </p>
             </div>
           ) : (
-            <div className="max-h-[calc(100vh-320px)] overflow-y-auto space-y-2 -mx-2 px-2">
+            <div className="max-h-[calc(100vh-320px)] overflow-y-auto space-y-3 -mx-2 px-2">
               {branches.map((branch) => (
                 <BranchCard
                   key={branch.id}
@@ -202,7 +202,6 @@ export const BranchList = () => {
           )}
         </div>
       </div>
-
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)}>
         <Modal.Content title="Eliminar sucursal">
           <p className="text-sm text-content-500 mb-6">
