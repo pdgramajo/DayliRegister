@@ -27,13 +27,13 @@ const Card = ({
   <button
     onClick={onCopy}
     title="Clic para copiar"
-    className="w-full p-1.5 bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 text-center hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors cursor-pointer"
+    className="w-full p-2 sm:p-3 bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 text-center hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors cursor-pointer"
   >
-    <div className="flex items-center justify-center gap-1 mb-0.5">
-      <span className={`size-3 ${iconColor}`}>{icon}</span>
-      <span className={`text-md ${valueColor}`}>{label}</span>
+    <div className="flex items-center justify-center gap-1.5 mb-1">
+      <span className={`size-4 sm:size-5 ${iconColor}`}>{icon}</span>
+      <span className={`text-sm sm:text-base ${valueColor}`}>{label}</span>
     </div>
-    <p className={`text-xl font-semibold ${valueColor}`}>
+    <p className={`text-2xl sm:text-3xl font-semibold ${valueColor}`}>
       {formatMoney(value)}
     </p>
   </button>
@@ -51,7 +51,7 @@ export const SummaryCards = ({
   }
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-2 sm:mb-3">
       <Card
         icon={<Wallet width={14} height={14} />}
         iconColor="text-green-600"

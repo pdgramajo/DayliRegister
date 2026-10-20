@@ -14,17 +14,17 @@ export const SessionHeaderOpen = ({
   onClose,
   onBack,
 }: SessionHeaderOpenProps) => (
-  <div className="flex items-center justify-between mb-2">
+  <div className="flex items-center justify-between mb-2 lg:mb-3">
     <button
       onClick={onBack}
-      className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors"
+      className="text-base lg:text-lg text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors"
     >
       ← Atrás
     </button>
-    <span className="text-lg font-semibold text-content-900 dark:text-content-100">
+    <span className="text-base lg:text-xl font-semibold text-content-900 dark:text-content-100">
       {name}
     </span>
-    <Button variant="destructive" size="sm" onClick={onClose}>
+    <Button variant="destructive" size="default" onClick={onClose}>
       Cerrar
     </Button>
   </div>
@@ -34,14 +34,14 @@ export const SessionHeaderClosed = ({
   name,
   onBack,
 }: SessionHeaderBaseProps) => (
-  <div className="flex items-center justify-between mb-2">
+  <div className="flex items-center justify-between mb-2 lg:mb-3">
     <button
       onClick={onBack}
-      className="text-sm text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors"
+      className="text-base lg:text-lg text-content-500 hover:text-content-700 dark:hover:text-content-300 transition-colors"
     >
       ← Atrás
     </button>
-    <span className="text-lg font-semibold text-content-900 dark:text-content-100">
+    <span className="text-base lg:text-xl font-semibold text-content-900 dark:text-content-100">
       {name}
     </span>
     <div className="w-16" />

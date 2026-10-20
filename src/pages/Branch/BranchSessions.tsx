@@ -102,7 +102,7 @@ export const BranchSessions = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pt-4 flex flex-col h-dvh">
+    <div className="max-w-7xl mx-auto px-4 pt-4 flex flex-col h-dvh">
       <div className="shrink-0">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">

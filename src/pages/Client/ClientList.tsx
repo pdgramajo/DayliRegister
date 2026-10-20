@@ -141,7 +141,7 @@ export const ClientList = () => {
 
   return (
     <div className="h-screen flex flex-col bg-surface-50 dark:bg-surface-900">
-      <div className="max-w-2xl mx-auto w-full flex flex-col flex-1 min-h-0">
+      <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
         <div className="px-4 pt-6 sm:px-6 lg:px-8 shrink-0">
           <button
             onClick={() =>
@@ -154,14 +154,15 @@ export const ClientList = () => {
 
           <div className="flex items-start justify-between mb-1">
             <div>
-              <h1 className="text-2xl font-bold text-content-900 dark:text-white tracking-tight">
+              <h1 className="text-2xl lg:text-3xl font-bold text-content-900 dark:text-white tracking-tight">
                 Clientes
               </h1>
-              <p className="text-sm text-content-400 mt-0.5">
+              <p className="text-sm lg:text-base text-content-400 mt-0.5">
                 {clients.length} cliente{clients.length !== 1 ? 's' : ''}
               </p>
             </div>
             <Button
+              size="lg"
               onClick={() =>
                 navigate(buildRoute(ROUTES.BRANCH_CLIENT_NEW, { id: branchId }))
               }

@@ -194,7 +194,7 @@ export const ReportPage = () => {
 
   return (
     <div className="h-screen flex flex-col bg-surface-50 dark:bg-surface-900">
-      <div className="max-w-2xl mx-auto w-full flex flex-col flex-1 min-h-0">
+      <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
         {/* Header */}
         <div className="shrink-0 px-4 pt-6 sm:px-6 lg:px-8">
           <button
